@@ -1,10 +1,21 @@
 [package]
 name = "tom"
+description = "Utility for automating basic processes"
 version = "0.1.0"
-authors = ["jaredgorski <jared.gorski@liferay.cloud>"]
+license = "MIT"
+readme = "README.md"
+keywords = ["automation", "process", "process-manager"]
+authors = ["Jared Gorski <jaredgorski6@gmail.com>"]
+repository = "https://github.com/jaredgorski/tom"
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[badges]
+travis-ci = { repository = "jaredgorski/tom" }
+
+[[bin]]
+doc = false
+path = "src/main.rs"
+name = "tom"
 
 [dependencies]
 dirs = "2.0"

@@ -15,6 +15,7 @@ pub struct Profile {
 pub struct ProcessCfg {
     pub name: String,
     pub command: String,
+    #[serde(default = "default_cwd")]
     pub cwd: String,
     pub silent: bool,
 }
@@ -41,6 +42,10 @@ pub struct ActionCfg {
     pub name: String,
     pub r#type: String,
     pub command: String,
+}
+
+fn default_cwd() -> String {
+    ".".to_string()
 }
 
 pub fn get_tom_pr(tom_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {

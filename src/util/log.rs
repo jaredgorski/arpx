@@ -1,10 +1,11 @@
+
 pub fn error(err: &str) {
     let error: String = format!("error: {}", err);
     println!("{}", error);
 }
 
 pub fn usage(bin: &str, arg_doc: Option<&Vec<String>>) {
-    let mut usage: String = String::from("\nUSAGE:");
+    let mut usage: String = "\nUSAGE:".to_string();
 
     let doc_from_str = |bin: &str, doc: &str| -> String {
         return format!("\n    {} {}", bin, doc);
