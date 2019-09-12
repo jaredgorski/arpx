@@ -1,5 +1,4 @@
-use std::io::{BufRead, BufReader, Stdout};
-use std::process::{Command, Child, ChildStdout, ChildStderr, Stdio};
+use std::process::{Command, Child, Stdio};
 
 pub mod stream_read;
 
@@ -12,7 +11,7 @@ pub struct Process {
 
 impl Process {
     pub fn init(name: String, cwd: &str, command: &str) -> Process {
-        let mut child: Child = Command::new("sh")
+        let child: Child = Command::new("sh")
             .args(&["-c", command])
             .current_dir(cwd)
             .stdout(Stdio::piped())

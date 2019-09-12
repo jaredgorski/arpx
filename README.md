@@ -1,2 +1,2 @@
 # tom
-Utility for automating basic processes
+Utility for running and automating concurrent processes

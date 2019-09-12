@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::thread;
 use crate::config::Cfg;
 use crate::config::profile::ProcessCfg;
 use crate::processes::Process;
@@ -6,14 +7,22 @@ use crate::handlers::output;
 
 pub fn run(cfg: Cfg, processes: Vec<String>) {
     let profile_processes_map = get_profile_processes_map(cfg);
-    let mut procs: Vec<Process> = Vec::new();
+    let mut proc_handles = Vec::new();
 
     for process in processes {
         let proc_cfg = profile_processes_map.get(&process).expect("Internal process does not match any profile process.");
-        procs.push(Process::init(proc_cfg.name[..].to_string(), &proc_cfg.cwd[..], &proc_cfg.command[..]));
+        let proc = Process::init(proc_cfg.name[..].to_string(), &proc_cfg.cwd[..], &proc_cfg.command[..]);
+        let handle = thread::Builder::new()
+            .name(proc_cfg.name[..].to_string().into())
+            .spawn(move || {
+                output::handle_output(proc);
+            }).expect("Could not spawn process thread");
+        proc_handles.push(handle);
     }
 
-    output::handle_output(procs)
+    for handle in proc_handles {
+        handle.join().unwrap();
+    }
 }
 
 fn get_profile_processes_map(cfg: Cfg) -> HashMap<String, ProcessCfg> {

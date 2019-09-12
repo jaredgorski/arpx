@@ -42,7 +42,7 @@ pub fn command_parse() {
                     cmd_mode = "run".to_string();
                     cmd_processes.push(value);
                 },
-                "--set-profile" => println!("Set profile flag invoked"),
+                "--set-profile" | "-s" => println!("Set profile flag invoked"),
                 _ => util::log::usage(init_cmd, Some(&args)),
             }
 
