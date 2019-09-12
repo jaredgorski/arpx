@@ -1,6 +1,6 @@
 use std::env;
-use super::config;
-use super::util;
+use crate::config;
+use crate::util;
 
 pub mod run;
 
@@ -55,5 +55,5 @@ pub fn command_parse() {
         processes: cmd_processes,
     };
 
-    run::run(command);
+    run::run(cfg, command.processes);
 }

@@ -11,7 +11,7 @@ pub struct Profile {
     pub actions: Vec<ActionCfg>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProcessCfg {
     pub name: String,
     pub command: String,

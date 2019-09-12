@@ -1,7 +1,6 @@
-mod commands;
-mod config;
-mod process;
-mod util;
+extern crate tom;
+
+use tom::commands;
 
 fn main() {
     commands::command_parse();
