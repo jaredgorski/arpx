@@ -4,7 +4,7 @@ use std::fs::{File};
 use std::path::{PathBuf};
 use std::io::prelude::*;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Profile {
     pub processes: Vec<ProcessCfg>,
     pub monitors: Vec<MonitorCfg>,
@@ -20,24 +20,24 @@ pub struct ProcessCfg {
     pub silent: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MonitorCfg {
     pub process: String,
     pub triggers: Triggers,
     pub actions: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Triggers {
     pub logs: LogTriggerCfg,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct LogTriggerCfg {
     pub includes_string: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ActionCfg {
     pub name: String,
     pub r#type: String,

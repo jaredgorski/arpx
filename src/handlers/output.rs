@@ -1,9 +1,12 @@
 use crossbeam_channel::{Select};
+use std::collections::{HashMap};
+use crate::config::Cfg;
 use crate::processes::Process;
 use crate::processes::stream_read::{PipedLine, PipeStreamReader};
-use crate::util;
+use crate::util::log;
+use crate::handlers::monitor;
 
-pub fn handle_output(mut proc: Process) {
+pub fn handle_output(cfg: &Cfg, mut proc: Process) {
     let mut channels: Vec<PipeStreamReader> = Vec::new();
     channels.push(PipeStreamReader::new(Box::new(proc.child.stdout.take().expect("!stdout"))));
     channels.push(PipeStreamReader::new(Box::new(proc.child.stderr.take().expect("!stderr"))));
@@ -26,7 +29,7 @@ pub fn handle_output(mut proc: Process) {
                     Ok(piped_line) => {
                         match piped_line {
                             PipedLine::Line(line) => {
-                                handle_output_line(line);
+                                handle_output_line(&cfg, &mut proc, line);
                             },
                             PipedLine::EOF => {
                                 stream_eof = true;
@@ -34,7 +37,7 @@ pub fn handle_output(mut proc: Process) {
                             }
                         }
                     }
-                    Err(error) => util::log::error(&format!("{:?}", error)),
+                    Err(error) => log::error(&format!("{:?}", error)),
                 }
             }
             Err(_) => {
@@ -51,6 +54,11 @@ pub fn handle_output(mut proc: Process) {
     }
 }
 
-pub fn handle_output_line(line: String) {
-    println!("TOM: {}", line);
+pub fn handle_output_line(cfg: &Cfg, proc: &mut Process, line: String) {
+    let mut log_data = log::LogData {
+        message: &line,
+        snippets: HashMap::new(),
+    };
+
+    monitor::handle_monitor(cfg, proc, &mut log_data);
 }

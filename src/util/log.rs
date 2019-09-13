@@ -1,3 +1,15 @@
+use std::collections::{HashMap};
+
+#[derive(Debug)]
+pub struct LogData<'a> {
+    pub message: &'a str,
+    pub snippets: HashMap<String, String>,
+}
+
+pub fn logger(log: &str) {
+    let log_output: String = format!("{}", log);
+    println!("{}", log_output);
+}
 
 pub fn error(err: &str) {
     let error: String = format!("error: {}", err);

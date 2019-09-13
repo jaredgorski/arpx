@@ -4,7 +4,7 @@ use std::path::{PathBuf};
 pub mod config;
 pub mod profile;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Cfg {
     pub config: config::Config,
     pub profile: profile::Profile,
@@ -24,11 +24,11 @@ pub fn get_tom_cfg() -> Cfg {
     };
 
     let profile = match profile::get_tom_pr(tom_dir.clone(), PathBuf::from(config.profile.clone())) {
-        Ok(config) => config,
+        Ok(profile) => profile,
         Err(error) => panic!(error),
     };
 
-    let cfg = Cfg {
+    let cfg: Cfg = Cfg {
         config: config,
         profile: profile,
     };

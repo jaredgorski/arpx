@@ -4,13 +4,13 @@ use std::fs::{File};
 use std::path::{PathBuf};
 use std::io::prelude::*;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
     pub profile: String,
     pub logging: LoggingCfg,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct LoggingCfg {
     pub sidebar: bool,
 }

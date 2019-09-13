@@ -6,16 +6,17 @@ use crate::processes::Process;
 use crate::handlers::output;
 
 pub fn run(cfg: Cfg, processes: Vec<String>) {
-    let profile_processes_map = get_profile_processes_map(cfg);
+    let profile_processes_map = get_profile_processes_map(&cfg);
     let mut proc_handles = Vec::new();
 
     for process in processes {
         let proc_cfg = profile_processes_map.get(&process).expect("Internal process does not match any profile process.");
         let proc = Process::init(proc_cfg.name[..].to_string(), &proc_cfg.cwd[..], &proc_cfg.command[..]);
+        let cfg_copy = cfg.clone();
         let handle = thread::Builder::new()
             .name(proc_cfg.name[..].to_string().into())
             .spawn(move || {
-                output::handle_output(proc);
+                output::handle_output(&cfg_copy, proc);
             }).expect("Could not spawn process thread");
         proc_handles.push(handle);
     }
@@ -25,10 +26,10 @@ pub fn run(cfg: Cfg, processes: Vec<String>) {
     }
 }
 
-fn get_profile_processes_map(cfg: Cfg) -> HashMap<String, ProcessCfg> {
+fn get_profile_processes_map(cfg: &Cfg) -> HashMap<String, ProcessCfg> {
     let mut profile_processes: HashMap<String, ProcessCfg> = HashMap::new();
     
-    for profile_process in cfg.profile.processes {
+    for profile_process in &cfg.profile.processes {
         profile_processes.insert(profile_process.name[..].to_string(), profile_process.clone());
     }
 
