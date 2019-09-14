@@ -55,5 +55,5 @@ pub fn command_parse() {
         processes: cmd_processes,
     };
 
-    run::run(cfg, command.processes);
+    run::run(&cfg, command.processes);
 }

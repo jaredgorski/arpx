@@ -6,11 +6,11 @@ pub mod stream_read;
 pub struct Process {
     pub child: Child,
     pub name: String,
-    pub pid: String,
+    pub silent: bool,
 }
 
 impl Process {
-    pub fn init(name: String, cwd: &str, command: &str) -> Process {
+    pub fn init(name: String, cwd: &str, command: &str, silent: &bool) -> Process {
         let child: Child = Command::new("sh")
             .args(&["-c", command])
             .current_dir(cwd)
@@ -22,7 +22,7 @@ impl Process {
         Process {
             child: child,
             name: name,
-            pid: "blah".to_string(),
+            silent: *silent,
         }
     }
 }

@@ -23,7 +23,7 @@ pub fn handle_monitor(cfg: &Cfg, proc: &mut Process, log_data: &mut LogData) {
         }
     }
 
-    action::handle_action(cfg, proc, log_data, exec_actions);
+    action::handle_action(cfg, proc, log_data, &mut exec_actions);
 }
 
 fn get_profile_monitors(cfg: &Cfg) -> Vec<&MonitorCfg> {

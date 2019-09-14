@@ -42,6 +42,7 @@ pub struct ActionCfg {
     pub name: String,
     pub r#type: String,
     pub command: String,
+    pub silent: bool,
 }
 
 fn default_cwd() -> String {

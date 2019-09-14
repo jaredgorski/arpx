@@ -34,3 +34,10 @@ pub fn usage(bin: &str, arg_doc: Option<&Vec<String>>) {
 
     println!("{}\n", usage);
 }
+
+pub fn log_trigger_snippet(log_data: &LogData, action: &str) {
+    match log_data.snippets.get(action) {
+        Some(snippet) => logger(&format!("Caught trigger: {}", snippet)),
+        None => (),
+    }
+}
