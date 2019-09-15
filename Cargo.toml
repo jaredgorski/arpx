@@ -1,7 +1,7 @@
 [package]
 name = "tom"
 description = "Utility for automating basic processes"
-version = "0.1.0"
+version = "0.0.0-alpha"
 license = "MIT"
 readme = "README.md"
 keywords = ["automation", "process", "process-manager"]
