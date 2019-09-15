@@ -22,6 +22,7 @@ pub fn logs_potential_pull(log_actions: &Vec<String>, log_triggers: &LogTriggerC
     return output;
 }
 
-fn get_trigger_snippet(log_data: &LogData, substr: &str) -> String {
-    "snippet placeholder".to_string()
+fn get_trigger_snippet(_log_data: &LogData, substr: &str) -> String {
+    // TODO: provide context on snippets
+    substr.to_string()
 }

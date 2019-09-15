@@ -3,6 +3,12 @@ use serde_yaml::{Error};
 use std::fs::{File};
 use std::path::{PathBuf};
 use std::io::prelude::*;
+use crate::config::{
+    default_cwd,
+    default_empty_string,
+    default_empty_vec_string,
+    default_false,
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Profile {
@@ -13,17 +19,22 @@ pub struct Profile {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProcessCfg {
+    #[serde(default = "default_empty_string")]
     pub name: String,
+    #[serde(default = "default_empty_string")]
     pub command: String,
     #[serde(default = "default_cwd")]
     pub cwd: String,
+    #[serde(default = "default_false")]
     pub silent: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MonitorCfg {
+    #[serde(default = "default_empty_string")]
     pub process: String,
     pub triggers: Triggers,
+    #[serde(default = "default_empty_vec_string")]
     pub actions: Vec<String>,
 }
 
@@ -34,19 +45,20 @@ pub struct Triggers {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct LogTriggerCfg {
+    #[serde(default = "default_empty_string")]
     pub includes_string: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ActionCfg {
+    #[serde(default = "default_empty_string")]
     pub name: String,
+    #[serde(default = "default_empty_string")]
     pub r#type: String,
+    #[serde(default = "default_empty_string")]
     pub command: String,
+    #[serde(default = "default_false")]
     pub silent: bool,
-}
-
-fn default_cwd() -> String {
-    ".".to_string()
 }
 
 pub fn get_tom_pr(tom_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {

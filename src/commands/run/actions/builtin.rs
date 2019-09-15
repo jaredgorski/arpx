@@ -7,7 +7,7 @@ pub const BUILTINS: &[&str] = &[
     "kill",
     "logger",
     "respawn",
-    "silent",
+    "silence",
     "tomexit",
 ];
 
@@ -29,7 +29,7 @@ pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
             logger(&format!("Process [pid: {}] killed. Respawning...", proc.child.id()));
             run::run(&cfg, vec![proc.name[..].to_string()]);
         },
-        "silent" => {},
+        "silence" => {},
         "tomexit" => {
             log_trigger_snippet(log_data, "tomexit");
             logger("Exiting tom.");

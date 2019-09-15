@@ -3,15 +3,21 @@ use serde_yaml::{Error};
 use std::fs::{File};
 use std::path::{PathBuf};
 use std::io::prelude::*;
+use crate::config::{
+    default_empty_string,
+    default_false,
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
+    #[serde(default = "default_empty_string")]
     pub profile: String,
     pub logging: LoggingCfg,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct LoggingCfg {
+    #[serde(default = "default_false")]
     pub sidebar: bool,
 }
 

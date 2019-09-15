@@ -35,3 +35,19 @@ pub fn get_tom_cfg() -> Cfg {
 
     return cfg;
 }
+
+pub fn default_cwd() -> String {
+    ".".to_string()
+}
+
+pub fn default_empty_string() -> String {
+    "".to_string()
+}
+
+pub fn default_false() -> bool {
+    false
+}
+
+pub fn default_empty_vec_string() -> Vec<String> {
+    Vec::new()
+}
