@@ -1,8 +1,8 @@
+use crate::commands::run;
 use crate::util::log::{LogData};
-use crate::processes::{Process};
+use crate::commands::run::processes::{Process};
 use crate::config::Cfg;
 use crate::config::profile::{ActionCfg, ProcessCfg};
-use crate::commands::run;
 
 pub fn act(cfg: &Cfg, _proc: &mut Process, _log_data: &LogData, action: &str) {
     let exec_action = cfg.profile.actions.iter().find(|x| x.name == action);

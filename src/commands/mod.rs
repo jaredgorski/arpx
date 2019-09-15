@@ -3,6 +3,7 @@ use crate::config;
 use crate::util;
 
 pub mod run;
+pub mod setup;
 
 #[derive(Debug)]
 pub struct Command {

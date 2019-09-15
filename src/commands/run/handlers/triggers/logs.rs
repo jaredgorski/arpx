@@ -1,7 +1,7 @@
 use std::collections::{HashMap};
 use crate::config::profile::{LogTriggerCfg};
 use crate::util::log::{LogData};
-use crate::handlers::monitor::{MonitorOutput};
+use crate::commands::run::handlers::monitor::{MonitorOutput};
 
 pub fn logs_potential_pull(log_actions: &Vec<String>, log_triggers: &LogTriggerCfg, log_data: &LogData) -> MonitorOutput {
     let mut output = MonitorOutput {

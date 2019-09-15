@@ -1,9 +1,13 @@
-use std::collections::HashMap;
-use std::thread;
 use crate::config::Cfg;
 use crate::config::profile::ProcessCfg;
-use crate::processes::Process;
-use crate::handlers::output;
+use crate::commands::run::handlers::output;
+use crate::commands::run::processes::Process;
+use std::collections::HashMap;
+use std::thread;
+
+pub mod actions;
+pub mod handlers;
+pub mod processes;
 
 pub fn run(cfg: &Cfg, processes: Vec<String>) {
     let profile_processes_map = get_profile_processes_map(&cfg);

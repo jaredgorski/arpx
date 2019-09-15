@@ -1,10 +1,10 @@
+use crate::config::Cfg;
+use crate::commands::run::handlers::monitor;
+use crate::commands::run::processes::Process;
+use crate::commands::run::processes::stream_read::{PipedLine, PipeStreamReader};
+use crate::util::log;
 use crossbeam_channel::{Select};
 use std::collections::{HashMap};
-use crate::config::Cfg;
-use crate::processes::Process;
-use crate::processes::stream_read::{PipedLine, PipeStreamReader};
-use crate::util::log;
-use crate::handlers::monitor;
 
 pub fn handle_output(cfg: &Cfg, mut proc: Process) {
     let mut channels: Vec<PipeStreamReader> = Vec::new();

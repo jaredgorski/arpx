@@ -1,9 +1,9 @@
-use std::collections::{HashMap};
-use crate::config::profile::{MonitorCfg};
-use crate::processes::{Process};
-use crate::util::log::{LogData};
 use crate::config::Cfg;
-use crate::handlers::{action, triggers};
+use crate::config::profile::{MonitorCfg};
+use crate::commands::run::handlers::{action, triggers};
+use crate::commands::run::processes::{Process};
+use crate::util::log::{LogData};
+use std::collections::{HashMap};
 
 #[derive(Debug)]
 pub struct MonitorOutput {
