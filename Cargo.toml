@@ -1,21 +1,21 @@
 [package]
-name = "tom"
+name = "px"
 description = "Utility for automating basic processes"
 version = "0.0.0-alpha"
 license = "MIT"
 readme = "README.md"
 keywords = ["automation", "process", "process-manager"]
 authors = ["Jared Gorski <jaredgorski6@gmail.com>"]
-repository = "https://github.com/jaredgorski/tom"
+repository = "https://github.com/jaredgorski/px"
 edition = "2018"
 
 [badges]
-travis-ci = { repository = "jaredgorski/tom" }
+travis-ci = { repository = "jaredgorski/px" }
 
 [[bin]]
 doc = false
 path = "src/main.rs"
-name = "tom"
+name = "px"
 
 [dependencies]
 crossbeam-channel = "0.3"

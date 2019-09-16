@@ -1,6 +1,6 @@
-extern crate tom;
+extern crate px;
 
-use tom::commands;
+use px::commands;
 
 fn main() {
     commands::command_parse();

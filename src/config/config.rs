@@ -21,9 +21,9 @@ pub struct LoggingCfg {
     pub sidebar: bool,
 }
 
-pub fn get_tom_rc(tom_dir: PathBuf) -> Result<Config, Error> {
-    let cfg_filename: PathBuf = PathBuf::from("tomrc.yaml");
-    let cfg_path: PathBuf = [tom_dir, cfg_filename].iter().collect();
+pub fn get_px_rc(px_dir: PathBuf) -> Result<Config, Error> {
+    let cfg_filename: PathBuf = PathBuf::from("pxrc.yaml");
+    let cfg_path: PathBuf = [px_dir, cfg_filename].iter().collect();
     let mut cfg_file: File = File::open(cfg_path).expect("Unable to open config file");
 
     let mut cfg_file_str = String::new(); 

@@ -12,3 +12,4 @@ pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
         custom::act(cfg, proc, log_data, &action[..]);
     }
 }
+
