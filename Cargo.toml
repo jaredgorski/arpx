@@ -13,9 +13,9 @@ edition = "2018"
 travis-ci = { repository = "jaredgorski/px" }
 
 [[bin]]
-doc = false
-path = "src/main.rs"
 name = "px"
+path = "src/main.rs"
+doc = false
 
 [dependencies]
 crossbeam-channel = "0.3"
