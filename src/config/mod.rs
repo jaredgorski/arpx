@@ -10,20 +10,20 @@ pub struct Cfg {
     pub profile: profile::Profile,
 }
 
-pub fn get_px_cfg() -> Cfg {
+pub fn get_pmux_cfg() -> Cfg {
     let home_dir: PathBuf = match dirs::home_dir() {
         Some(dir) => dir,
         _ => panic!(),
     };
-    let px_dirname: PathBuf = PathBuf::from(".px");
-    let px_dir: PathBuf = [home_dir, px_dirname].iter().collect();
+    let pmux_dirname: PathBuf = PathBuf::from(".pmux");
+    let pmux_dir: PathBuf = [home_dir, pmux_dirname].iter().collect();
 
-    let config = match config::get_px_rc(px_dir.clone()) {
+    let config = match config::get_pmux_rc(pmux_dir.clone()) {
         Ok(config) => config,
         Err(error) => panic!(error),
     };
 
-    let profile = match profile::get_px_pr(px_dir.clone(), PathBuf::from(config.profile.clone())) {
+    let profile = match profile::get_pmux_pr(pmux_dir.clone(), PathBuf::from(config.profile.clone())) {
         Ok(profile) => profile,
         Err(error) => panic!(error),
     };

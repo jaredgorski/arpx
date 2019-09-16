@@ -8,7 +8,7 @@ pub const BUILTINS: &[&str] = &[
     "logger",
     "respawn",
     "silence",
-    "pxexit",
+    "pmuxexit",
 ];
 
 pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
@@ -30,9 +30,9 @@ pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
             run::run(&cfg, vec![proc.name[..].to_string()]);
         },
         "silence" => {},
-        "pxexit" => {
-            log_trigger_snippet(log_data, "pxexit");
-            logger("Exiting px.");
+        "pmuxexit" => {
+            log_trigger_snippet(log_data, "pmuxexit");
+            logger("Exiting pmux.");
             std::process::exit(0);
         },
         _ => {},

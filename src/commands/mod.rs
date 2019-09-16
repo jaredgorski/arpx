@@ -15,7 +15,7 @@ pub fn command_parse() {
     let args: Vec<String> = env::args().collect::<Vec<String>>();
     let init_cmd: &str = &args[0][..];
 
-    let cfg = config::get_px_cfg();
+    let cfg = config::get_pmux_cfg();
 
     let mut cmd_mode: String = String::new();
     let mut cmd_processes: Vec<String> = Vec::new();

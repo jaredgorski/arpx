@@ -61,9 +61,9 @@ pub struct ActionCfg {
     pub silent: bool,
 }
 
-pub fn get_px_pr(px_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
-    path.set_extension("px.yaml");
-    let pr_path: PathBuf = [px_dir, path].iter().collect();
+pub fn get_pmux_pr(pmux_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
+    path.set_extension("pmux.yaml");
+    let pr_path: PathBuf = [pmux_dir, path].iter().collect();
     let mut pr_file: File = File::open(pr_path).expect("Unable to open profile file");
 
     let mut pr_file_str = String::new(); 

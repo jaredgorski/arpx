@@ -1,6 +1,6 @@
-extern crate px;
+extern crate pmux;
 
-use px::commands;
+use pmux::commands;
 
 fn main() {
     commands::command_parse();

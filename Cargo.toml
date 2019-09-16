@@ -1,19 +1,19 @@
 [package]
-name = "px"
-description = "Utility for automating basic processes"
-version = "0.0.2"
+name = "pmux"
+description = "Utility for running and automating concurrent processes"
+version = "0.0.0"
 license = "MIT"
 readme = "README.md"
-keywords = ["automation", "process", "process-manager"]
+keywords = ["automation", "process", "task", "multiplexer"]
 authors = ["Jared Gorski <jaredgorski6@gmail.com>"]
-repository = "https://github.com/jaredgorski/px"
+repository = "https://github.com/jaredgorski/pmux"
 edition = "2018"
 
 [badges]
-travis-ci = { repository = "jaredgorski/px" }
+travis-ci = { repository = "jaredgorski/pmux" }
 
 [[bin]]
-name = "px"
+name = "pmux"
 path = "src/main.rs"
 doc = false
 
