@@ -189,7 +189,7 @@ dependencies = [
 
 [[package]]
 name = "px"
-version = "0.0.0-alpha"
+version = "0.0.1-alpha"
 dependencies = [
  "crossbeam-channel 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
