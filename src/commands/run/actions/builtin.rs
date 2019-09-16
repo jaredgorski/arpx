@@ -20,7 +20,8 @@ pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
         },
         "logger" => {
             if !proc.silent {
-                logger(log_data.message);
+                let annotated_message = &format!("[{}] {}", proc.name, log_data.message);
+                logger(annotated_message);
             }
         },
         "respawn" => {
