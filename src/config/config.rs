@@ -15,10 +15,27 @@ pub struct Config {
     pub logging: LoggingCfg,
 }
 
+impl Config {
+    pub fn new() -> Config {
+        Config {
+            profile: "".to_string(),
+            logging: LoggingCfg::new(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct LoggingCfg {
     #[serde(default = "default_false")]
     pub sidebar: bool,
+}
+
+impl LoggingCfg {
+    pub fn new() -> LoggingCfg {
+        LoggingCfg {
+            sidebar: false,
+        }
+    }
 }
 
 pub fn get_pmux_rc(pmux_dir: PathBuf) -> Result<Config, Error> {

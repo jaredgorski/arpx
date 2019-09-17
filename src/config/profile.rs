@@ -17,6 +17,16 @@ pub struct Profile {
     pub actions: Vec<ActionCfg>,
 }
 
+impl Profile {
+    pub fn new() -> Profile {
+        Profile {
+            processes: Vec::new(),
+            monitors: Vec::new(),
+            actions: Vec::new(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProcessCfg {
     #[serde(default = "default_empty_string")]
@@ -67,9 +77,14 @@ pub struct ActionCfg {
     pub blocking: bool,
 }
 
-pub fn get_pmux_pr(pmux_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
-    path.set_extension("pmux.yaml");
-    let pr_path: PathBuf = [pmux_dir, path].iter().collect();
+pub fn get_pmux_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
+    let path_string = path.clone().into_os_string().into_string().expect("!string");
+
+    if !path_string.contains("pmux.yaml") {
+        path.set_extension("pmux.yaml");
+    }
+
+    let pr_path: PathBuf = [prof_dir, path].iter().collect();
     let mut pr_file: File = File::open(pr_path).expect("Unable to open profile file");
 
     let mut pr_file_str = String::new(); 

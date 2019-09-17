@@ -10,7 +10,19 @@ pub struct Cfg {
     pub profile: profile::Profile,
 }
 
-pub fn get_pmux_cfg() -> Cfg {
+impl Cfg {
+    pub fn new() -> Cfg {
+        let config = config::Config::new();
+        let profile = profile::Profile::new();
+
+        Cfg {
+            config: config,
+            profile: profile,
+        }
+    }
+}
+
+pub fn get_pmux_cfg(profile_path: &str) -> Cfg {
     let home_dir: PathBuf = match dirs::home_dir() {
         Some(dir) => dir,
         _ => panic!(),
@@ -23,7 +35,19 @@ pub fn get_pmux_cfg() -> Cfg {
         Err(error) => panic!(error),
     };
 
-    let profile = match profile::get_pmux_pr(pmux_dir.clone(), PathBuf::from(config.profile.clone())) {
+    let prof_dir: PathBuf = if profile_path == "default" {
+        pmux_dir.clone()
+    } else {
+        PathBuf::from(".")
+    };
+
+    let prof_path: String = if profile_path == "default" {
+        config.profile.clone()
+    } else {
+        profile_path.to_string()
+    };
+
+    let profile = match profile::get_pmux_pr(prof_dir, PathBuf::from(prof_path)) {
         Ok(profile) => profile,
         Err(error) => panic!(error),
     };
