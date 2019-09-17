@@ -27,6 +27,8 @@ pub struct ProcessCfg {
     pub cwd: String,
     #[serde(default = "default_false")]
     pub silent: bool,
+    #[serde(default = "default_false")]
+    pub blocking: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -54,11 +56,15 @@ pub struct ActionCfg {
     #[serde(default = "default_empty_string")]
     pub name: String,
     #[serde(default = "default_empty_string")]
-    pub r#type: String,
-    #[serde(default = "default_empty_string")]
     pub command: String,
+    #[serde(default = "default_cwd")]
+    pub cwd: String,
+    #[serde(default = "default_empty_string")]
+    pub r#type: String,
     #[serde(default = "default_false")]
     pub silent: bool,
+    #[serde(default = "default_false")]
+    pub blocking: bool,
 }
 
 pub fn get_pmux_pr(pmux_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {

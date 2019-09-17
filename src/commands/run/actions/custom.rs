@@ -22,8 +22,9 @@ fn exec_shell_type(cfg: &Cfg, action: &ActionCfg) {
     let proc_cfg = ProcessCfg {
         name: action.name[..].to_string(),
         command: action.command[..].to_string(),
-        cwd: ".".to_string(),
+        cwd: action.cwd[..].to_string(),
         silent: action.silent,
+        blocking: action.blocking,
     };
 
     run::run_individual(&cfg, proc_cfg);

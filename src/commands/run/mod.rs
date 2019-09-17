@@ -15,14 +15,19 @@ pub fn run(cfg: &Cfg, processes: Vec<String>) {
 
     for process in processes {
         let proc_cfg = profile_processes_map.get(&process).expect("Internal process does not match any profile process.");
-        let proc = Process::init(proc_cfg.name[..].to_string(), &proc_cfg.cwd[..], &proc_cfg.command[..], &proc_cfg.silent);
+        let proc = Process::init(proc_cfg.name[..].to_string(), &proc_cfg.cwd[..], &proc_cfg.command[..], &proc_cfg.silent, &proc_cfg.blocking);
         let cfg_copy = cfg.clone();
         let handle = thread::Builder::new()
             .name(proc_cfg.name[..].to_string().into())
             .spawn(move || {
                 output::handle_output(&cfg_copy, proc);
             }).expect("Could not spawn process thread");
-        proc_handles.push(handle);
+
+        if proc_cfg.blocking {
+            handle.join().expect("!join");
+        } else {
+            proc_handles.push(handle);
+        }
     }
 
     for handle in proc_handles {
@@ -31,7 +36,7 @@ pub fn run(cfg: &Cfg, processes: Vec<String>) {
 }
 
 pub fn run_individual(cfg: &Cfg, proc_cfg: ProcessCfg) {
-    let proc = Process::init(proc_cfg.name[..].to_string(), &proc_cfg.cwd[..], &proc_cfg.command[..], &proc_cfg.silent);
+    let proc = Process::init(proc_cfg.name[..].to_string(), &proc_cfg.cwd[..], &proc_cfg.command[..], &proc_cfg.silent, &proc_cfg.blocking);
     let cfg_copy = cfg.clone();
     let handle = thread::Builder::new()
         .name(proc_cfg.name[..].to_string().into())
