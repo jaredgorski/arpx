@@ -173,7 +173,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "pmux"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "crossbeam-channel 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",

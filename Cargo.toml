@@ -1,7 +1,7 @@
 [package]
 name = "pmux"
 description = "Utility for running and automating concurrent processes"
-version = "0.0.1"
+version = "0.0.2"
 license = "MIT"
 readme = "README.md"
 keywords = ["automation", "process", "task", "multiplexer"]
