@@ -15,6 +15,7 @@ impl Process {
         let child: Child = Command::new("sh")
             .args(&["-c", command])
             .current_dir(cwd)
+            .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()

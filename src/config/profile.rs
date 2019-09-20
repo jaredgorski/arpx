@@ -71,6 +71,8 @@ pub struct ActionCfg {
     pub cwd: String,
     #[serde(default = "default_empty_string")]
     pub r#type: String,
+    #[serde(default = "default_empty_string")]
+    pub stdin: String,
     #[serde(default = "default_false")]
     pub silent: bool,
     #[serde(default = "default_false")]
