@@ -11,8 +11,7 @@ pub fn act(cfg: &Cfg, proc: &mut Process, _log_data: &LogData, action: &str) {
     match exec_action {
         Some(to_exec) => {
             match &to_exec.r#type[..] {
-                "shell" => exec_shell_type(cfg, to_exec),
-                "stdin" => exec_stdin_type(proc, to_exec),
+                "shell" => exec_shell_type(cfg, proc, to_exec),
                 _ => (),
             }
         },
@@ -20,20 +19,22 @@ pub fn act(cfg: &Cfg, proc: &mut Process, _log_data: &LogData, action: &str) {
     }
 }
 
-fn exec_shell_type(cfg: &Cfg, action: &ActionCfg) {
-    let proc_cfg = ProcessCfg {
-        name: action.name[..].to_string(),
-        command: action.command[..].to_string(),
-        cwd: action.cwd[..].to_string(),
-        silent: action.silent,
-        blocking: action.blocking,
-    };
+fn exec_shell_type(cfg: &Cfg, proc: &mut Process, action: &ActionCfg) {
+    if !action.stdin.is_empty() {
+        let mut stdin_pipe = proc.child.stdin.take().expect("!stdin");
+        let to_write = action.stdin[..].to_string();
+        stdin_pipe.write_all(to_write.as_bytes()).expect("!write");
+    }
 
-    run::run_individual(&cfg, proc_cfg);
-}
+    if !action.command.is_empty() {
+        let proc_cfg = ProcessCfg {
+            name: action.name[..].to_string(),
+            command: action.command[..].to_string(),
+            cwd: action.cwd[..].to_string(),
+            silent: action.silent,
+            blocking: action.blocking,
+        };
 
-fn exec_stdin_type(proc: &mut Process, action: &ActionCfg) {
-    let mut stdin_pipe = proc.child.stdin.take().expect("!stdin");
-    let to_write = action.stdin[..].to_string();
-    stdin_pipe.write_all(to_write.as_bytes()).expect("!write");
+        run::run_individual(&cfg, proc_cfg);
+    }
 }
