@@ -79,11 +79,11 @@ pub struct ActionCfg {
     pub blocking: bool,
 }
 
-pub fn get_pmux_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
+pub fn get_sym_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
     let path_string = path.clone().into_os_string().into_string().expect("!string");
 
-    if !path_string.contains("pmux.yaml") {
-        path.set_extension("pmux.yaml");
+    if !path_string.contains("sym.yaml") {
+        path.set_extension("sym.yaml");
     }
 
     let pr_path: PathBuf = [prof_dir, path].iter().collect();

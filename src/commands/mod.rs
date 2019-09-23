@@ -21,7 +21,7 @@ pub fn command_parse() {
 
     match args.len() - 1 {
         0 => {
-            cfg = config::get_pmux_cfg("default");
+            cfg = config::get_sym_cfg("default");
             cmd_mode = "run".to_string();
 
             for process in cfg.profile.processes.iter() {
@@ -40,12 +40,12 @@ pub fn command_parse() {
 
             match &flag[..] {
                 "--process" | "-p" => {
-                    cfg = config::get_pmux_cfg("default");
+                    cfg = config::get_sym_cfg("default");
                     cmd_mode = "run".to_string();
                     cmd_processes.push(value);
                 },
                 "--profile" | "-f" => {
-                    cfg = config::get_pmux_cfg(&value);
+                    cfg = config::get_sym_cfg(&value);
                     cmd_mode = "run".to_string();
 
                     for process in cfg.profile.processes.iter() {
@@ -70,7 +70,7 @@ pub fn command_parse() {
                     flag1was = "p";
                 },
                 "--profile" | "-f" => {
-                    cfg = config::get_pmux_cfg(&value1);
+                    cfg = config::get_sym_cfg(&value1);
                     cmd_mode = "run".to_string();
                     flag1was = "f";
                 },
@@ -91,7 +91,7 @@ pub fn command_parse() {
                         panic!("same flag twice");
                     }
 
-                    cfg = config::get_pmux_cfg(&value2);
+                    cfg = config::get_sym_cfg(&value2);
                     cmd_mode = "run".to_string();
                 },
                 _ => util::log::usage(init_cmd, Some(&args)),

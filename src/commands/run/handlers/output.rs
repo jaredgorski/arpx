@@ -47,10 +47,13 @@ pub fn handle_output(cfg: &Cfg, mut proc: Process) {
         }
     }
 
-    // TODO: handle error output on child exit
     let status = proc.child.wait().expect("!wait");
-    if !status.success() {
-        panic!("!status: {}", status.code().expect("!code"))
+    if status.success() {
+        let annotated_message = &format!("[{}] exited with success.", proc.name);
+        log::logger(annotated_message);
+    } else {
+        let annotated_message = &format!("[{}] exited with failure.", proc.name);
+        log::logger(annotated_message);
     }
 }
 

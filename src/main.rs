@@ -1,6 +1,6 @@
-extern crate pmux;
+extern crate sym;
 
-use pmux::commands;
+use sym::commands;
 
 fn main() {
     commands::command_parse();

@@ -22,21 +22,21 @@ impl Cfg {
     }
 }
 
-pub fn get_pmux_cfg(profile_path: &str) -> Cfg {
+pub fn get_sym_cfg(profile_path: &str) -> Cfg {
     let home_dir: PathBuf = match dirs::home_dir() {
         Some(dir) => dir,
         _ => panic!(),
     };
-    let pmux_dirname: PathBuf = PathBuf::from(".pmux");
-    let pmux_dir: PathBuf = [home_dir, pmux_dirname].iter().collect();
+    let sym_dirname: PathBuf = PathBuf::from(".sym");
+    let sym_dir: PathBuf = [home_dir, sym_dirname].iter().collect();
 
-    let config = match config::get_pmux_rc(pmux_dir.clone()) {
+    let config = match config::get_sym_rc(sym_dir.clone()) {
         Ok(config) => config,
         Err(error) => panic!(error),
     };
 
     let prof_dir: PathBuf = if profile_path == "default" {
-        pmux_dir.clone()
+        sym_dir.clone()
     } else {
         PathBuf::from(".")
     };
@@ -47,7 +47,7 @@ pub fn get_pmux_cfg(profile_path: &str) -> Cfg {
         profile_path.to_string()
     };
 
-    let profile = match profile::get_pmux_pr(prof_dir, PathBuf::from(prof_path)) {
+    let profile = match profile::get_sym_pr(prof_dir, PathBuf::from(prof_path)) {
         Ok(profile) => profile,
         Err(error) => panic!(error),
     };

@@ -1,19 +1,19 @@
 [package]
-name = "pmux"
+name = "sym"
 description = "Utility for running and automating concurrent processes"
-version = "0.0.2"
+version = "0.0.0"
 license = "MIT"
 readme = "README.md"
 keywords = ["automation", "process", "task", "multiplexer"]
 authors = ["Jared Gorski <jaredgorski6@gmail.com>"]
-repository = "https://github.com/jaredgorski/pmux"
+repository = "https://github.com/jaredgorski/sym"
 edition = "2018"
 
 [badges]
-travis-ci = { repository = "jaredgorski/pmux" }
+travis-ci = { repository = "jaredgorski/sym" }
 
 [[bin]]
-name = "pmux"
+name = "sym"
 path = "src/main.rs"
 doc = false
 
