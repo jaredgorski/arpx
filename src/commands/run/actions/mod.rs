@@ -1,6 +1,6 @@
-use crate::commands::run::processes::{Process};
-use crate::util::log::{LogData};
+use crate::commands::run::processes::Process;
 use crate::config::Cfg;
+use crate::util::log::LogData;
 
 pub mod builtin;
 pub mod custom;
@@ -12,4 +12,3 @@ pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
         custom::act(cfg, proc, log_data, &action[..]);
     }
 }
-

@@ -1,5 +1,5 @@
-use std::io;
 use crossbeam_channel::{unbounded, Receiver};
+use std::io;
 use std::string::FromUtf8Error;
 use std::thread::spawn;
 
@@ -38,10 +38,10 @@ impl PipeStreamReader {
                             Ok(_) => {
                                 if byte[0] == 0x0A {
                                     tx.send(match String::from_utf8(buf.clone()) {
-                                          Ok(line) => Ok(PipedLine::Line(line)),
-                                          Err(err) => Err(PipeError::NotUtf8(err)),
-                                      })
-                                      .unwrap();
+                                        Ok(line) => Ok(PipedLine::Line(line)),
+                                        Err(err) => Err(PipeError::NotUtf8(err)),
+                                    })
+                                    .unwrap();
                                     buf.clear()
                                 } else {
                                     buf.push(byte[0])

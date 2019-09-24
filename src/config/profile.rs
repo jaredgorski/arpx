@@ -1,14 +1,9 @@
-use serde::{Serialize, Deserialize};
-use serde_yaml::{Error};
-use std::fs::{File};
-use std::path::{PathBuf};
+use crate::config::{default_cwd, default_empty_string, default_empty_vec_string, default_false};
+use serde::{Deserialize, Serialize};
+use serde_yaml::Error;
+use std::fs::File;
 use std::io::prelude::*;
-use crate::config::{
-    default_cwd,
-    default_empty_string,
-    default_empty_vec_string,
-    default_false,
-};
+use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Profile {
@@ -80,7 +75,11 @@ pub struct ActionCfg {
 }
 
 pub fn get_sym_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
-    let path_string = path.clone().into_os_string().into_string().expect("!string");
+    let path_string = path
+        .clone()
+        .into_os_string()
+        .into_string()
+        .expect("!string");
 
     if !path_string.contains("sym.yaml") {
         path.set_extension("sym.yaml");
@@ -89,8 +88,10 @@ pub fn get_sym_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error
     let pr_path: PathBuf = [prof_dir, path].iter().collect();
     let mut pr_file: File = File::open(pr_path).expect("Unable to open profile file");
 
-    let mut pr_file_str = String::new(); 
-    pr_file.read_to_string(&mut pr_file_str).expect("Unable to read profile file");
+    let mut pr_file_str = String::new();
+    pr_file
+        .read_to_string(&mut pr_file_str)
+        .expect("Unable to read profile file");
     let profile: Result<Profile, Error> = serde_yaml::from_str(&pr_file_str);
 
     return profile;

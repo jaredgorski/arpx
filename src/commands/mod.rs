@@ -1,6 +1,6 @@
-use std::env;
 use crate::config;
 use crate::util;
+use std::env;
 
 pub mod run;
 pub mod setup;
@@ -27,12 +27,10 @@ pub fn command_parse() {
             for process in cfg.profile.processes.iter() {
                 cmd_processes.push(process.name[..].to_string());
             }
-        },
-        1 => {
-            match &args[1][..] {
-                "--help" | "-h" => util::log::usage(init_cmd, None),
-                _ => util::log::usage(init_cmd, Some(&args)),
-            }
+        }
+        1 => match &args[1][..] {
+            "--help" | "-h" => util::log::usage(init_cmd, None),
+            _ => util::log::usage(init_cmd, Some(&args)),
         },
         2 => {
             let flag: &str = &args[1][..];
@@ -43,7 +41,7 @@ pub fn command_parse() {
                     cfg = config::get_sym_cfg("default");
                     cmd_mode = "run".to_string();
                     cmd_processes.push(value);
-                },
+                }
                 "--profile" | "-f" => {
                     cfg = config::get_sym_cfg(&value);
                     cmd_mode = "run".to_string();
@@ -51,11 +49,11 @@ pub fn command_parse() {
                     for process in cfg.profile.processes.iter() {
                         cmd_processes.push(process.name[..].to_string());
                     }
-                },
+                }
                 "--set-profile" | "-s" => println!("Set profile flag invoked"),
                 _ => util::log::usage(init_cmd, Some(&args)),
             }
-        },
+        }
         4 => {
             let flag1: &str = &args[1][..];
             let value1: String = args[2][..].to_string();
@@ -68,12 +66,12 @@ pub fn command_parse() {
                     cmd_mode = "run".to_string();
                     cmd_processes.push(value1[..].to_string());
                     flag1was = "p";
-                },
+                }
                 "--profile" | "-f" => {
                     cfg = config::get_sym_cfg(&value1);
                     cmd_mode = "run".to_string();
                     flag1was = "f";
-                },
+                }
                 _ => util::log::usage(init_cmd, Some(&args)),
             }
 
@@ -85,7 +83,7 @@ pub fn command_parse() {
 
                     cmd_mode = "run".to_string();
                     cmd_processes.push(value2[..].to_string());
-                },
+                }
                 "--profile" | "-f" => {
                     if flag1was == "f" {
                         panic!("same flag twice");
@@ -93,10 +91,10 @@ pub fn command_parse() {
 
                     cfg = config::get_sym_cfg(&value2);
                     cmd_mode = "run".to_string();
-                },
+                }
                 _ => util::log::usage(init_cmd, Some(&args)),
             }
-        },
+        }
         _ => util::log::usage(init_cmd, Some(&args)),
     };
 

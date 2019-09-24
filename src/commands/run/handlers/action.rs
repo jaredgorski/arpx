@@ -1,10 +1,15 @@
-use std::collections::HashSet;
-use crate::commands::run::processes::{Process};
-use crate::util::log::{LogData};
-use crate::config::Cfg;
 use crate::commands::run::actions::act;
+use crate::commands::run::processes::Process;
+use crate::config::Cfg;
+use crate::util::log::LogData;
+use std::collections::HashSet;
 
-pub fn handle_action(cfg: &Cfg, proc: &mut Process, log_data: &LogData, exec_actions: &mut Vec<String>) {
+pub fn handle_action(
+    cfg: &Cfg,
+    proc: &mut Process,
+    log_data: &LogData,
+    exec_actions: &mut Vec<String>,
+) {
     let mut action_set = HashSet::new();
 
     if !exec_actions.contains(&"silence".to_string()) {

@@ -1,12 +1,9 @@
-use serde::{Serialize, Deserialize};
-use serde_yaml::{Error};
-use std::fs::{File};
-use std::path::{PathBuf};
+use crate::config::{default_empty_string, default_false};
+use serde::{Deserialize, Serialize};
+use serde_yaml::Error;
+use std::fs::File;
 use std::io::prelude::*;
-use crate::config::{
-    default_empty_string,
-    default_false,
-};
+use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
@@ -32,9 +29,7 @@ pub struct LoggingCfg {
 
 impl LoggingCfg {
     pub fn new() -> LoggingCfg {
-        LoggingCfg {
-            sidebar: false,
-        }
+        LoggingCfg { sidebar: false }
     }
 }
 
@@ -43,8 +38,10 @@ pub fn get_sym_rc(sym_dir: PathBuf) -> Result<Config, Error> {
     let cfg_path: PathBuf = [sym_dir, cfg_filename].iter().collect();
     let mut cfg_file: File = File::open(cfg_path).expect("Unable to open config file");
 
-    let mut cfg_file_str = String::new(); 
-    cfg_file.read_to_string(&mut cfg_file_str).expect("Unable to read config file");
+    let mut cfg_file_str = String::new();
+    cfg_file
+        .read_to_string(&mut cfg_file_str)
+        .expect("Unable to read config file");
     let config: Result<Config, Error> = serde_yaml::from_str(&cfg_file_str);
 
     return config;

@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
-use std::path::{PathBuf};
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 pub mod config;
 pub mod profile;
