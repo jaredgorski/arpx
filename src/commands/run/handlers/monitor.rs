@@ -1,7 +1,7 @@
+use crate::cfg::profile::MonitorCfg;
+use crate::cfg::Cfg;
 use crate::commands::run::handlers::{action, triggers};
 use crate::commands::run::processes::Process;
-use crate::config::profile::MonitorCfg;
-use crate::config::Cfg;
 use crate::util::log::LogData;
 use std::collections::HashMap;
 
@@ -37,5 +37,5 @@ fn get_profile_monitors(cfg: &Cfg) -> Vec<&MonitorCfg> {
         profile_monitors.push(profile_monitor);
     }
 
-    return profile_monitors;
+    profile_monitors
 }

@@ -1,19 +1,18 @@
+use crate::cfg::profile::{ActionCfg, ProcessCfg};
+use crate::cfg::Cfg;
 use crate::commands::run;
 use crate::commands::run::processes::Process;
-use crate::config::profile::{ActionCfg, ProcessCfg};
-use crate::config::Cfg;
 use crate::util::log::LogData;
 use std::io::Write;
 
 pub fn act(cfg: &Cfg, proc: &mut Process, _log_data: &LogData, action: &str) {
     let exec_action = cfg.profile.actions.iter().find(|x| x.name == action);
 
-    match exec_action {
-        Some(to_exec) => match &to_exec.r#type[..] {
+    if let Some(to_exec) = exec_action {
+        match &to_exec.r#type[..] {
             "shell" => exec_shell_type(cfg, proc, to_exec),
             _ => (),
-        },
-        None => (),
+        }
     }
 }
 

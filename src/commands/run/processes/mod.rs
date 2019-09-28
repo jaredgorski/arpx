@@ -11,7 +11,7 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn init(name: String, cwd: &str, command: &str, silent: &bool, blocking: &bool) -> Process {
+    pub fn init(name: String, cwd: &str, command: &str, silent: bool, blocking: bool) -> Process {
         let child: Child = Command::new("sh")
             .args(&["-c", command])
             .current_dir(cwd)
@@ -22,10 +22,10 @@ impl Process {
             .expect("!spawn");
 
         Process {
-            child: child,
-            name: name,
-            silent: *silent,
-            blocking: *blocking,
+            child,
+            name,
+            silent,
+            blocking,
         }
     }
 }

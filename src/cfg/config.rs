@@ -1,4 +1,4 @@
-use crate::config::{default_empty_string, default_false};
+use crate::cfg::{default_empty_string, default_false};
 use serde::{Deserialize, Serialize};
 use serde_yaml::Error;
 use std::fs::File;
@@ -12,6 +12,12 @@ pub struct Config {
     pub logging: LoggingCfg,
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Config {
     pub fn new() -> Config {
         Config {
@@ -21,7 +27,7 @@ impl Config {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct LoggingCfg {
     #[serde(default = "default_false")]
     pub sidebar: bool,
@@ -44,5 +50,5 @@ pub fn get_sym_rc(sym_dir: PathBuf) -> Result<Config, Error> {
         .expect("Unable to read config file");
     let config: Result<Config, Error> = serde_yaml::from_str(&cfg_file_str);
 
-    return config;
+    config
 }

@@ -1,5 +1,5 @@
+use crate::cfg::Cfg;
 use crate::commands::run::processes::Process;
-use crate::config::Cfg;
 use crate::util::log::LogData;
 
 pub mod builtin;

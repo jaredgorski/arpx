@@ -7,7 +7,7 @@ pub struct LogData<'a> {
 }
 
 pub fn logger(log: &str) {
-    let log_output: String = format!("{}", log);
+    let log_output: String = log.to_string();
     println!("{}", log_output);
 }
 
@@ -24,8 +24,8 @@ pub fn usage(bin: &str, arg_doc: Option<&Vec<String>>) {
     };
 
     if let Some(doc) = arg_doc {
-        for i in 1..doc.len() {
-            usage += doc_from_str(bin, &doc[i]).as_str();
+        for item in doc.iter().skip(1) {
+            usage += doc_from_str(bin, &item).as_str();
         }
     } else {
         let default_doc: &str = "[-p | -r | MODE] [OPTIONS]";
@@ -36,8 +36,7 @@ pub fn usage(bin: &str, arg_doc: Option<&Vec<String>>) {
 }
 
 pub fn log_trigger_snippet(log_data: &LogData, action: &str) {
-    match log_data.snippets.get(action) {
-        Some(snippet) => logger(&format!("Caught trigger: {}", snippet)),
-        None => (),
+    if let Some(snippet) = log_data.snippets.get(action) {
+        logger(&format!("Caught trigger: {}", snippet));
     }
 }

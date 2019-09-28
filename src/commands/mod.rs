@@ -1,4 +1,4 @@
-use crate::config;
+use crate::cfg;
 use crate::util;
 use std::env;
 
@@ -15,13 +15,13 @@ pub fn command_parse() {
     let args: Vec<String> = env::args().collect::<Vec<String>>();
     let init_cmd: &str = &args[0][..];
 
-    let mut cfg: config::Cfg = config::Cfg::new();
+    let mut cfg: cfg::Cfg = cfg::Cfg::new();
     let mut cmd_mode: String = String::new();
     let mut cmd_processes: Vec<String> = Vec::new();
 
     match args.len() - 1 {
         0 => {
-            cfg = config::get_sym_cfg("default");
+            cfg = cfg::get_sym_cfg("default");
             cmd_mode = "run".to_string();
 
             for process in cfg.profile.processes.iter() {
@@ -38,12 +38,12 @@ pub fn command_parse() {
 
             match &flag[..] {
                 "--process" | "-p" => {
-                    cfg = config::get_sym_cfg("default");
+                    cfg = cfg::get_sym_cfg("default");
                     cmd_mode = "run".to_string();
                     cmd_processes.push(value);
                 }
                 "--profile" | "-f" => {
-                    cfg = config::get_sym_cfg(&value);
+                    cfg = cfg::get_sym_cfg(&value);
                     cmd_mode = "run".to_string();
 
                     for process in cfg.profile.processes.iter() {
@@ -68,7 +68,7 @@ pub fn command_parse() {
                     flag1was = "p";
                 }
                 "--profile" | "-f" => {
-                    cfg = config::get_sym_cfg(&value1);
+                    cfg = cfg::get_sym_cfg(&value1);
                     cmd_mode = "run".to_string();
                     flag1was = "f";
                 }
@@ -89,7 +89,7 @@ pub fn command_parse() {
                         panic!("same flag twice");
                     }
 
-                    cfg = config::get_sym_cfg(&value2);
+                    cfg = cfg::get_sym_cfg(&value2);
                     cmd_mode = "run".to_string();
                 }
                 _ => util::log::usage(init_cmd, Some(&args)),

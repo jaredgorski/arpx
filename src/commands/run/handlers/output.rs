@@ -1,7 +1,7 @@
+use crate::cfg::Cfg;
 use crate::commands::run::handlers::monitor;
 use crate::commands::run::processes::stream_read::{PipeStreamReader, PipedLine};
 use crate::commands::run::processes::Process;
-use crate::config::Cfg;
 use crate::util::log;
 use crossbeam_channel::Select;
 use std::collections::HashMap;

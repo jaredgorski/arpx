@@ -1,11 +1,11 @@
-use crate::config::{default_cwd, default_empty_string, default_empty_vec_string, default_false};
+use crate::cfg::{default_cwd, default_empty_string, default_empty_vec_string, default_false};
 use serde::{Deserialize, Serialize};
 use serde_yaml::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Profile {
     pub processes: Vec<ProcessCfg>,
     pub monitors: Vec<MonitorCfg>,
@@ -94,5 +94,5 @@ pub fn get_sym_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error
         .expect("Unable to read profile file");
     let profile: Result<Profile, Error> = serde_yaml::from_str(&pr_file_str);
 
-    return profile;
+    profile
 }

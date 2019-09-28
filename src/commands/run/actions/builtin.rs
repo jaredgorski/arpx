@@ -1,6 +1,6 @@
+use crate::cfg::Cfg;
 use crate::commands::run;
 use crate::commands::run::processes::Process;
-use crate::config::Cfg;
 use crate::util::log::{log_trigger_snippet, logger, LogData};
 
 pub const BUILTINS: &[&str] = &["kill", "logger", "respawn", "silence", "symexit"];

@@ -1,10 +1,10 @@
+use crate::cfg::profile::LogTriggerCfg;
 use crate::commands::run::handlers::monitor::MonitorOutput;
-use crate::config::profile::LogTriggerCfg;
 use crate::util::log::LogData;
 use std::collections::HashMap;
 
 pub fn logs_potential_pull(
-    log_actions: &Vec<String>,
+    log_actions: &[String],
     log_triggers: &LogTriggerCfg,
     log_data: &LogData,
 ) -> MonitorOutput {
@@ -31,7 +31,7 @@ pub fn logs_potential_pull(
         }
     }
 
-    return output;
+    output
 }
 
 fn get_trigger_snippet(_log_data: &LogData, substr: &str) -> String {

@@ -1,7 +1,7 @@
+use crate::cfg::profile::ProcessCfg;
+use crate::cfg::Cfg;
 use crate::commands::run::handlers::output;
 use crate::commands::run::processes::Process;
-use crate::config::profile::ProcessCfg;
-use crate::config::Cfg;
 use std::collections::HashMap;
 use std::thread;
 
@@ -21,12 +21,12 @@ pub fn run(cfg: &Cfg, processes: Vec<String>) {
             proc_cfg.name[..].to_string(),
             &proc_cfg.cwd[..],
             &proc_cfg.command[..],
-            &proc_cfg.silent,
-            &proc_cfg.blocking,
+            proc_cfg.silent,
+            proc_cfg.blocking,
         );
         let cfg_copy = cfg.clone();
         let handle = thread::Builder::new()
-            .name(proc_cfg.name[..].to_string().into())
+            .name(proc_cfg.name[..].to_string())
             .spawn(move || {
                 output::handle_output(&cfg_copy, proc);
             })
@@ -49,12 +49,12 @@ pub fn run_individual(cfg: &Cfg, proc_cfg: ProcessCfg) {
         proc_cfg.name[..].to_string(),
         &proc_cfg.cwd[..],
         &proc_cfg.command[..],
-        &proc_cfg.silent,
-        &proc_cfg.blocking,
+        proc_cfg.silent,
+        proc_cfg.blocking,
     );
     let cfg_copy = cfg.clone();
     let handle = thread::Builder::new()
-        .name(proc_cfg.name[..].to_string().into())
+        .name(proc_cfg.name[..].to_string())
         .spawn(move || {
             output::handle_output(&cfg_copy, proc);
         })
@@ -73,5 +73,5 @@ fn get_profile_processes_map(cfg: &Cfg) -> HashMap<String, ProcessCfg> {
         );
     }
 
-    return profile_processes;
+    profile_processes
 }

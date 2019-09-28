@@ -10,15 +10,18 @@ pub struct Cfg {
     pub profile: profile::Profile,
 }
 
+impl Default for Cfg {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Cfg {
     pub fn new() -> Cfg {
         let config = config::Config::new();
         let profile = profile::Profile::new();
 
-        Cfg {
-            config: config,
-            profile: profile,
-        }
+        Cfg { config, profile }
     }
 }
 
@@ -52,12 +55,9 @@ pub fn get_sym_cfg(profile_path: &str) -> Cfg {
         Err(error) => panic!(error),
     };
 
-    let cfg: Cfg = Cfg {
-        config: config,
-        profile: profile,
-    };
+    let cfg: Cfg = Cfg { config, profile };
 
-    return cfg;
+    cfg
 }
 
 pub fn default_cwd() -> String {

@@ -21,7 +21,7 @@ pub struct PipeStreamReader {
 }
 
 impl PipeStreamReader {
-    pub fn new(mut stream: Box<io::Read + Send>) -> PipeStreamReader {
+    pub fn new(mut stream: Box<dyn io::Read + Send>) -> PipeStreamReader {
         PipeStreamReader {
             lines: {
                 let (tx, rx) = unbounded();
