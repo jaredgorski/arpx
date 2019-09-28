@@ -1,6 +1,6 @@
-extern crate sym;
+extern crate tog;
 
-use sym::commands;
+use tog::commands;
 
 fn main() {
     commands::command_parse();

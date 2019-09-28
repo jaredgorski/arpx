@@ -25,21 +25,21 @@ impl Cfg {
     }
 }
 
-pub fn get_sym_cfg(profile_path: &str) -> Cfg {
+pub fn get_tog_cfg(profile_path: &str) -> Cfg {
     let home_dir: PathBuf = match dirs::home_dir() {
         Some(dir) => dir,
         _ => panic!(),
     };
-    let sym_dirname: PathBuf = PathBuf::from(".sym");
-    let sym_dir: PathBuf = [home_dir, sym_dirname].iter().collect();
+    let tog_dirname: PathBuf = PathBuf::from(".tog");
+    let tog_dir: PathBuf = [home_dir, tog_dirname].iter().collect();
 
-    let config = match config::get_sym_rc(sym_dir.clone()) {
+    let config = match config::get_tog_rc(tog_dir.clone()) {
         Ok(config) => config,
         Err(error) => panic!(error),
     };
 
     let prof_dir: PathBuf = if profile_path == "default" {
-        sym_dir.clone()
+        tog_dir.clone()
     } else {
         PathBuf::from(".")
     };
@@ -50,7 +50,7 @@ pub fn get_sym_cfg(profile_path: &str) -> Cfg {
         profile_path.to_string()
     };
 
-    let profile = match profile::get_sym_pr(prof_dir, PathBuf::from(prof_path)) {
+    let profile = match profile::get_tog_pr(prof_dir, PathBuf::from(prof_path)) {
         Ok(profile) => profile,
         Err(error) => panic!(error),
     };

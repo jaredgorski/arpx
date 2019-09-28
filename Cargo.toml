@@ -1,19 +1,19 @@
 [package]
-name = "sym"
+name = "tog"
 description = "Utility for running and automating concurrent processes"
 version = "0.0.0"
 license = "MIT"
 readme = "README.md"
 keywords = ["automation", "process", "task", "multiplexer"]
 authors = ["Jared Gorski <jaredgorski6@gmail.com>"]
-repository = "https://github.com/jaredgorski/sym"
+repository = "https://github.com/jaredgorski/tog"
 edition = "2018"
 
 [badges]
-travis-ci = { repository = "jaredgorski/sym" }
+travis-ci = { repository = "jaredgorski/tog" }
 
 [[bin]]
-name = "sym"
+name = "tog"
 path = "src/main.rs"
 doc = false
 

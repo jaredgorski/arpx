@@ -74,15 +74,15 @@ pub struct ActionCfg {
     pub blocking: bool,
 }
 
-pub fn get_sym_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
+pub fn get_tog_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
     let path_string = path
         .clone()
         .into_os_string()
         .into_string()
         .expect("!string");
 
-    if !path_string.contains("sym.yaml") {
-        path.set_extension("sym.yaml");
+    if !path_string.contains("tog.yaml") {
+        path.set_extension("tog.yaml");
     }
 
     let pr_path: PathBuf = [prof_dir, path].iter().collect();

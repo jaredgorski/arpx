@@ -3,7 +3,7 @@ use crate::commands::run;
 use crate::commands::run::processes::Process;
 use crate::util::log::{log_trigger_snippet, logger, LogData};
 
-pub const BUILTINS: &[&str] = &["kill", "logger", "respawn", "silence", "symexit"];
+pub const BUILTINS: &[&str] = &["kill", "logger", "respawn", "silence", "togexit"];
 
 pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
     match action {
@@ -29,9 +29,9 @@ pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
             run::run(&cfg, vec![proc.name[..].to_string()]);
         }
         "silence" => {}
-        "symexit" => {
-            log_trigger_snippet(log_data, "symexit");
-            logger("Exiting sym.");
+        "togexit" => {
+            log_trigger_snippet(log_data, "togexit");
+            logger("Exiting tog.");
             std::process::exit(0);
         }
         _ => {}
