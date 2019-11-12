@@ -3,7 +3,6 @@ use crate::util;
 use std::env;
 
 pub mod run;
-pub mod setup;
 
 #[derive(Debug)]
 pub struct Command {
@@ -50,7 +49,6 @@ pub fn command_parse() {
                         cmd_processes.push(process.name[..].to_string());
                     }
                 }
-                "--set-profile" | "-s" => println!("Set profile flag invoked"),
                 _ => util::log::usage(init_cmd, Some(&args)),
             }
         }

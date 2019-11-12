@@ -75,18 +75,23 @@ pub struct ActionCfg {
 }
 
 pub fn get_tog_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
-    let path_string = path
-        .clone()
-        .into_os_string()
-        .into_string()
-        .expect("!string");
+    if path.file_name() == None {
+        path.set_file_name("tog");
+        path.set_extension("yaml");
+    } else {
+        let path_string = path
+            .clone()
+            .into_os_string()
+            .into_string()
+            .expect("!string");
 
-    if !path_string.contains("tog.yaml") {
-        path.set_extension("tog.yaml");
+        if !path_string.contains("tog.yaml") {
+            path.set_extension("tog.yaml");
+        }
     }
 
     let pr_path: PathBuf = [prof_dir, path].iter().collect();
-    let mut pr_file: File = File::open(pr_path).expect("Unable to open profile file");
+    let mut pr_file: File = File::open(pr_path).expect("Unable to find or open profile file");
 
     let mut pr_file_str = String::new();
     pr_file
