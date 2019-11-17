@@ -1,12 +1,10 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-pub mod config;
 pub mod profile;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Cfg {
-    pub config: config::Config,
     pub profile: profile::Profile,
 }
 
@@ -18,34 +16,16 @@ impl Default for Cfg {
 
 impl Cfg {
     pub fn new() -> Cfg {
-        let config = config::Config::new();
         let profile = profile::Profile::new();
 
-        Cfg { config, profile }
+        Cfg { profile }
     }
 }
 
 pub fn get_tog_cfg(profile_path: &str) -> Cfg {
-    let home_dir: PathBuf = match dirs::home_dir() {
-        Some(dir) => dir,
-        _ => panic!(),
-    };
-    let tog_dirname: PathBuf = PathBuf::from(".tog");
-    let tog_dir: PathBuf = [home_dir, tog_dirname].iter().collect();
-
-    let config = match config::get_tog_rc(tog_dir.clone()) {
-        Ok(config) => config,
-        Err(error) => panic!(error),
-    };
-
-    let prof_dir: PathBuf = if profile_path == "default" {
-        tog_dir.clone()
-    } else {
-        PathBuf::from(".")
-    };
-
+    let prof_dir: PathBuf = PathBuf::from(".");
     let prof_path: String = if profile_path == "default" {
-        config.profile.clone()
+        "".to_string()
     } else {
         profile_path.to_string()
     };
@@ -55,7 +35,7 @@ pub fn get_tog_cfg(profile_path: &str) -> Cfg {
         Err(error) => panic!(error),
     };
 
-    let cfg: Cfg = Cfg { config, profile };
+    let cfg: Cfg = Cfg { profile };
 
     cfg
 }
