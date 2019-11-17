@@ -18,6 +18,7 @@ path = "src/main.rs"
 doc = false
 
 [dependencies]
+clap = "2.27.0"
 crossbeam-channel = "0.3"
 dirs = "2.0"
 serde = { version = "1.0.99", features = ["derive"] }
