@@ -1,11 +1,11 @@
-use crate::cfg::Cfg;
+use crate::profile::Profile;
 use crate::commands::run::actions::act;
 use crate::commands::run::processes::Process;
 use crate::util::log::LogData;
 use std::collections::HashSet;
 
 pub fn handle_action(
-    cfg: &Cfg,
+    profile: &Profile,
     proc: &mut Process,
     log_data: &LogData,
     exec_actions: &mut Vec<String>,
@@ -19,6 +19,6 @@ pub fn handle_action(
     exec_actions.retain(|x| action_set.insert(x.clone()));
 
     for action in action_set {
-        act(cfg, proc, log_data, &action[..]);
+        act(profile, proc, log_data, &action[..]);
     }
 }

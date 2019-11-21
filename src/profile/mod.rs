@@ -1,4 +1,3 @@
-use crate::cfg::{default_cwd, default_empty_string, default_empty_vec_string, default_false};
 use serde::{Deserialize, Serialize};
 use serde_yaml::Error;
 use std::fs::File;
@@ -74,7 +73,25 @@ pub struct ActionCfg {
     pub blocking: bool,
 }
 
-pub fn get_tog_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error> {
+fn default_cwd() -> String {
+    ".".to_string()
+}
+
+fn default_empty_string() -> String {
+    "".to_string()
+}
+
+fn default_false() -> bool {
+    false
+}
+
+fn default_empty_vec_string() -> Vec<String> {
+    Vec::new()
+}
+
+pub fn get_tog_pr(pathstr: String) -> Result<Profile, Error> {
+    let mut path: PathBuf = PathBuf::from(pathstr);
+
     if path.file_name() == None {
         path.set_file_name("tog");
         path.set_extension("yaml");
@@ -90,8 +107,7 @@ pub fn get_tog_pr(prof_dir: PathBuf, mut path: PathBuf) -> Result<Profile, Error
         }
     }
 
-    let pr_path: PathBuf = [prof_dir, path].iter().collect();
-    let mut pr_file: File = File::open(pr_path).expect("Unable to find or open profile file");
+    let mut pr_file: File = File::open(path).expect("Unable to find or open profile file");
 
     let mut pr_file_str = String::new();
     pr_file

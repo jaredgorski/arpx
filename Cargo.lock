@@ -374,7 +374,7 @@ dependencies = [
 
 [[package]]
 name = "tog"
-version = "0.0.0"
+version = "0.1.1"
 dependencies = [
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "crossbeam-channel 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",

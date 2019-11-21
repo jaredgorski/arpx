@@ -1,11 +1,11 @@
 extern crate tog;
-extern crate clap;
-use clap::{Arg, App, SubCommand};
-// use tog::commands;
 
-const TOG_VERSION: &'static str = env!("CARGO_PKG_VERSION");
-const TOG_AUTHOR: &'static str = env!("CARGO_PKG_AUTHORS");
-const TOG_DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
+use clap::{Arg, App, SubCommand};
+use tog::commands::{Command, get_command, run};
+
+const TOG_VERSION: &str = env!("CARGO_PKG_VERSION");
+const TOG_AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
+const TOG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 
 fn main() {
   let matches = App::new("tog")
@@ -16,6 +16,7 @@ fn main() {
          .short("f")
          .long("file")
          .value_name("FILE")
+         .default_value("tog.yaml")
          .help("Path to the tog profile to be executed")
          .takes_value(true))
     .arg(Arg::with_name("process")
@@ -42,29 +43,7 @@ fn main() {
                 .about("Lists currently running tog processes"))
     .get_matches();
 
+  let cmd: Command = get_command(matches);
 
-  if matches.is_present("ls") {
-    println!("Listing processes...");
-  } else {
-    let file = matches.value_of("file").unwrap_or("tog.yaml");
-    let process = matches.value_of("process").unwrap_or("no_process");
-    let to_kill = matches.value_of("kill").unwrap_or("no_to_kill");
-
-    if matches.is_present("daemon") {
-      println!("Will execute in background");
-    }
-
-    println!("Killing pid: {}", to_kill);
-    println!("Value for file: {}", file);
-    println!("Executing process: {}", process);
-  }
-
-  match matches.occurrences_of("v") {
-    0 => println!("logging level: Info"),
-    1 => println!("logging level: Verbose"),
-    2 => println!("logging level: Debug"),
-    3 | _ => println!("logging level: Silly"),
-  }
-
-  // logic
+  run::run(&cmd.profile, cmd.processes_to_run);
 }

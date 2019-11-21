@@ -1,105 +1,68 @@
-use crate::cfg;
-use crate::util;
-use std::env;
+use crate::profile::{get_tog_pr, Profile};
+use clap::{ArgMatches};
 
 pub mod run;
 
 #[derive(Debug)]
 pub struct Command {
-    pub mode: String,
-    pub processes: Vec<String>,
+    pub profile: Profile,
+    pub daemon_mode: bool,
+    pub pid_to_kill: String,
+    pub processes_to_run: Vec<String>,
+    pub verbosity: String,
 }
 
-pub fn command_parse() {
-    let args: Vec<String> = env::args().collect::<Vec<String>>();
-    let init_cmd: &str = &args[0][..];
-
-    let mut cfg: cfg::Cfg = cfg::Cfg::new();
-    let mut cmd_mode: String = String::new();
+pub fn get_command(matches: ArgMatches) -> Command {
+    let mut cmd_profile: Profile = Profile::new();
+    let mut cmd_daemon: bool = false;
+    let mut cmd_kill: String = String::new();
     let mut cmd_processes: Vec<String> = Vec::new();
 
-    match args.len() - 1 {
-        0 => {
-            cfg = cfg::get_tog_cfg("default");
-            cmd_mode = "run".to_string();
+    if matches.is_present("ls") {
+        println!("NOTE: Processes cannot be listed. Feature not fully implemented yet.");
+    } else {
+        let file: String = matches.value_of("file").unwrap_or("tog.yaml").to_string();
 
-            for process in cfg.profile.processes.iter() {
+        cmd_profile = match get_tog_pr(file) {
+            Ok(profile) => profile,
+            Err(error) => panic!(error),
+        };
+
+        if matches.is_present("daemon") {
+            cmd_daemon = true;
+            println!("NOTE: Daemon mode not invoked. Feature not fully implemented yet.");
+        }
+
+        if let Some(pid) = matches.value_of("kill") {
+            cmd_kill = pid.to_string();
+            println!("NOTE: Process cannot be killed. Feature not fully implemented yet.");
+        }
+
+        if let Some(ref process) = matches.value_of("process") {
+            cmd_processes.push(process.to_string());
+        } else {
+            for process in cmd_profile.processes.iter() {
                 cmd_processes.push(process.name[..].to_string());
             }
         }
-        1 => match &args[1][..] {
-            "--help" | "-h" => util::log::usage(init_cmd, None),
-            _ => util::log::usage(init_cmd, Some(&args)),
-        },
-        2 => {
-            let flag: &str = &args[1][..];
-            let value: String = args[2][..].to_string();
+    }
 
-            match &flag[..] {
-                "--process" | "-p" => {
-                    cfg = cfg::get_tog_cfg("default");
-                    cmd_mode = "run".to_string();
-                    cmd_processes.push(value);
-                }
-                "--profile" | "-f" => {
-                    cfg = cfg::get_tog_cfg(&value);
-                    cmd_mode = "run".to_string();
-
-                    for process in cfg.profile.processes.iter() {
-                        cmd_processes.push(process.name[..].to_string());
-                    }
-                }
-                _ => util::log::usage(init_cmd, Some(&args)),
-            }
-        }
-        4 => {
-            let flag1: &str = &args[1][..];
-            let value1: String = args[2][..].to_string();
-            let flag2: &str = &args[3][..];
-            let value2: String = args[4][..].to_string();
-            let mut flag1was = "";
-
-            match &flag1[..] {
-                "--process" | "-p" => {
-                    cmd_mode = "run".to_string();
-                    cmd_processes.push(value1[..].to_string());
-                    flag1was = "p";
-                }
-                "--profile" | "-f" => {
-                    cfg = cfg::get_tog_cfg(&value1);
-                    cmd_mode = "run".to_string();
-                    flag1was = "f";
-                }
-                _ => util::log::usage(init_cmd, Some(&args)),
-            }
-
-            match &flag2[..] {
-                "--process" | "-p" => {
-                    if flag1was == "p" {
-                        panic!("same flag twice");
-                    }
-
-                    cmd_mode = "run".to_string();
-                    cmd_processes.push(value2[..].to_string());
-                }
-                "--profile" | "-f" => {
-                    if flag1was == "f" {
-                        panic!("same flag twice");
-                    }
-
-                    cfg = cfg::get_tog_cfg(&value2);
-                    cmd_mode = "run".to_string();
-                }
-                _ => util::log::usage(init_cmd, Some(&args)),
-            }
-        }
-        _ => util::log::usage(init_cmd, Some(&args)),
+    let cmd_verbosity = match matches.occurrences_of("v") {
+        0 => "info".to_string(),
+        1 => "verbose".to_string(),
+        2 => "debug".to_string(),
+        3 | _ => "silly".to_string(),
     };
 
-    let command: Command = Command {
-        mode: cmd_mode,
-        processes: cmd_processes,
-    };
+    if cmd_verbosity != "info" {
+        println!("NOTE: Verbosity level is info. Feature not fully implemented yet.");
+    }
 
-    run::run(&cfg, command.processes);
+    Command {
+        profile: cmd_profile,
+        daemon_mode: cmd_daemon,
+        pid_to_kill: cmd_kill,
+        processes_to_run: cmd_processes,
+        verbosity: cmd_verbosity,
+    }
 }

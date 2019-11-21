@@ -1,11 +1,11 @@
-use crate::cfg::Cfg;
+use crate::profile::Profile;
 use crate::commands::run;
 use crate::commands::run::processes::Process;
 use crate::util::log::{log_trigger_snippet, logger, LogData};
 
 pub const BUILTINS: &[&str] = &["kill", "logger", "respawn", "silence", "togexit"];
 
-pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
+pub fn act(profile: &Profile, proc: &mut Process, log_data: &LogData, action: &str) {
     match action {
         "kill" => {
             log_trigger_snippet(log_data, "kill");
@@ -26,7 +26,7 @@ pub fn act(cfg: &Cfg, proc: &mut Process, log_data: &LogData, action: &str) {
                 proc.name,
                 proc.child.id()
             ));
-            run::run(&cfg, vec![proc.name[..].to_string()]);
+            run::run(&profile, vec![proc.name[..].to_string()]);
         }
         "silence" => {}
         "togexit" => {

@@ -1,7 +1,6 @@
-use crate::cfg::profile::MonitorCfg;
-use crate::cfg::Cfg;
 use crate::commands::run::handlers::{action, triggers};
 use crate::commands::run::processes::Process;
+use crate::profile::{Profile,MonitorCfg};
 use crate::util::log::LogData;
 use std::collections::HashMap;
 
@@ -11,9 +10,9 @@ pub struct MonitorOutput {
     pub snippets: HashMap<String, String>,
 }
 
-pub fn handle_monitor(cfg: &Cfg, proc: &mut Process, log_data: &mut LogData) {
+pub fn handle_monitor(profile: &Profile, proc: &mut Process, log_data: &mut LogData) {
     let mut exec_actions: Vec<String> = Vec::new();
-    let profile_monitors = get_profile_monitors(&cfg);
+    let profile_monitors = get_profile_monitors(&profile);
 
     for monitor in profile_monitors {
         if monitor.process == proc.name {
@@ -27,13 +26,13 @@ pub fn handle_monitor(cfg: &Cfg, proc: &mut Process, log_data: &mut LogData) {
         }
     }
 
-    action::handle_action(cfg, proc, log_data, &mut exec_actions);
+    action::handle_action(profile, proc, log_data, &mut exec_actions);
 }
 
-fn get_profile_monitors(cfg: &Cfg) -> Vec<&MonitorCfg> {
+fn get_profile_monitors(profile: &Profile) -> Vec<&MonitorCfg> {
     let mut profile_monitors: Vec<&MonitorCfg> = Vec::new();
 
-    for profile_monitor in &cfg.profile.monitors {
+    for profile_monitor in &profile.monitors {
         profile_monitors.push(profile_monitor);
     }
 

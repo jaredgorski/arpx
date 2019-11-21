@@ -1,4 +1,4 @@
-use crate::cfg::Cfg;
+use crate::profile::Profile;
 use crate::commands::run::handlers::monitor;
 use crate::commands::run::processes::stream_read::{PipeStreamReader, PipedLine};
 use crate::commands::run::processes::Process;
@@ -6,7 +6,7 @@ use crate::util::log;
 use crossbeam_channel::Select;
 use std::collections::HashMap;
 
-pub fn handle_output(cfg: &Cfg, mut proc: Process) {
+pub fn handle_output(profile: &Profile, mut proc: Process) {
     let mut channels: Vec<PipeStreamReader> = Vec::new();
     channels.push(PipeStreamReader::new(Box::new(
         proc.child.stdout.take().expect("!stdout"),
@@ -31,7 +31,7 @@ pub fn handle_output(cfg: &Cfg, mut proc: Process) {
             Ok(remote_result) => match remote_result {
                 Ok(piped_line) => match piped_line {
                     PipedLine::Line(line) => {
-                        handle_output_line(&cfg, &mut proc, line);
+                        handle_output_line(&profile, &mut proc, line);
                     }
                     PipedLine::EOF => {
                         stream_eof = true;
@@ -57,11 +57,11 @@ pub fn handle_output(cfg: &Cfg, mut proc: Process) {
     }
 }
 
-pub fn handle_output_line(cfg: &Cfg, proc: &mut Process, line: String) {
+pub fn handle_output_line(profile: &Profile, proc: &mut Process, line: String) {
     let mut log_data = log::LogData {
         message: &line,
         snippets: HashMap::new(),
     };
 
-    monitor::handle_monitor(cfg, proc, &mut log_data);
+    monitor::handle_monitor(profile, proc, &mut log_data);
 }

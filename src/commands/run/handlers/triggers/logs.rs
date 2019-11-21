@@ -1,4 +1,4 @@
-use crate::cfg::profile::LogTriggerCfg;
+use crate::profile::LogTriggerCfg;
 use crate::commands::run::handlers::monitor::MonitorOutput;
 use crate::util::log::LogData;
 use std::collections::HashMap;

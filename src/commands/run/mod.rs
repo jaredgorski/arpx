@@ -1,5 +1,4 @@
-use crate::cfg::profile::ProcessCfg;
-use crate::cfg::Cfg;
+use crate::profile::{Profile, ProcessCfg};
 use crate::commands::run::handlers::output;
 use crate::commands::run::processes::Process;
 use std::collections::HashMap;
@@ -9,8 +8,8 @@ pub mod actions;
 pub mod handlers;
 pub mod processes;
 
-pub fn run(cfg: &Cfg, processes: Vec<String>) {
-    let profile_processes_map = get_profile_processes_map(&cfg);
+pub fn run(profile: &Profile, processes: Vec<String>) {
+    let profile_processes_map = get_profile_processes_map(&profile);
     let mut proc_handles = Vec::new();
 
     for process in processes {
@@ -24,11 +23,11 @@ pub fn run(cfg: &Cfg, processes: Vec<String>) {
             proc_cfg.silent,
             proc_cfg.blocking,
         );
-        let cfg_copy = cfg.clone();
+        let profile_copy = profile.clone();
         let handle = thread::Builder::new()
             .name(proc_cfg.name[..].to_string())
             .spawn(move || {
-                output::handle_output(&cfg_copy, proc);
+                output::handle_output(&profile_copy, proc);
             })
             .expect("Could not spawn process thread");
 
@@ -44,7 +43,7 @@ pub fn run(cfg: &Cfg, processes: Vec<String>) {
     }
 }
 
-pub fn run_individual(cfg: &Cfg, proc_cfg: ProcessCfg) {
+pub fn run_individual(profile: &Profile, proc_cfg: ProcessCfg) {
     let proc = Process::init(
         proc_cfg.name[..].to_string(),
         &proc_cfg.cwd[..],
@@ -52,21 +51,21 @@ pub fn run_individual(cfg: &Cfg, proc_cfg: ProcessCfg) {
         proc_cfg.silent,
         proc_cfg.blocking,
     );
-    let cfg_copy = cfg.clone();
+    let profile_copy = profile.clone();
     let handle = thread::Builder::new()
         .name(proc_cfg.name[..].to_string())
         .spawn(move || {
-            output::handle_output(&cfg_copy, proc);
+            output::handle_output(&profile_copy, proc);
         })
         .expect("Could not spawn process thread");
 
     handle.join().expect("!join");
 }
 
-fn get_profile_processes_map(cfg: &Cfg) -> HashMap<String, ProcessCfg> {
+fn get_profile_processes_map(profile: &Profile) -> HashMap<String, ProcessCfg> {
     let mut profile_processes: HashMap<String, ProcessCfg> = HashMap::new();
 
-    for profile_process in &cfg.profile.processes {
+    for profile_process in &profile.processes {
         profile_processes.insert(
             profile_process.name[..].to_string(),
             profile_process.clone(),
