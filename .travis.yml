@@ -1,0 +1,15 @@
+language: rust
+rust:
+  - stable
+matrix:
+  fast_finish: true
+cache: cargo
+script:
+  - cargo build --verbose --all
+  - cargo test --verbose --all
+branches:
+  only:
+    - master
+notifications:
+  email: false
+
