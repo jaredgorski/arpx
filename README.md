@@ -91,8 +91,8 @@ actions:
       exit
 ```
 
-![Example arpx output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_screenshot.png)
-_`script.arpx.yaml` output_
+![Example arpx output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_screenshot-annotated.png)
+
 
 ### Processes
 PROCESSES are the primary commands **arpx** will manage. PROCESSES can be run blockingly or concurrently, and can be run one at a time with the `-p` option.
