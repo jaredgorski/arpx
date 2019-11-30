@@ -126,7 +126,15 @@ ACTIONS are new PROCESSES which can be executed when triggered by a MONITOR. The
 #### Custom
 Custom ACTIONS can define new tasks to be executed if/when triggering conditions are met. Currently, the only type of ACTION available is `shell`, which allows for defining a shell command to run when the current ACTION is activated.
 
-## Purpose and applications
+## Applications and purpose
+Some potential applications:
+- Selectively silence logging output for programs or scripts
+- Run multiple programs or scripts concurrently
+- Manage local development environment with multiple dependent services as one process
+- Run scripts in a particular order
+- Automate spinning up multiple processes which depend on each other
+- Handle errors in scripts automatically
+
 **arpx** is useful for automatically handling errors, suppressing stdout/stderr output, scheduling processes relative to each other, and more. It was originally concieved for the purpose of automatically handling errors while running a local development environment with multiple dependent services. The goal is that **arpx** should be generally useful, so please open issues for enhancements with a mind toward powerful, general utility.
 
 ## Contributing
