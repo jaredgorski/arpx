@@ -139,3 +139,7 @@ Some potential applications:
 
 ## Contributing
 This project is my first program in Rust. It's rough around the edges and has not been styleguided yet, but "simplicity" and "clarity" are words that come to mind when I envision what it should look like down the road. Contributions and suggestions should reflect the [Unix Philosophy](https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch01s06.html).
+
+## Integrations
+### Programmatic
+- [**arpxjs**](https://github.com/jaredgorski/arpxjs): Programmatic process automation, relation, and multiplexing for Node.js
