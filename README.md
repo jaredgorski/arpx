@@ -62,7 +62,6 @@ processes:
         sleep 1
         echo "Loop1 $i"
       done
-    blocking: true
   - name: loop3
     command: |
       for i in {1..5}
@@ -91,8 +90,47 @@ actions:
       exit
 ```
 
-![Example arpx output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_screenshot-annotated.png)
+![Example arpx concurrent output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_concurrent_screenshot-annotated.png)
 
+```yaml
+processes:
+  - name: loop1
+    command: |
+      for i in {1..5}
+      do
+        sleep 1
+        echo "Loop1 $i"
+      done
+    blocking: true                  // Added
+  - name: loop3
+    command: |
+      for i in {1..5}
+      do
+        sleep 1
+        echo "Loop3 $i"
+      done
+
+monitors:
+  - process: loop1
+    triggers:
+      logs:
+        includes_string: Loop1 5
+    actions:
+      - loop2
+
+actions:
+  - name: loop2
+    type: shell
+    command: |
+      for i in {1..3}
+      do
+        sleep 1
+        echo "Loop2 $i"
+      done
+      exit
+```
+
+![Example arpx blocking output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_blocking_screenshot-annotated.png)
 
 ### Processes
 PROCESSES are the primary commands **arpx** will manage. PROCESSES can be run blockingly or concurrently, and can be run one at a time with the `-p` option.
