@@ -10,13 +10,13 @@ pub fn act(profile: &Profile, proc: &Arc<Mutex<Process>>, log_data: &LogData, ac
     match action {
         "exit" => {
             log_trigger_snippet(log_data, "exit");
-            logger("Exiting arpx.");
+            logger("[arpx] Exiting.");
             std::process::exit(0);
         }
         "kill" => {
             log_trigger_snippet(log_data, "kill");
             proc.lock().unwrap().child.kill().expect("!kill");
-            logger(&format!("Process [pid: {}] killed.", proc.lock().unwrap().child.id()));
+            logger(&format!("[arpx] Process [pid: {}] killed.", proc.lock().unwrap().child.id()));
         }
         "logger" => {
             if !proc.lock().unwrap().silent {
@@ -26,15 +26,18 @@ pub fn act(profile: &Profile, proc: &Arc<Mutex<Process>>, log_data: &LogData, ac
         }
         "respawn" => {
             log_trigger_snippet(log_data, "respawn");
+            let old_id = proc.lock().unwrap().child.id();
+            let respawn_proc = proc.lock().unwrap().name[..].to_string();
+            let message = format!(
+                "[arpx] Process [{} | pid: {}] killed. Respawning.",
+                &respawn_proc,
+                old_id,
+            );
             proc.lock().unwrap().child.kill().expect("!kill");
-            logger(&format!(
-                "Process [{} | pid: {}] killed. Respawning.",
-                proc.lock().unwrap().name,
-                proc.lock().unwrap().child.id()
-            ));
-            run::run(&profile, vec![proc.lock().unwrap().name[..].to_string()]);
+            logger(&message);
+            run::run(&profile, vec![respawn_proc], false);
         }
-        "silence" => {}
-        _ => {}
+        "silence" => (),
+        _ => (),
     }
 }

@@ -5,8 +5,11 @@ use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Profile {
+    #[serde(default = "default_processes")]
     pub processes: Vec<ProcessCfg>,
+    #[serde(default = "default_monitors")]
     pub monitors: Vec<MonitorCfg>,
+    #[serde(default = "default_actions")]
     pub actions: Vec<ActionCfg>,
 }
 
@@ -29,6 +32,8 @@ pub struct ProcessCfg {
     #[serde(default = "default_cwd")]
     pub cwd: String,
     #[serde(default = "default_false")]
+    pub daemon: bool,
+    #[serde(default = "default_false")]
     pub silent: bool,
     #[serde(default = "default_false")]
     pub blocking: bool,
@@ -38,20 +43,10 @@ pub struct ProcessCfg {
 pub struct MonitorCfg {
     #[serde(default = "default_empty_string")]
     pub process: String,
-    pub triggers: Triggers,
+    #[serde(default = "default_empty_string")]
+    pub condition: String,
     #[serde(default = "default_empty_vec_string")]
     pub actions: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Triggers {
-    pub logs: LogTriggerCfg,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct LogTriggerCfg {
-    #[serde(default = "default_empty_string")]
-    pub includes_string: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -62,7 +57,9 @@ pub struct ActionCfg {
     pub command: String,
     #[serde(default = "default_cwd")]
     pub cwd: String,
-    #[serde(default = "default_empty_string")]
+    #[serde(default = "default_false")]
+    pub daemon: bool,
+    #[serde(default = "default_shell")]
     pub r#type: String,
     #[serde(default = "default_empty_string")]
     pub stdin: String,
@@ -72,12 +69,48 @@ pub struct ActionCfg {
     pub blocking: bool,
 }
 
+fn default_processes() -> Vec<ProcessCfg> {
+    vec![ProcessCfg {
+        name: default_empty_string(),
+        command: default_empty_string(),
+        cwd: default_empty_string(),
+        daemon: default_false(),
+        silent: default_false(),
+        blocking: default_false(),
+    }]
+}
+
+fn default_monitors() -> Vec<MonitorCfg> {
+    vec![MonitorCfg {
+        process: default_empty_string(),
+        condition: default_empty_string(),
+        actions: default_empty_vec_string(),
+    }]
+}
+
+fn default_actions() -> Vec<ActionCfg> {
+    vec![ActionCfg {
+        name: default_empty_string(),
+        command: default_empty_string(),
+        cwd: default_empty_string(),
+        daemon: default_false(),
+        r#type: default_empty_string(),
+        stdin: default_empty_string(),
+        silent: default_false(),
+        blocking: default_false(),
+    }]
+}
+
 fn default_cwd() -> String {
     ".".to_string()
 }
 
 fn default_empty_string() -> String {
     "".to_string()
+}
+
+fn default_shell() -> String {
+    "shell".to_string()
 }
 
 fn default_false() -> bool {

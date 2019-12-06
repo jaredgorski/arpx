@@ -1,4 +1,4 @@
-use crate::commands::run::handlers::{action, triggers};
+use crate::commands::run::handlers::{action, condition};
 use crate::commands::run::processes::Process;
 use crate::profile::{Profile,MonitorCfg};
 use crate::util::log::LogData;
@@ -17,13 +17,13 @@ pub fn handle_monitor(profile: &Profile, proc: &Arc<Mutex<Process>>, log_data: &
 
     for monitor in profile_monitors {
         if monitor.process == proc.lock().unwrap().name {
-            let logs_potential_pull: MonitorOutput = triggers::logs::logs_potential_pull(
+            let logs_potential_trigger: MonitorOutput = condition::test_condition(
                 &monitor.actions,
-                &monitor.triggers.logs,
+                &monitor.condition[..],
                 &log_data,
             );
-            exec_actions.extend(logs_potential_pull.exec_actions);
-            log_data.snippets.extend(logs_potential_pull.snippets);
+            exec_actions.extend(logs_potential_trigger.exec_actions);
+            log_data.snippets.extend(logs_potential_trigger.snippets);
         }
     }
 

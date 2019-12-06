@@ -30,10 +30,14 @@ fn main() {
         .arg(Arg::with_name("daemon")
                  .short("D")
                  .long("daemon")
-                 .help("Runs the profile as a background process"))
+                 .help("Runs the profile as a background process (unstable)"))
+        .arg(Arg::with_name("v")
+               .short("v")
+               .multiple(true)
+               .help("Sets the level of verbosity (not implemented yet)"))
         .get_matches();
 
     let cmd: Command = get_command(matches);
 
-    run::run(&cmd.profile, cmd.processes_to_run);
+    run::run(&cmd.profile, cmd.processes_to_run, cmd.daemon_mode);
 }

@@ -18,6 +18,6 @@ pub fn error(err: &str) {
 
 pub fn log_trigger_snippet(log_data: &LogData, action: &str) {
     if let Some(snippet) = log_data.snippets.get(action) {
-        logger(&format!("Caught trigger: {}", snippet));
+        logger(&format!("[arpx] Condition met on line:\n[arpx]\t--> {}", snippet));
     }
 }
