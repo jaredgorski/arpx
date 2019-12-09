@@ -33,23 +33,20 @@ processes:                          // Define primary PROCESSES.
   - name: [NAME OF PROCESS]         // Add a unique name to identify the PROCESS within the arpx runtime.
     command: [COMMAND]              // The command to execute.
     cwd: [PATH]                     // Directory in which to execute command.
-    blocking: [TRUE|FALSE]          // Whether the PROCESS should block the main thread or run concurrently. (default: false)
-    silent: [TRUE|FALSE]            // Whether to silence logs for the PROCESS. (default: false)
+    blocking: [TRUE|(FALSE)]        // Whether the PROCESS should block the main thread or run concurrently.
+    silent: [TRUE|(FALSE)]          // Whether to silence logs for the PROCESS.
 
 monitors:                           // Configure MONITORS for specific PROCESSES.
   - process: [NAME OF PROCESS]      // Specify the PROCESS to MONITOR.
-    triggers:                       // Define conditions under which MONITOR triggers ACTIONS.
-      [TRIGGERS]                    // See `Triggers` section below, under `Monitors`.
+    condition:                      // Define condition (shell) under which MONITOR triggers ACTIONS.
     actions:                        // Specify ACTIONS to execute when triggering conditions are met.
       [ACTIONS]                     // See `Actions` section below for an overview on built-in and custom ACTIONS.
 
 actions:                            // Define custom ACTIONS which can be activated by MONITORS under triggering conditions.
   - name: [NAME OF ACTION]          // Add a unique name to identify the ACTION within the arpx runtime.
-    type: shell                     // Specify the type of custom ACTION. Currently only `shell` is available, and it must be passed.
     command: [COMMAND]              // The command to execute.
     cwd: [PATH]                     // Directory in which to execute command.
-    blocking: [TRUE|FALSE]          // Whether the ACTION should block the main thread or run concurrently. (default: false)
-    silent: [TRUE|FALSE]            // Whether to silence logs for the ACTION. (default: false)
+    silent: [TRUE|(FALSE)]          // Whether to silence logs for the ACTION.
 ```
 
 #### Example profile - script.arpx.yaml:
@@ -72,15 +69,12 @@ processes:
 
 monitors:
   - process: loop1
-    triggers:
-      logs:
-        includes_string: Loop1 5
+    condition: '[[ "$LOG_LINE" =~ "Loop1 5" ]]'
     actions:
       - loop2
 
 actions:
   - name: loop2
-    type: shell
     command: |
       for i in {1..3}
       do
@@ -112,15 +106,12 @@ processes:
 
 monitors:
   - process: loop1
-    triggers:
-      logs:
-        includes_string: Loop1 5
+    condition: '[[ "$LOG_LINE" =~ "Loop1 5" ]]'
     actions:
       - loop2
 
 actions:
   - name: loop2
-    type: shell
     command: |
       for i in {1..3}
       do
@@ -146,11 +137,10 @@ $ arpx -f ~/path/to/my.arpx.yaml
 ```
 
 ### Monitors
-MONITORS watch for conditions in a given PROCESS and perform ACTIONS if/when those conditions are met. MONITORS are configured by defining a "triggers" struct. The available triggers are specified below.
+MONITORS watch for conditions in a given PROCESS and perform ACTIONS if/when those conditions are met. MONITORS are configured by defining a condition and actions to execute when the condition exits successfully.
 
-#### Triggers
-- **logs**: reads PROCESS output (stdout/stderr) line-by-line
-  - `includes_string`: searches PROCESS output line-by-line for a string
+#### Condition
+The `condition` of a MONITOR is a shell condition which, upon a successful exit status, triggers ACTIONS. Conditions are checked with each line a program logs from `stdout` or `stderr`. The output of the current line is available within the `condition` script via the `$LOG_LINE` variable.
 
 ### Actions
 ACTIONS are new PROCESSES which can be executed when triggered by a MONITOR. There are built-in actions available to all MONITORS specified below. Custom ACTIONS can also be defined.
@@ -159,7 +149,7 @@ ACTIONS are new PROCESSES which can be executed when triggered by a MONITOR. The
 - **exit**: Exit **arpx**.
 - **kill**: Exit the current PROCESS.
 - **respawn**: Exit and restart the current PROCESS.
-- **silence**: Silence logs which trigger the current MONITOR.
+- **silence**: Silence the current log.
 
 #### Custom
 Custom ACTIONS can define new tasks to be executed if/when triggering conditions are met. Currently, the only type of ACTION available is `shell`, which allows for defining a shell command to run when the current ACTION is activated.
