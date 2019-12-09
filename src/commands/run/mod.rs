@@ -9,9 +9,13 @@ pub mod actions;
 pub mod handlers;
 pub mod processes;
 
-pub fn run(profile: &Profile, processes: Vec<String>) {
+pub fn run(profile: &Profile, processes: Vec<String>, daemon: bool) {
     let profile_processes_map = get_profile_processes_map(&profile);
     let mut proc_handles = Vec::new();
+
+    if processes[0].is_empty() {
+        panic!("!processes");
+    }
 
     for process in processes {
         let proc_cfg = profile_processes_map
@@ -35,9 +39,12 @@ pub fn run(profile: &Profile, processes: Vec<String>) {
             .expect("Could not spawn process thread");
 
         if proc_cfg.blocking {
-            handle.join().expect("!join");
+            if !daemon && !proc_cfg.daemon {
+                handle.join().expect("!join");
+            }
+
             proc2.lock().unwrap().child.wait().expect("!wait");
-        } else {
+        } else if !daemon && !proc_cfg.daemon {
             proc_handles.push(handle);
         }
     }
@@ -64,7 +71,9 @@ pub fn run_individual(profile: &Profile, proc_cfg: ProcessCfg) {
         })
         .expect("Could not spawn process thread");
 
-    handle.join().expect("!join");
+    if !proc_cfg.daemon {
+        handle.join().expect("!join");
+    }
 
     if proc_cfg.blocking {
         proc2.lock().unwrap().child.wait().expect("!wait");
