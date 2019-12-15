@@ -1,5 +1,5 @@
 use crate::profile::{get_profile, Profile};
-use clap::{ArgMatches};
+use clap::ArgMatches;
 
 pub mod run;
 

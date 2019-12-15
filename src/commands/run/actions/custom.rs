@@ -1,7 +1,7 @@
-use crate::profile::{ActionCfg, ProcessCfg};
-use crate::profile::Profile;
 use crate::commands::run;
 use crate::commands::run::processes::Process;
+use crate::profile::Profile;
+use crate::profile::{ActionCfg, ProcessCfg};
 use crate::util::log::{log_trigger_snippet, LogData};
 use std::io::Write;
 use std::sync::{Arc, Mutex};
@@ -14,7 +14,7 @@ pub fn act(profile: &Profile, proc: &Arc<Mutex<Process>>, log_data: &LogData, ac
             "shell" => {
                 log_trigger_snippet(log_data, action);
                 exec_shell_type(profile, &proc, to_exec);
-            },
+            }
             _ => (),
         }
     }

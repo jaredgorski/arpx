@@ -1,6 +1,6 @@
 use crate::commands::run::handlers::{action, condition};
 use crate::commands::run::processes::Process;
-use crate::profile::{Profile,MonitorCfg};
+use crate::profile::{MonitorCfg, Profile};
 use crate::util::log::LogData;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -17,11 +17,8 @@ pub fn handle_monitor(profile: &Profile, proc: &Arc<Mutex<Process>>, log_data: &
 
     for monitor in profile_monitors {
         if monitor.process == proc.lock().unwrap().name {
-            let logs_potential_trigger: MonitorOutput = condition::test_condition(
-                &monitor.actions,
-                &monitor.condition[..],
-                &log_data,
-            );
+            let logs_potential_trigger: MonitorOutput =
+                condition::test_condition(&monitor.actions, &monitor.condition[..], &log_data);
             exec_actions.extend(logs_potential_trigger.exec_actions);
             log_data.snippets.extend(logs_potential_trigger.snippets);
         }

@@ -1,9 +1,9 @@
-use crate::profile::{Profile, ProcessCfg};
 use crate::commands::run::handlers::output;
 use crate::commands::run::processes::Process;
+use crate::profile::{ProcessCfg, Profile};
 use std::collections::HashMap;
-use std::thread;
 use std::sync::Arc;
+use std::thread;
 
 pub mod actions;
 pub mod handlers;

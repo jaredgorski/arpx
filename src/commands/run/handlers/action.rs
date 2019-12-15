@@ -1,6 +1,6 @@
-use crate::profile::Profile;
 use crate::commands::run::actions::act;
 use crate::commands::run::processes::Process;
+use crate::profile::Profile;
 use crate::util::log::LogData;
 use std::collections::HashSet;
 use std::sync::{Arc, Mutex};

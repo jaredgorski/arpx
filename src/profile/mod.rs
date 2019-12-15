@@ -143,4 +143,3 @@ pub fn get_profile(pathstr: String) -> Result<Profile, Error> {
 
     serde_yaml::from_str(&pr_file_str)
 }
-

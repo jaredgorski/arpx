@@ -3,11 +3,7 @@ use crate::util::log::LogData;
 use std::collections::HashMap;
 use std::process::{Child, Command, Stdio};
 
-pub fn test_condition(
-    actions: &[String],
-    condition: &str,
-    log_data: &LogData,
-) -> MonitorOutput {
+pub fn test_condition(actions: &[String], condition: &str, log_data: &LogData) -> MonitorOutput {
     let mut output = MonitorOutput {
         exec_actions: Vec::new(),
         snippets: HashMap::<String, String>::new(),

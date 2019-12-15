@@ -12,7 +12,13 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn init(name: String, cwd: &str, command: &str, silent: bool, blocking: bool) -> Arc<Mutex<Process>> {
+    pub fn init(
+        name: String,
+        cwd: &str,
+        command: &str,
+        silent: bool,
+        blocking: bool,
+    ) -> Arc<Mutex<Process>> {
         let child: Child = Command::new("sh")
             .args(&["-c", command])
             .current_dir(cwd)
