@@ -32,7 +32,6 @@ fn exec_shell_type(profile: &Profile, proc: &Arc<Mutex<Process>>, action: &Actio
             name: action.name[..].to_string(),
             command: action.command[..].to_string(),
             cwd: action.cwd[..].to_string(),
-            daemon: action.daemon,
             silent: action.silent,
             blocking: action.blocking,
         };

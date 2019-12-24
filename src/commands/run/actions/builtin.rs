@@ -38,7 +38,7 @@ pub fn act(profile: &Profile, proc: &Arc<Mutex<Process>>, log_data: &LogData, ac
             );
             proc.lock().unwrap().child.kill().expect("!kill");
             logger(&message);
-            run::run(&profile, vec![respawn_proc], false);
+            run::run(&profile, vec![respawn_proc]);
         }
         "silence" => (),
         _ => (),

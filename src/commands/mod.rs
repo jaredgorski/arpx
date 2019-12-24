@@ -6,9 +6,7 @@ pub mod run;
 #[derive(Debug)]
 pub struct Command {
     pub profile: Profile,
-    pub daemon_mode: bool,
     pub processes_to_run: Vec<String>,
-    pub verbosity: String,
 }
 
 pub fn get_command(matches: ArgMatches) -> Command {
@@ -27,27 +25,8 @@ pub fn get_command(matches: ArgMatches) -> Command {
         }
     }
 
-    let mut cmd_daemon: bool = false;
-    if matches.is_present("daemon") {
-        cmd_daemon = true;
-        print!("\nNOTE: Daemon mode unstable. Feature not fully implemented yet.\n\n");
-    }
-
-    let cmd_verbosity = match matches.occurrences_of("v") {
-        0 => "info".to_string(),
-        1 => "verbose".to_string(),
-        2 => "debug".to_string(),
-        3 | _ => "silly".to_string(),
-    };
-
-    if cmd_verbosity != "info" {
-        print!("\nNOTE: Verbosity level is info. Feature not implemented yet.\n\n");
-    }
-
     Command {
         profile: cmd_profile,
-        daemon_mode: cmd_daemon,
         processes_to_run: cmd_processes,
-        verbosity: cmd_verbosity,
     }
 }

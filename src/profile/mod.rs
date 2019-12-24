@@ -32,8 +32,6 @@ pub struct ProcessCfg {
     #[serde(default = "default_cwd")]
     pub cwd: String,
     #[serde(default = "default_false")]
-    pub daemon: bool,
-    #[serde(default = "default_false")]
     pub silent: bool,
     #[serde(default = "default_false")]
     pub blocking: bool,
@@ -57,8 +55,6 @@ pub struct ActionCfg {
     pub command: String,
     #[serde(default = "default_cwd")]
     pub cwd: String,
-    #[serde(default = "default_false")]
-    pub daemon: bool,
     #[serde(default = "default_shell")]
     pub r#type: String,
     #[serde(default = "default_empty_string")]
@@ -74,7 +70,6 @@ fn default_processes() -> Vec<ProcessCfg> {
         name: default_empty_string(),
         command: default_empty_string(),
         cwd: default_empty_string(),
-        daemon: default_false(),
         silent: default_false(),
         blocking: default_false(),
     }]
@@ -93,7 +88,6 @@ fn default_actions() -> Vec<ActionCfg> {
         name: default_empty_string(),
         command: default_empty_string(),
         cwd: default_empty_string(),
-        daemon: default_false(),
         r#type: default_empty_string(),
         stdin: default_empty_string(),
         silent: default_false(),

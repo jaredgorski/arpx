@@ -9,7 +9,7 @@ pub mod actions;
 pub mod handlers;
 pub mod processes;
 
-pub fn run(profile: &Profile, processes: Vec<String>, daemon: bool) {
+pub fn run(profile: &Profile, processes: Vec<String>) {
     let profile_processes_map = get_profile_processes_map(&profile);
     let mut proc_handles = Vec::new();
 
@@ -39,15 +39,15 @@ pub fn run(profile: &Profile, processes: Vec<String>, daemon: bool) {
             .expect("Could not spawn process thread");
 
         if proc_cfg.blocking {
-            if !daemon && !proc_cfg.daemon {
-                handle.join().expect("!join");
-            }
-
+            handle.join().expect("!join");
             proc2.lock().unwrap().child.wait().expect("!wait");
-        } else if !daemon && !proc_cfg.daemon {
+        } else {
             proc_handles.push(handle);
         }
     }
+
+    // Consider implementing a Join On Drop here
+    // --> https://matklad.github.io/2019/08/23/join-your-threads.html
 
     for handle in proc_handles {
         handle.join().expect("!join");
@@ -71,9 +71,7 @@ pub fn run_individual(profile: &Profile, proc_cfg: ProcessCfg) {
         })
         .expect("Could not spawn process thread");
 
-    if !proc_cfg.daemon {
-        handle.join().expect("!join");
-    }
+    handle.join().expect("!join");
 
     if proc_cfg.blocking {
         proc2.lock().unwrap().child.wait().expect("!wait");
