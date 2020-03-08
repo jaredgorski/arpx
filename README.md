@@ -1,13 +1,13 @@
-<div align="center">
-  <h1>
+<div>
+  <img align="right" src="https://img.shields.io/crates/v/arpx?color=black">
+  <img align="right" src="https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master" />
+  <h1 align="center">
     arpx
   </h1>
-  [![Crates.io](https://img.shields.io/crates/v/arpx?color=black)](https://crates.io/crates/arpx)
-  [![Build Status](https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master)](https://travis-ci.com/jaredgorski/arpx) 
-  <br>Automate and relate multiple processes.
+  <p align="center">Automate and relate multiple processes.</p>
 </div>
 
-<div align="center">
+<div align="left">
   <h2>
     Description
   </h2>
@@ -17,7 +17,7 @@
 
 PROFILES can be run entirely or a single PROCESS can be run from within a PROFILE. If no PROFILE is defined, **arpx** will look for a file named `arpx.yaml` within the current working directory to run. PROCESSES can be configured to execute alone (blocking), run concurrently, depend on other PROCESSES, and perform ACTIONS when specific conditions are met.
 
-<div align="center">
+<div align="left">
   <h2>
     Usage
   </h2>
@@ -190,7 +190,7 @@ Custom ACTIONS can define new tasks to be executed if/when triggering conditions
 - **onsucceed**: An ACTION to initiate if the current ACTION `command` exits successfully.
 - **onfail**: An ACTION to initiate if the current ACTION `command` exits with failure.
 
-<div align="center">
+<div align="left">
   <h2>
     Applications and purpose
   </h2>
@@ -205,7 +205,7 @@ Some potential applications:
 
 **arpx** is useful for automatically handling errors, suppressing stdout/stderr output, scheduling processes relative to each other, and more. It was originally concieved for the purpose of automatically handling errors while running a local development environment with multiple dependent services. The goal is that **arpx** should be generally useful, so please open issues for enhancements with a mind toward powerful, general utility.
 
-<div align="center">
+<div align="left">
   <h2>
     Contributing
   </h2>
