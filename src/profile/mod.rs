@@ -35,6 +35,10 @@ pub struct ProcessCfg {
     pub silent: bool,
     #[serde(default = "default_false")]
     pub blocking: bool,
+    #[serde(default = "default_empty_string")]
+    pub onfail: String,
+    #[serde(default = "default_empty_string")]
+    pub onsucceed: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -63,6 +67,10 @@ pub struct ActionCfg {
     pub silent: bool,
     #[serde(default = "default_false")]
     pub blocking: bool,
+    #[serde(default = "default_empty_string")]
+    pub onfail: String,
+    #[serde(default = "default_empty_string")]
+    pub onsucceed: String,
 }
 
 fn default_processes() -> Vec<ProcessCfg> {
@@ -72,6 +80,8 @@ fn default_processes() -> Vec<ProcessCfg> {
         cwd: default_empty_string(),
         silent: default_false(),
         blocking: default_false(),
+        onfail: default_empty_string(),
+        onsucceed: default_empty_string(),
     }]
 }
 
@@ -92,6 +102,8 @@ fn default_actions() -> Vec<ActionCfg> {
         stdin: default_empty_string(),
         silent: default_false(),
         blocking: default_false(),
+        onfail: default_empty_string(),
+        onsucceed: default_empty_string(),
     }]
 }
 

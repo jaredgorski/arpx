@@ -27,6 +27,8 @@ pub fn run(profile: &Profile, processes: Vec<String>) {
             &proc_cfg.command[..],
             proc_cfg.silent,
             proc_cfg.blocking,
+            proc_cfg.onfail[..].to_string(),
+            proc_cfg.onsucceed[..].to_string(),
         );
         let proc2 = Arc::clone(&proc);
         let profile_copy = profile.clone();
@@ -61,6 +63,8 @@ pub fn run_individual(profile: &Profile, proc_cfg: ProcessCfg) {
         &proc_cfg.command[..],
         proc_cfg.silent,
         proc_cfg.blocking,
+        proc_cfg.onfail,
+        proc_cfg.onsucceed,
     );
     let proc2 = Arc::clone(&proc);
     let profile_copy = profile.clone();

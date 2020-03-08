@@ -20,6 +20,6 @@ pub fn handle_action(
     exec_actions.retain(|x| action_set.insert(x.clone()));
 
     for action in action_set {
-        act(profile, &proc, log_data, &action[..]);
+        act(profile, &proc, log_data, &action[..], false);
     }
 }

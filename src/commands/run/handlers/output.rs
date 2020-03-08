@@ -1,3 +1,4 @@
+use crate::commands::run::actions::act;
 use crate::commands::run::handlers::monitor;
 use crate::commands::run::processes::stream_read::{PipeStreamReader, PipedLine};
 use crate::commands::run::processes::Process;
@@ -49,12 +50,41 @@ pub fn handle_output(profile: &Profile, proc: &Arc<Mutex<Process>>) {
     }
 
     let status = proc.lock().unwrap().child.wait().expect("!wait");
+    let proc_name = proc.lock().unwrap().name[..].to_string();
     if status.success() {
-        let annotated_message = &format!("[{}] exited with success.", proc.lock().unwrap().name);
-        log::logger(annotated_message);
+        let onsucceed = proc.lock().unwrap().onsucceed[..].to_string();
+
+        if onsucceed.is_empty() {
+            let annotated_message = format!("[{}] exited with success.", proc_name);
+            log::logger(&annotated_message);
+        } else {
+            let annotated_message = format!("[{}] onsucceed: {}", proc_name, &onsucceed);
+            log::logger(&annotated_message);
+
+            let tmp_log_data = log::LogData {
+                message: "Triggering onsucceed.",
+                snippets: HashMap::new(),
+            };
+
+            act(profile, proc, &tmp_log_data, &onsucceed, true);
+        }
     } else {
-        let annotated_message = &format!("[{}] exited with failure.", proc.lock().unwrap().name);
-        log::logger(annotated_message);
+        let onfail = proc.lock().unwrap().onfail[..].to_string();
+
+        if onfail.is_empty() {
+            let annotated_message = format!("[{}] exited with failure.", proc_name);
+            log::logger(&annotated_message);
+        } else {
+            let annotated_message = format!("[{}] onfail: {}", proc_name, onfail);
+            log::logger(&annotated_message);
+
+            let tmp_log_data = log::LogData {
+                message: "Triggering onfail.",
+                snippets: HashMap::new(),
+            };
+
+            act(profile, proc, &tmp_log_data, &onfail, true);
+        }
     }
 }
 

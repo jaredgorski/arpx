@@ -9,6 +9,8 @@ pub struct Process {
     pub name: String,
     pub silent: bool,
     pub blocking: bool,
+    pub onfail: String,
+    pub onsucceed: String,
 }
 
 impl Process {
@@ -18,6 +20,8 @@ impl Process {
         command: &str,
         silent: bool,
         blocking: bool,
+        onfail: String,
+        onsucceed: String,
     ) -> Arc<Mutex<Process>> {
         let child: Child = Command::new("sh")
             .args(&["-c", command])
@@ -33,6 +37,8 @@ impl Process {
             name,
             silent,
             blocking,
+            onfail,
+            onsucceed,
         }))
     }
 }
