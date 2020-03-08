@@ -22,6 +22,7 @@ PROFILES can be run entirely or a single PROCESS can be run from within a PROFIL
     Usage
   </h2>
 </div>
+
 ### General program information
 
 Command  | Info
@@ -195,6 +196,7 @@ Custom ACTIONS can define new tasks to be executed if/when triggering conditions
     Applications and purpose
   </h2>
 </div>
+
 Some potential applications:
 - Selectively silence logging output for programs or scripts
 - Run multiple programs or scripts concurrently
@@ -210,6 +212,7 @@ Some potential applications:
     Contributing
   </h2>
 </div>
+
 This project is my first program in Rust. It's rough around the edges and has not been styleguided yet, but "simplicity" and "clarity" are words that come to mind when I envision what it should look like down the road. Contributions and suggestions should reflect the [Unix Philosophy](https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch01s06.html).
 
 ## Integrations
