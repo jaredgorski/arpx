@@ -1,7 +1,8 @@
-use serde::{Deserialize, Serialize};
-use serde_yaml::Error;
 use std::fs;
 use std::path::PathBuf;
+
+use serde::{Deserialize, Serialize};
+use serde_yaml::Error;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Profile {
@@ -20,6 +21,29 @@ impl Profile {
             monitors: Vec::new(),
             actions: Vec::new(),
         }
+    }
+
+    pub fn from_file(pathstr: String) -> Result<Profile, Error> {
+        let mut path: PathBuf = PathBuf::from(pathstr);
+
+        if path.file_name() == None {
+            path.set_file_name("arpx");
+            path.set_extension("yaml");
+        } else {
+            let path_string = path
+                .clone()
+                .into_os_string()
+                .into_string()
+                .expect("!string");
+
+            if !path_string.contains("arpx.yaml") {
+                path.set_extension("arpx.yaml");
+            }
+        }
+
+        let pr_file_str = fs::read_to_string(path).expect("Problem reading profile");
+
+        serde_yaml::from_str(&pr_file_str)
     }
 }
 
@@ -125,27 +149,4 @@ fn default_false() -> bool {
 
 fn default_empty_vec_string() -> Vec<String> {
     Vec::new()
-}
-
-pub fn get_profile(pathstr: String) -> Result<Profile, Error> {
-    let mut path: PathBuf = PathBuf::from(pathstr);
-
-    if path.file_name() == None {
-        path.set_file_name("arpx");
-        path.set_extension("yaml");
-    } else {
-        let path_string = path
-            .clone()
-            .into_os_string()
-            .into_string()
-            .expect("!string");
-
-        if !path_string.contains("arpx.yaml") {
-            path.set_extension("arpx.yaml");
-        }
-    }
-
-    let pr_file_str = fs::read_to_string(path).expect("Problem reading profile");
-
-    serde_yaml::from_str(&pr_file_str)
 }

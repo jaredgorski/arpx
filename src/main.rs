@@ -1,14 +1,16 @@
-extern crate arpx;
+use std::io::Error;
 
-use arpx::commands::{get_command, run, Command};
 use clap::{App, Arg};
+
+extern crate arpx;
+use arpx::arpx::Arpx;
 
 pub const APPNAME: &str = "arpx";
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
 const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 
-fn main() {
+fn main() -> Result<(), Error> {
     let default_profile: String = format!("{}.yaml", APPNAME);
     let matches = App::new(APPNAME)
         .version(VERSION)
@@ -33,7 +35,15 @@ fn main() {
         )
         .get_matches();
 
-    let cmd: Command = get_command(matches);
+    let requested_profile_file: String =
+        matches.value_of("file").unwrap_or("arpx.yaml").to_string();
 
-    run::run(&cmd.profile, cmd.processes_to_run);
+    let mut requested_processes: Vec<String> = Vec::new();
+    if let Some(ref process) = matches.value_of("process") {
+        requested_processes.push(process.to_string());
+    }
+
+    Arpx::new()
+        .load_profile(requested_profile_file)
+        .run(requested_processes)
 }
