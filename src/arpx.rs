@@ -31,7 +31,6 @@ use crate::profile::{ActionCfg, MonitorCfg, ProcessCfg, Profile};
 /// all processes defined in the loaded arpx.yaml profile will be run.
 #[derive(Debug, Clone)]
 pub struct Arpx {
-
     /// List of custom actions available to the Arpx instance, as defined in the currently-loaded
     /// profile.
     pub actions: Vec<ActionCfg>,
@@ -119,7 +118,7 @@ impl Arpx {
     /// from the loaded profile will be run.
     pub fn run(mut self, processes: Vec<String>) -> Result<(), Error> {
         if processes.is_empty() {
-            for (process_name, _) in &self.processes {
+            for process_name in self.processes.keys() {
                 self.processes_to_run.push(process_name[..].to_string());
             }
         } else {
@@ -133,8 +132,8 @@ impl Arpx {
                 move || loop {
                     let received = uplink_receiver_clone.recv();
 
-                    match received {
-                        Ok(uplink_message) => match &uplink_message.cmd[..] {
+                    if let Ok(uplink_message) = received {
+                        match &uplink_message.cmd[..] {
                             "execute_action" => {
                                 this.act(uplink_message);
                             }
@@ -142,8 +141,7 @@ impl Arpx {
                                 this.remove_running_process(uplink_message.pid);
                             }
                             _ => (),
-                        },
-                        Err(_) => (),
+                        }
                     }
                 }
             })
