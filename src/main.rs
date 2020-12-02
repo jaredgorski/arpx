@@ -22,15 +22,16 @@ fn main() -> Result<(), Error> {
                 .long("file")
                 .value_name("FILE")
                 .default_value(&default_profile)
-                .help("Path to the profile to be executed")
+                .help("Path to the profile to be executed.")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("process")
                 .short("p")
                 .long("process")
+                .multiple(true)
                 .value_name("PROCESS")
-                .help("Specifies a process in the profile to run individually")
+                .help("Specifies processes in the profile to run. Defaults to all.")
                 .takes_value(true),
         )
         .get_matches();
@@ -38,10 +39,13 @@ fn main() -> Result<(), Error> {
     let requested_profile_file: String =
         matches.value_of("file").unwrap_or("arpx.yaml").to_string();
 
-    let mut requested_processes: Vec<String> = Vec::new();
-    if let Some(ref process) = matches.value_of("process") {
-        requested_processes.push(process.to_string());
-    }
+    let requested_processes: Vec<String> = {
+        if matches.is_present("process") {
+            matches.values_of("process").unwrap().map(|x| x.to_string()).collect()
+        } else {
+            Vec::new()
+        }
+    };
 
     Arpx::new()
         .load_profile(requested_profile_file)
