@@ -76,7 +76,91 @@ impl Process {
     }
 
     pub fn run(&mut self) {
+        self.handle_process_stream();
+        self.wait_and_close();
+    }
+
+    pub fn kill(&mut self) {
+        if !self.exited {
+            self.child.kill().expect("killed");
+        }
+    }
+
+    pub fn wait(&mut self) -> ExitStatus {
+        self.child.wait().expect("waited")
+    }
+
+    pub fn wait_and_close(&mut self) -> ExitStatus {
+        let status = self.wait();
+        let process_name = self.name[..].to_string();
+        if status.success() {
+            let onsucceed = self.onsucceed[..].to_string();
+            if onsucceed.is_empty() {
+                let annotated_message = format!("[{}] exited with success.", process_name);
+                log::logger(&annotated_message);
+            } else {
+                let annotated_message = format!("[{}] onsucceed: {}", process_name, &onsucceed);
+                log::logger(&annotated_message);
+            }
+
+            self.uplink
+                .send(UplinkMessage {
+                    action: onsucceed,
+                    cmd: String::from("execute_action"),
+                    parameters: Vec::new(),
+                    pid: self.pid.clone(),
+                    process_name: process_name[..].to_string(),
+                })
+                .expect("!send to uplink");
+
+            self.uplink
+                .send(UplinkMessage {
+                    action: String::new(),
+                    cmd: String::from("remove_running_process"),
+                    parameters: Vec::new(),
+                    pid: self.pid.clone(),
+                    process_name: process_name[..].to_string(),
+                })
+                .expect("!send to uplink");
+        } else {
+            let onfail = self.onfail[..].to_string();
+            if onfail.is_empty() {
+                let annotated_message = format!("[{}] exited with failure.", process_name);
+                log::logger(&annotated_message);
+            } else {
+                let annotated_message = format!("[{}] onfail: {}", process_name, onfail);
+                log::logger(&annotated_message);
+            }
+
+            self.uplink
+                .send(UplinkMessage {
+                    action: onfail,
+                    cmd: String::from("execute_action"),
+                    parameters: Vec::new(),
+                    pid: self.pid.clone(),
+                    process_name: process_name[..].to_string(),
+                })
+                .expect("!send to uplink");
+
+            self.uplink
+                .send(UplinkMessage {
+                    action: String::new(),
+                    cmd: String::from("remove_running_process"),
+                    parameters: Vec::new(),
+                    pid: self.pid.clone(),
+                    process_name: process_name[..].to_string(),
+                })
+                .expect("!send to uplink");
+        }
+
+        self.exited = true;
+
+        status
+    }
+
+    fn handle_process_stream(&mut self) {
         let mut channels: Vec<PipeStreamReader> = Vec::new();
+
         channels.push(PipeStreamReader::new(Box::new(
             self.child.stdout.take().expect("!stdout"),
         )));
@@ -85,6 +169,7 @@ impl Process {
         )));
 
         let mut select = Select::new();
+
         for channel in channels.iter() {
             select.recv(&channel.lines);
         }
@@ -130,6 +215,7 @@ impl Process {
                                                     action,
                                                 ));
                                             }
+
                                             exec_actions.push(action.to_string());
                                         }
                                     }
@@ -169,87 +255,5 @@ impl Process {
                 }
             }
         }
-
-        self.wait_and_close();
-    }
-
-    pub fn kill(&mut self) {
-        if !self.exited {
-            self.child.kill().expect("killed");
-        }
-    }
-
-    pub fn wait(&mut self) -> ExitStatus {
-        self.child.wait().expect("waited")
-    }
-
-    pub fn wait_and_close(&mut self) -> ExitStatus {
-        let status = self.wait();
-        let process_name = self.name[..].to_string();
-        if status.success() {
-            let onsucceed = self.onsucceed[..].to_string();
-
-            if onsucceed.is_empty() {
-                let annotated_message = format!("[{}] exited with success.", process_name);
-                log::logger(&annotated_message);
-            } else {
-                let annotated_message = format!("[{}] onsucceed: {}", process_name, &onsucceed);
-                log::logger(&annotated_message);
-            }
-
-            self.uplink
-                .send(UplinkMessage {
-                    action: onsucceed,
-                    cmd: String::from("execute_action"),
-                    parameters: Vec::new(),
-                    pid: self.pid.clone(),
-                    process_name: process_name[..].to_string(),
-                })
-                .expect("!send to uplink");
-
-            self.uplink
-                .send(UplinkMessage {
-                    action: String::new(),
-                    cmd: String::from("remove_running_process"),
-                    parameters: Vec::new(),
-                    pid: self.pid.clone(),
-                    process_name: process_name[..].to_string(),
-                })
-                .expect("!send to uplink");
-        } else {
-            let onfail = self.onfail[..].to_string();
-
-            if onfail.is_empty() {
-                let annotated_message = format!("[{}] exited with failure.", process_name);
-                log::logger(&annotated_message);
-            } else {
-                let annotated_message = format!("[{}] onfail: {}", process_name, onfail);
-                log::logger(&annotated_message);
-            }
-
-            self.uplink
-                .send(UplinkMessage {
-                    action: onfail,
-                    cmd: String::from("execute_action"),
-                    parameters: Vec::new(),
-                    pid: self.pid.clone(),
-                    process_name: process_name[..].to_string(),
-                })
-                .expect("!send to uplink");
-
-            self.uplink
-                .send(UplinkMessage {
-                    action: String::new(),
-                    cmd: String::from("remove_running_process"),
-                    parameters: Vec::new(),
-                    pid: self.pid.clone(),
-                    process_name: process_name[..].to_string(),
-                })
-                .expect("!send to uplink");
-        }
-
-        self.exited = true;
-
-        status
     }
 }
