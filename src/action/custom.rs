@@ -28,6 +28,7 @@ pub fn act(
                     let process_cfg = ProcessCfg {
                         name: action.name[..].to_string(),
                         command: action.command[..].to_string(),
+                        color: action.color[..].to_string(),
                         cwd: action.cwd[..].to_string(),
                         silent: action.silent,
                         blocking: action.blocking,

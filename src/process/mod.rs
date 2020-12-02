@@ -32,6 +32,9 @@ pub struct Process {
     /// The configured command to be executed on the process.
     pub command: String,
 
+    /// The configured output color for the child process.
+    pub color: String,
+
     /// The working directory in which to execute the command.
     pub cwd: String,
 
@@ -98,6 +101,7 @@ impl Process {
             blocking: process.blocking,
             child,
             command: process.command[..].to_string(),
+            color: process.color[..].to_string(),
             cwd: process.cwd[..].to_string(),
             exited: false,
             monitors,
@@ -252,8 +256,7 @@ impl Process {
                                         if status.success() {
                                             if !self.silent && (&action[..] != "silence") {
                                                 log::logger(&format!(
-                                                    "[arpx] Condition met on line:\n[arpx]\t--> {}\n[arpx]\t performing: {}",
-                                                    &line,
+                                                    "[arpx] Condition met. Performing: {}",
                                                     action,
                                                 ));
                                             }
@@ -266,7 +269,10 @@ impl Process {
 
                             if !self.silent && !exec_actions.contains(&"silence".to_string()) {
                                 let annotated_message = &format!("[{}] {}", self.name, line);
-                                log::logger(annotated_message);
+                                log::logger_with_color(
+                                    annotated_message,
+                                    self.color[..].to_string(),
+                                );
                             }
 
                             let mut action_set = HashSet::new();
