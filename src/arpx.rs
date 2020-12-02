@@ -191,7 +191,7 @@ impl Arpx {
         let actions_clone = self.actions.clone();
         let monitors_clone = self.monitors.clone();
         let uplink_clone = self.uplink.clone();
-        let process = Arc::new(Mutex::new(Process::new(
+        let process = Arc::new(Mutex::new(Process::init(
             actions_clone,
             monitors_clone,
             process_cfg,
@@ -207,7 +207,7 @@ impl Arpx {
             Builder::new()
                 .name(process_cfg.name[..].to_string())
                 .spawn(move || {
-                    process_clone.lock().unwrap().run();
+                    process_clone.lock().unwrap().handle_runtime();
                 })
                 .expect("Could not spawn process thread"),
             process_clone_2,

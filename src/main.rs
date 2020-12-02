@@ -41,7 +41,11 @@ fn main() -> Result<(), Error> {
 
     let requested_processes: Vec<String> = {
         if matches.is_present("process") {
-            matches.values_of("process").unwrap().map(|x| x.to_string()).collect()
+            matches
+                .values_of("process")
+                .unwrap()
+                .map(|x| x.to_string())
+                .collect()
         } else {
             Vec::new()
         }

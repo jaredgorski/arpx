@@ -13,23 +13,56 @@ use crate::util::log;
 pub mod stream_read;
 pub mod uplink_message;
 
+/// Represents a single process run and managed by the current Arpx instance. All output from the
+/// child process, as well as significant events in the process lifetime (including monitor
+/// conditions being triggered and exit status) are sent via the uplink to the Arpx instance to be
+/// handled on the main thread.
 #[derive(Debug)]
 pub struct Process {
+    /// The list of custom actions from the Arpx instance, as defined in the currently-loaded
+    /// profile.
     pub actions: Vec<ActionCfg>,
+
+    /// If true, Arpx will wait for the process to exit before spawning any new processes.
     pub blocking: bool,
+
+    /// The child process object, which executes the command.
     pub child: Child,
+
+    /// The configured command to be executed on the process.
     pub command: String,
+
+    /// The working directory in which to execute the command.
     pub cwd: String,
+
+    /// Signals whether the process has exited.
     pub exited: bool,
+
+    /// The list of monitors from the Arpx instance, as defined in the currently-loaded profile.
     pub monitors: Vec<MonitorCfg>,
+
+    /// The name of the process.
     pub name: String,
+
+    /// The name of the action to perform if the process exits with a failure code.
     pub onfail: String,
+
+    /// The name of the action to perform if the process exits with a success code.
     pub onsucceed: String,
+
+    /// The `id` of the child process within the operating system.
     pub pid: String,
+
+    /// If true, process stdout will be suppressed.
     pub silent: bool,
+
+    /// The `Sender` object received from the Arpx instance. Used for sending messages to the Arpx
+    /// instance to perform actions on the main thread.
     pub uplink: Sender<UplinkMessage>,
 }
 
+/// Simple function for joining a given process and conditionally blocking it, if it's a blocking
+/// process as defined in the profile.
 pub fn join_and_handle_blocking(process_with_handle: (JoinHandle<()>, Arc<Mutex<Process>>)) {
     let (handle, process) = process_with_handle;
 
@@ -41,7 +74,9 @@ pub fn join_and_handle_blocking(process_with_handle: (JoinHandle<()>, Arc<Mutex<
 }
 
 impl Process {
-    pub fn new(
+    /// Builds and initiates a child process. Returns a Process instance with the proper
+    /// configuration.
+    pub fn init(
         actions: Vec<ActionCfg>,
         monitors: Vec<MonitorCfg>,
         process: &ProcessCfg,
@@ -75,21 +110,27 @@ impl Process {
         }
     }
 
-    pub fn run(&mut self) {
+    /// Handles entire process runtime including logging child process output, monitoring the child
+    /// process, communicating events to the Arpx instance, and closing the process.
+    pub fn handle_runtime(&mut self) {
         self.handle_process_stream();
         self.wait_and_close();
     }
 
+    /// SIGKILL the child process.
     pub fn kill(&mut self) {
         if !self.exited {
             self.child.kill().expect("killed");
         }
     }
 
+    /// Wait on the child process to exit.
     pub fn wait(&mut self) -> ExitStatus {
         self.child.wait().expect("waited")
     }
 
+    /// Wait on the child process to exit, log the process exit, and communicate the exit details
+    /// to the Arpx instance.
     pub fn wait_and_close(&mut self) -> ExitStatus {
         let status = self.wait();
         let process_name = self.name[..].to_string();
@@ -158,13 +199,14 @@ impl Process {
         status
     }
 
+    /// Log child process output, monitor the process, and communicate events to the Arpx instance.
     fn handle_process_stream(&mut self) {
         let mut channels: Vec<PipeStreamReader> = Vec::new();
 
-        channels.push(PipeStreamReader::new(Box::new(
+        channels.push(PipeStreamReader::init(Box::new(
             self.child.stdout.take().expect("!stdout"),
         )));
-        channels.push(PipeStreamReader::new(Box::new(
+        channels.push(PipeStreamReader::init(Box::new(
             self.child.stderr.take().expect("!stderr"),
         )));
 

@@ -3,25 +3,28 @@ use std::io;
 use std::string::FromUtf8Error;
 use std::thread::spawn;
 
+/// Represents a stream error.
 #[derive(Debug)]
 pub enum PipeError {
     IO(io::Error),
     NotUtf8(FromUtf8Error),
 }
 
+/// Represents a line of stream output.
 #[derive(Debug)]
 pub enum PipedLine {
     Line(String),
     EOF,
 }
 
+/// Provides a channel for streaming line-by-line output.
 #[derive(Debug)]
 pub struct PipeStreamReader {
     pub lines: Receiver<Result<PipedLine, PipeError>>,
 }
 
 impl PipeStreamReader {
-    pub fn new(mut stream: Box<dyn io::Read + Send>) -> PipeStreamReader {
+    pub fn init(mut stream: Box<dyn io::Read + Send>) -> PipeStreamReader {
         PipeStreamReader {
             lines: {
                 let (tx, rx) = unbounded();
