@@ -22,7 +22,7 @@ fn main() -> Result<(), Error> {
                 .long("file")
                 .value_name("FILE")
                 .default_value(&default_profile)
-                .help("Path to the profile to be executed.")
+                .help("Path to the profile to be executed")
                 .takes_value(true),
         )
         .arg(
@@ -31,7 +31,7 @@ fn main() -> Result<(), Error> {
                 .long("process")
                 .multiple(true)
                 .value_name("PROCESS")
-                .help("Specifies processes in the profile to run. Defaults to all.")
+                .help("Processes in the profile to run (runs all if none given)")
                 .takes_value(true),
         )
         .get_matches();
