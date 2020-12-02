@@ -118,8 +118,9 @@ impl Arpx {
     /// from the loaded profile will be run.
     pub fn run(mut self, processes: Vec<String>) -> Result<(), Error> {
         if processes.is_empty() {
-            for process_name in self.processes.keys() {
-                self.processes_to_run.push(process_name[..].to_string());
+            for profile_process in &self.profile.processes {
+                self.processes_to_run
+                    .push(profile_process.name[..].to_string());
             }
         } else {
             self.processes_to_run.extend(processes);
