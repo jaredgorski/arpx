@@ -5,8 +5,13 @@ use std::thread::JoinHandle;
 
 use crossbeam_channel::{Select, Sender};
 
-use crate::process::stream_read::{PipeStreamReader, PipedLine};
-use crate::process::uplink_message::UplinkMessage;
+use crate::process::{
+    stream_read::{
+        PipeStreamReader,
+        PipedLine,
+    },
+    uplink_message::UplinkMessage,
+};
 use crate::profile::{ActionCfg, MonitorCfg, ProcessCfg};
 use crate::util::log;
 
@@ -66,6 +71,7 @@ pub struct Process {
 
 /// Simple function for joining a given process and conditionally blocking it, if it's a blocking
 /// process as defined in the profile.
+#[doc(hidden)]
 pub fn join_and_handle_blocking(process_with_handle: (JoinHandle<()>, Arc<Mutex<Process>>)) {
     let (handle, process) = process_with_handle;
 

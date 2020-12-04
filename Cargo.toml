@@ -15,7 +15,6 @@ travis-ci = { repository = "jaredgorski/arpx" }
 [[bin]]
 name = "arpx"
 path = "src/main.rs"
-doc = false
 
 [dependencies]
 clap = "2.27.0"

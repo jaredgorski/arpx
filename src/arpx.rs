@@ -6,8 +6,10 @@ use std::thread::{Builder, JoinHandle};
 use crossbeam_channel::{unbounded, Receiver, Sender};
 
 use crate::action::act;
-use crate::process::uplink_message::UplinkMessage;
-use crate::process::Process;
+use crate::process::{
+    uplink_message::UplinkMessage,
+    Process,
+};
 use crate::profile::{ActionCfg, MonitorCfg, ProcessCfg, Profile};
 
 /// Provides an interface for loading an `arpx.yaml` profile and running one or more processes

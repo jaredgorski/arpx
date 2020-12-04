@@ -1,13 +1,36 @@
+#![cfg_attr(feature = "doc", doc(include = "../README.md"))]
+//! https://github.com/jaredgorski/arpx
+#![deny(
+    missing_docs,
+    missing_debug_implementations,
+    missing_copy_implementations,
+    trivial_casts,
+    unused_import_braces,
+    unused_allocation,
+    trivial_numeric_casts
+)]
+#![forbid(unsafe_code)]
+
 use std::io::Error;
 
 use clap::{App, Arg};
 
-extern crate arpx;
-use arpx::arpx::Arpx;
+mod arpx;
+mod action;
+mod process;
+mod profile;
+mod util;
 
+#[doc(hidden)]
 pub const APPNAME: &str = "arpx";
+
+#[doc(hidden)]
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+#[doc(hidden)]
 const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
+
+#[doc(hidden)]
 const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 
 fn main() -> Result<(), Error> {
@@ -51,7 +74,7 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    Arpx::new()
+    arpx::Arpx::new()
         .load_profile(requested_profile_file)
         .run(requested_processes)
 }
