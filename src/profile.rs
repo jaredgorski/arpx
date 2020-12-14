@@ -2,7 +2,8 @@ use std::fs;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
-use serde_yaml::Error;
+
+use crate::error::{self, ArpxError};
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Profile {
@@ -23,8 +24,8 @@ impl Profile {
         }
     }
 
-    pub fn from_file(pathstr: String) -> Result<Profile, Error> {
-        let mut path: PathBuf = PathBuf::from(pathstr);
+    pub fn from_file(pathstr: String) -> Result<Profile, ArpxError> {
+        let mut path: PathBuf = PathBuf::from(pathstr[..].to_string());
 
         if path.file_name() == None {
             path.set_file_name("arpx");
@@ -41,9 +42,15 @@ impl Profile {
             }
         }
 
-        let pr_file_str = fs::read_to_string(path).expect("Problem reading profile");
+        let pr_file_str = match fs::read_to_string(path) {
+            Ok(file_str) => file_str,
+            Err(_) => return Err(error::profile_not_found(pathstr)),
+        };
 
-        serde_yaml::from_str(&pr_file_str)
+        match serde_yaml::from_str(&pr_file_str) {
+            Ok(deserialized) => Ok(deserialized),
+            Err(error) => Err(error::profile_parse_error(format!("{}", error))),
+        }
     }
 }
 

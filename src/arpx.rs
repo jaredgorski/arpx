@@ -1,15 +1,12 @@
 use std::collections::HashMap;
-use std::io::Error;
 use std::sync::{Arc, Mutex};
 use std::thread::{Builder, JoinHandle};
 
 use crossbeam_channel::{unbounded, Receiver, Sender};
 
 use crate::action::act;
-use crate::process::{
-    uplink_message::UplinkMessage,
-    Process,
-};
+use crate::error;
+use crate::process::{uplink_message::UplinkMessage, Process};
 use crate::profile::{ActionCfg, MonitorCfg, ProcessCfg, Profile};
 
 /// Provides an interface for loading an `arpx.yaml` profile and running one or more processes
@@ -89,38 +86,36 @@ impl Arpx {
 
     /// Loads an `arpx.yaml` profile into the Arpx instance by filepath and configures the Arpx
     /// instance according to the definitions in the profile.
-    pub fn load_profile(mut self, filepath: String) -> Arpx {
-        self.profile = match Profile::from_file(filepath) {
+    pub fn load_profile(mut self, filepath: String) -> Result<Self, error::ArpxError> {
+        self.profile = match Profile::from_file(filepath[..].to_string()) {
             Ok(profile) => profile,
-            Err(error) => panic!(error),
+            Err(error) => return Err(error),
         };
 
-        for profile_process in &self.profile.processes {
+        for profile_process in self.profile.processes.iter() {
             self.processes.insert(
                 profile_process.name[..].to_string(),
                 profile_process.clone(),
             );
         }
 
-        let profile_monitors = self.profile.monitors.clone();
-        for profile_monitor in profile_monitors {
-            self.monitors.push(profile_monitor);
+        for profile_monitor in self.profile.monitors.iter() {
+            self.monitors.push(profile_monitor.clone());
         }
 
-        let profile_actions = self.profile.actions.clone();
-        for profile_action in profile_actions {
-            self.actions.push(profile_action);
+        for profile_action in self.profile.actions.iter() {
+            self.actions.push(profile_action.clone());
         }
 
-        self
+        Ok(self)
     }
 
     /// Runs the Arpx instance based on the current configuration, allowing for specifying one or
     /// more processes from the loaded profile to run. If no processes are specified, all processes
     /// from the loaded profile will be run.
-    pub fn run(mut self, processes: Vec<String>) -> Result<(), Error> {
+    pub fn run(mut self, processes: Vec<String>) -> Result<(), error::ArpxError> {
         if processes.is_empty() {
-            for profile_process in &self.profile.processes {
+            for profile_process in self.profile.processes.iter() {
                 self.processes_to_run
                     .push(profile_process.name[..].to_string());
             }
@@ -128,17 +123,25 @@ impl Arpx {
             self.processes_to_run.extend(processes);
         }
 
+        match self.validate_runtime_config() {
+            Ok(()) => (),
+            Err(error) => return Err(error),
+        };
+
         let uplink_receiver_clone = self.uplink_receiver.clone();
-        Builder::new()
-            .spawn({
-                let mut this = self.clone();
-                move || loop {
+        match Builder::new().spawn({
+            let mut this = self.clone();
+            move || -> Result<(), error::ArpxError> {
+                loop {
                     let received = uplink_receiver_clone.recv();
 
                     if let Ok(uplink_message) = received {
                         match &uplink_message.cmd[..] {
                             "execute_action" => {
-                                this.act(uplink_message);
+                                match this.act(uplink_message) {
+                                    Ok(()) => (),
+                                    Err(error) => return Err(error),
+                                };
                             }
                             "remove_running_process" => {
                                 this.remove_running_process(uplink_message.pid);
@@ -147,15 +150,32 @@ impl Arpx {
                         }
                     }
                 }
-            })
-            .expect("could not spawn listener thread");
+            }
+        }) {
+            Ok(handle) => handle,
+            Err(_) => {
+                return Err(error::internal_error(
+                    "Could not spawn listener thread.".to_string(),
+                ))
+            }
+        };
 
         let mut process_handles = Vec::new();
         for process_name in &self.processes_to_run.clone() {
-            let (handle, process) = self.run_process(process_name[..].to_string());
+            let (handle, process) = match self.run_process(process_name[..].to_string()) {
+                Ok(process_tuple) => process_tuple,
+                Err(error) => return Err(error),
+            };
 
             if process.lock().unwrap().blocking {
-                handle.join().expect("!join");
+                match handle.join() {
+                    Ok(()) => (),
+                    Err(_) => {
+                        return Err(error::internal_error(
+                            "Could not join process handle.".to_string(),
+                        ))
+                    }
+                }
                 process.lock().unwrap().wait();
             } else {
                 process_handles.push(handle);
@@ -166,7 +186,14 @@ impl Arpx {
         // --> https://matklad.github.io/2019/08/23/join-your-threads.html
 
         for handle in process_handles {
-            handle.join().expect("!join");
+            match handle.join() {
+                Ok(()) => (),
+                Err(_) => {
+                    return Err(error::internal_error(
+                        "Could not join process handle.".to_string(),
+                    ))
+                }
+            }
         }
 
         while self.running_processes_map.lock().unwrap().len() > 0 {}
@@ -175,14 +202,23 @@ impl Arpx {
     }
 
     /// Runs an individual process from the currently loaded profile by process name.
-    pub fn run_process(&mut self, process_name: String) -> (JoinHandle<()>, Arc<Mutex<Process>>) {
-        let process_cfg = self
-            .processes
-            .get(&process_name)
-            .expect("Internal process does not match any profile process.")
-            .clone();
+    pub fn run_process(
+        &mut self,
+        process_name: String,
+    ) -> Result<(JoinHandle<()>, Arc<Mutex<Process>>), error::ArpxError> {
+        let process_cfg = match self.processes.get(&process_name) {
+            Some(cfg) => cfg.clone(),
+            None => {
+                return Err(error::internal_error(
+                    "Internal process does not match any profile process.".to_string(),
+                ))
+            }
+        };
 
-        self.run_process_from_cfg(&process_cfg)
+        match self.run_process_from_cfg(&process_cfg) {
+            Ok(process_tuple) => Ok(process_tuple),
+            Err(error) => Err(error),
+        }
     }
 
     /// Runs an individual process by receiving a process configuration object. The process is run
@@ -190,7 +226,7 @@ impl Arpx {
     pub fn run_process_from_cfg(
         &mut self,
         process_cfg: &ProcessCfg,
-    ) -> (JoinHandle<()>, Arc<Mutex<Process>>) {
+    ) -> Result<(JoinHandle<()>, Arc<Mutex<Process>>), error::ArpxError> {
         let actions_clone = self.actions.clone();
         let monitors_clone = self.monitors.clone();
         let uplink_clone = self.uplink.clone();
@@ -206,15 +242,17 @@ impl Arpx {
         let pid = process.lock().unwrap().pid.clone();
         self.add_running_process(pid, process);
 
-        (
-            Builder::new()
+        let join_handle =
+            match Builder::new()
                 .name(process_cfg.name[..].to_string())
                 .spawn(move || {
                     process_clone.lock().unwrap().handle_runtime();
-                })
-                .expect("Could not spawn process thread"),
-            process_clone_2,
-        )
+                }) {
+                Ok(handle) => handle,
+                Err(_) => return Err(error::internal_error("".to_string())),
+            };
+
+        Ok((join_handle, process_clone_2))
     }
 
     /// Internal function which adds a process object to the running_processes_map on the current
@@ -234,7 +272,7 @@ impl Arpx {
 
     /// Internal function which passes an action instruction to the action handler code for
     /// execution.
-    fn act(&mut self, uplink_message: UplinkMessage) {
+    fn act(&mut self, uplink_message: UplinkMessage) -> Result<(), error::ArpxError> {
         let UplinkMessage {
             action,
             pid,
@@ -249,6 +287,41 @@ impl Arpx {
             .unwrap()
             .clone();
 
-        act(self, action, pid, process, process_name);
+        act(self, action, pid, process, process_name)?;
+
+        Ok(())
+    }
+
+    fn validate_runtime_config(&self) -> Result<(), error::ArpxError> {
+        let mut last_iterated_process_cfg: Option<&ProcessCfg> = None;
+
+        for process_name in self.processes_to_run.iter() {
+            let process_cfg =
+                match self.processes.get(process_name) {
+                    Some(cfg) => cfg,
+                    None => return Err(error::internal_error(
+                        "While validating:\n  Internal process does not match any profile process."
+                            .to_string(),
+                    )),
+                };
+
+            if process_cfg.blocking && process_cfg.onsucceed == "respawn" {
+                return Err(error::invalid_configuration(
+                    "Blocking process cannot respawn onsucceed.".to_string(),
+                ));
+            }
+
+            if let Some(p) = last_iterated_process_cfg {
+                if process_cfg.blocking && !p.blocking {
+                    return Err(error::invalid_configuration(
+                        "Cannot spawn a blocking process after a non-blocking process.".to_string(),
+                    ));
+                }
+            }
+
+            last_iterated_process_cfg = Some(process_cfg);
+        }
+
+        Ok(())
     }
 }

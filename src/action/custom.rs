@@ -2,6 +2,7 @@ use std::io::Write;
 use std::sync::{Arc, Mutex};
 
 use crate::arpx::Arpx;
+use crate::error;
 use crate::process::{join_and_handle_blocking, Process};
 use crate::profile::ProcessCfg;
 
@@ -11,7 +12,7 @@ pub fn act(
     _pid: String,
     process: Arc<Mutex<Process>>,
     _process_name: String,
-) {
+) -> Result<(), error::ArpxError> {
     let exec_action = arpx_ref.profile.actions.iter().find(|x| x.name == action);
 
     if let Some(action) = exec_action {
@@ -36,10 +37,17 @@ pub fn act(
                         onsucceed: action.onsucceed[..].to_string(),
                     };
 
-                    join_and_handle_blocking(arpx_ref.run_process_from_cfg(&process_cfg));
+                    let process_tuple = match arpx_ref.run_process_from_cfg(&process_cfg) {
+                        Ok(process_tuple) => process_tuple,
+                        Err(error) => return Err(error),
+                    };
+
+                    join_and_handle_blocking(process_tuple)?
                 }
             }
             _ => (),
         }
     }
+
+    Ok(())
 }

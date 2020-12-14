@@ -4,6 +4,7 @@ pub mod custom;
 use std::sync::{Arc, Mutex};
 
 use crate::arpx::Arpx;
+use crate::error;
 use crate::process::Process;
 
 pub fn act(
@@ -12,10 +13,12 @@ pub fn act(
     pid: String,
     process: Arc<Mutex<Process>>,
     process_name: String,
-) {
+) -> Result<(), error::ArpxError> {
     if builtin::BUILTINS.contains(&&action[..]) {
-        builtin::act(arpx_ref, action, pid, process, process_name);
+        builtin::act(arpx_ref, action, pid, process, process_name)?
     } else {
-        custom::act(arpx_ref, action, pid, process, process_name);
+        custom::act(arpx_ref, action, pid, process, process_name)?
     }
+
+    Ok(())
 }

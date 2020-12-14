@@ -5,15 +5,13 @@ use std::thread::JoinHandle;
 
 use crossbeam_channel::{Select, Sender};
 
+use crate::error;
 use crate::process::{
-    stream_read::{
-        PipeStreamReader,
-        PipedLine,
-    },
+    stream_read::{PipeStreamReader, PipedLine},
     uplink_message::UplinkMessage,
 };
 use crate::profile::{ActionCfg, MonitorCfg, ProcessCfg};
-use crate::util::log;
+use crate::util::log::{logger, logger_error, logger_with_color, AnnotatedMessage};
 
 pub mod stream_read;
 pub mod uplink_message;
@@ -72,14 +70,21 @@ pub struct Process {
 /// Simple function for joining a given process and conditionally blocking it, if it's a blocking
 /// process as defined in the profile.
 #[doc(hidden)]
-pub fn join_and_handle_blocking(process_with_handle: (JoinHandle<()>, Arc<Mutex<Process>>)) {
+pub fn join_and_handle_blocking(
+    process_with_handle: (JoinHandle<()>, Arc<Mutex<Process>>),
+) -> Result<(), error::ArpxError> {
     let (handle, process) = process_with_handle;
 
-    handle.join().expect("!join");
+    match handle.join() {
+        Ok(()) => (),
+        Err(_) => return Err(error::internal_error("".to_string())),
+    };
 
     if process.lock().unwrap().blocking {
         process.lock().unwrap().wait_and_close();
     }
+
+    Ok(())
 }
 
 impl Process {
@@ -147,11 +152,15 @@ impl Process {
         if status.success() {
             let onsucceed = self.onsucceed[..].to_string();
             if onsucceed.is_empty() {
-                let annotated_message = format!("[{}] exited with success.", process_name);
-                log::logger(&annotated_message);
+                logger(AnnotatedMessage::new(
+                    &process_name[..],
+                    "exited with success",
+                ));
             } else {
-                let annotated_message = format!("[{}] onsucceed: {}", process_name, &onsucceed);
-                log::logger(&annotated_message);
+                logger(AnnotatedMessage::new(
+                    &process_name[..],
+                    &format!("onsucceed: {}", &onsucceed),
+                ));
             }
 
             self.uplink
@@ -176,11 +185,15 @@ impl Process {
         } else {
             let onfail = self.onfail[..].to_string();
             if onfail.is_empty() {
-                let annotated_message = format!("[{}] exited with failure.", process_name);
-                log::logger(&annotated_message);
+                logger(AnnotatedMessage::new(
+                    &process_name[..],
+                    "exited with failure",
+                ));
             } else {
-                let annotated_message = format!("[{}] onfail: {}", process_name, onfail);
-                log::logger(&annotated_message);
+                logger(AnnotatedMessage::new(
+                    &process_name[..],
+                    &format!("onfail: {}", &onfail),
+                ));
             }
 
             self.uplink
@@ -261,9 +274,12 @@ impl Process {
                                         let status = condition_child.wait().expect("!wait");
                                         if status.success() {
                                             if !self.silent && (&action[..] != "silence") {
-                                                log::logger(&format!(
-                                                    "[arpx] Condition met. Performing: {}",
-                                                    action,
+                                                logger(AnnotatedMessage::new(
+                                                    &self.name[..],
+                                                    &format!(
+                                                        "Condition met. Performing: {}",
+                                                        action
+                                                    ),
                                                 ));
                                             }
 
@@ -274,9 +290,8 @@ impl Process {
                             }
 
                             if !self.silent && !exec_actions.contains(&"silence".to_string()) {
-                                let annotated_message = &format!("[{}] {}", self.name, line);
-                                log::logger_with_color(
-                                    annotated_message,
+                                logger_with_color(
+                                    AnnotatedMessage::new(&self.name[..], &line),
                                     self.color[..].to_string(),
                                 );
                             }
@@ -301,7 +316,9 @@ impl Process {
                             select.remove(index);
                         }
                     },
-                    Err(error) => log::error(&format!("{:?}", error)),
+                    Err(error) => {
+                        logger_error(AnnotatedMessage::new(&self.name, &format!("{:?}", error)));
+                    }
                 },
                 Err(_) => {
                     stream_eof = true;

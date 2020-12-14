@@ -11,12 +11,11 @@
 )]
 #![forbid(unsafe_code)]
 
-use std::io::Error;
-
 use clap::{App, Arg};
 
-mod arpx;
 mod action;
+mod arpx;
+mod error;
 mod process;
 mod profile;
 mod util;
@@ -33,7 +32,34 @@ const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
 #[doc(hidden)]
 const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 
-fn main() -> Result<(), Error> {
+#[doc(hidden)]
+pub const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
+
+#[doc(hidden)]
+const DEBUG_FLAG: bool = false;
+
+#[doc(hidden)]
+const ERROR_PREFIX: &str = r#"
+ERROR:
+"#;
+
+fn wrap_arpx_error(error_str: String) -> String {
+    format!("{}\n> {}\n\n", ERROR_PREFIX, error_str)
+}
+
+fn print_error(error: error::ArpxError) {
+    let formatted = match DEBUG_FLAG {
+        true => format!("{:?}", error),
+        false => format!("{}", error),
+    };
+
+    let wrapped = wrap_arpx_error(formatted);
+
+    eprint!("{}", wrapped)
+}
+
+#[doc(hidden)]
+fn main() {
     let default_profile: String = format!("{}.yaml", APPNAME);
     let matches = App::new(APPNAME)
         .version(VERSION)
@@ -74,7 +100,21 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    arpx::Arpx::new()
-        .load_profile(requested_profile_file)
-        .run(requested_processes)
+    let a = arpx::Arpx::new();
+
+    let a_loaded = match a.load_profile(requested_profile_file) {
+        Ok(a) => a,
+        Err(error) => {
+            print_error(error);
+            std::process::exit(1);
+        }
+    };
+
+    match a_loaded.run(requested_processes) {
+        Ok(()) => (),
+        Err(error) => {
+            print_error(error);
+            std::process::exit(1);
+        }
+    };
 }
