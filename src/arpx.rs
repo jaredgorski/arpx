@@ -6,7 +6,7 @@ use crossbeam_channel::{unbounded, Receiver, Sender};
 
 use crate::action::act;
 use crate::error;
-use crate::process::{uplink_message::UplinkMessage, Process};
+use crate::process::{join_and_handle_blocking, uplink_message::UplinkMessage, Process};
 use crate::profile::{ActionCfg, MonitorCfg, ProcessCfg, Profile};
 
 /// Provides an interface for loading an `arpx.yaml` profile and running one or more processes
@@ -114,7 +114,10 @@ impl Arpx {
     /// more processes from the loaded profile to run. If no processes are specified, all processes
     /// from the loaded profile will be run.
     pub fn run(mut self, processes: Vec<String>) -> Result<(), error::ArpxError> {
-        if processes.is_empty() {
+        if !self.profile.entrypoint.is_empty() {
+            self.processes_to_run
+                .push(self.profile.entrypoint.to_string());
+        } else if processes.is_empty() {
             for profile_process in self.profile.processes.iter() {
                 self.processes_to_run
                     .push(profile_process.name[..].to_string());
@@ -142,6 +145,14 @@ impl Arpx {
                                     Ok(()) => (),
                                     Err(error) => return Err(error),
                                 };
+                            }
+                            "run_process" => {
+                                let process_tuple = match this.run_process(uplink_message.action) {
+                                    Ok(process_tuple) => process_tuple,
+                                    Err(error) => return Err(error),
+                                };
+
+                                join_and_handle_blocking(process_tuple)?
                             }
                             "remove_running_process" => {
                                 this.remove_running_process(uplink_message.pid);

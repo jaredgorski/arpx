@@ -7,6 +7,8 @@ use crate::error::{self, ArpxError};
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Profile {
+    #[serde(default = "default_empty_string")]
+    pub entrypoint: String,
     #[serde(default = "default_processes")]
     pub processes: Vec<ProcessCfg>,
     #[serde(default = "default_monitors")]
@@ -18,6 +20,7 @@ pub struct Profile {
 impl Profile {
     pub fn new() -> Profile {
         Profile {
+            entrypoint: String::new(),
             processes: Vec::new(),
             monitors: Vec::new(),
             actions: Vec::new(),

@@ -150,7 +150,7 @@ impl Process {
         let status = self.wait();
         let process_name = self.name[..].to_string();
         if status.success() {
-            let onsucceed = self.onsucceed[..].to_string();
+            let mut onsucceed = self.onsucceed[..].to_string();
             if onsucceed.is_empty() {
                 logger(AnnotatedMessage::new(
                     &process_name[..],
@@ -163,10 +163,19 @@ impl Process {
                 ));
             }
 
+            let onsucceed_split = onsucceed.split(":").collect::<Vec<&str>>();
+            let onsucceed_cmd = match onsucceed_split[0] {
+                "process" => {
+                    onsucceed = onsucceed_split[1].to_string();
+                    "run_process"
+                }
+                _ => "execute_action",
+            };
+
             self.uplink
                 .send(UplinkMessage {
                     action: onsucceed,
-                    cmd: String::from("execute_action"),
+                    cmd: onsucceed_cmd.to_string(),
                     parameters: Vec::new(),
                     pid: self.pid.clone(),
                     process_name: process_name[..].to_string(),
@@ -183,7 +192,7 @@ impl Process {
                 })
                 .expect("!send to uplink");
         } else {
-            let onfail = self.onfail[..].to_string();
+            let mut onfail = self.onfail[..].to_string();
             if onfail.is_empty() {
                 logger(AnnotatedMessage::new(
                     &process_name[..],
@@ -196,10 +205,19 @@ impl Process {
                 ));
             }
 
+            let onfail_split = onfail.split(":").collect::<Vec<&str>>();
+            let onfail_cmd = match onfail_split[0] {
+                "process" => {
+                    onfail = onfail_split[1].to_string();
+                    "run_process"
+                }
+                _ => "execute_action",
+            };
+
             self.uplink
                 .send(UplinkMessage {
                     action: onfail,
-                    cmd: String::from("execute_action"),
+                    cmd: onfail_cmd.to_string(),
                     parameters: Vec::new(),
                     pid: self.pid.clone(),
                     process_name: process_name[..].to_string(),
