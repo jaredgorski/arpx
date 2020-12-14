@@ -108,7 +108,7 @@ actions:
       exit
 ```
 
-![Example arpx concurrent output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_concurrent_screenshot.jpg)
+![Example arpx concurrent output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_concurrent_screenshot.png)
 
 ```yaml
 processes:
@@ -148,7 +148,7 @@ actions:
       exit
 ```
 
-![Example arpx blocking output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_blocking_screenshot.jpg)
+![Example arpx blocking output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_blocking_screenshot.png)
 
 ```yaml
 entrypoint: loop1                   // Added
@@ -183,7 +183,7 @@ processes:
       done
 ```
 
-![Example arpx entrypoint output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_entrypoint_screenshot.jpg)
+![Example arpx entrypoint output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_entrypoint_screenshot.png)
 
 ### Processes
 PROCESSES are the primary commands **arpx** will manage. PROCESSES can be run blockingly or concurrently, and can be run one at a time with the `-p` option.
