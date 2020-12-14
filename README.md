@@ -50,8 +50,8 @@ processes:                          // Define PROCESSES.
     cwd: [PATH]                     // Directory in which to execute command.
     blocking: [TRUE|(FALSE)]        // Whether the PROCESS should block the main thread or run concurrently.
     silent: [TRUE|(FALSE)]          // Whether to silence logs for the PROCESS.
-    onsucceed: [ACTION]             // ACTION to execute if PROCESS exits with success. To execute an existing process, use `process:` followed by the process name.
-    onfail: [ACTION]                // ACTION to execute if PROCESS exits with failure. To execute an existing process, use `process:` followed by the process name.
+    onsucceed: [ACTION]             // ACTION to execute if PROCESS exits with success. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
+    onfail: [ACTION]                // ACTION to execute if PROCESS exits with failure. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
 
 monitors:                           // Configure MONITORS for specific PROCESSES.
   - process: [NAME OF PROCESS]      // Specify the PROCESS to MONITOR.
@@ -66,8 +66,8 @@ actions:                            // Define custom ACTIONS which can be activa
     cwd: [PATH]                     // Directory in which to execute command.
     silent: [TRUE|(FALSE)]          // Whether to silence logs for the ACTION.
     stdin: [STDIN]                  // Enter some stdin when the ACTION is triggered.
-    onsucceed: [ACTION]             // ACTION to execute if ACTION exits with success. To execute an existing process, use `process:` followed by the process name.
-    onfail: [ACTION]                // ACTION to execute if ACTION exits with failure. To execute an existing process, use `process:` followed by the process name.
+    onsucceed: [ACTION]             // ACTION to execute if ACTION exits with success. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
+    onfail: [ACTION]                // ACTION to execute if ACTION exits with failure. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
 ```
 
 #### Example profile - script.arpx.yaml:
@@ -206,11 +206,12 @@ $ arpx -f ~/path/to/my.arpx.yaml
 #### Process properties:
 - **name**: Name of the PROCESS.
 - **command**: Command to execute when PROCESS is initiated.
+- **color** Output color. Receives [ black, blue, green, red, cyan, magenta, yellow, white, <ansi 256 number>, <rgb in format 255,255,255> ].
 - **cwd**: Working directory in which to execute PROCESS `command`.
 - **blocking**: Whether the PROCESS should block the main thread or run concurrently. Blocking PROCESSES will run in the order in which they are defined in `arpx.yaml`, so long as they precede any non-blocking PROCESSES. Non-blocking PROCESSES will run concurrently to to other PROCESSES and will therefore not block the main thread from initiating the remainder of the defined PROCESSES. Setting `blocking` to `true` makes it possible to run PROCESSES in order, rather than concurrently.
 - **silent**: Whether the PROCESS should propagate stdout and stderr from the `command` to the **arpx** stdout.
-- **onsucceed**: An ACTION to initiate if the current PROCESS `command` exits successfully.
-- **onfail**: An ACTION to initiate if the current PROCESS `command` exits with failure.
+- **onsucceed**: An ACTION to initiate if the current PROCESS `command` exits successfully. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
+- **onfail**: An ACTION to initiate if the current PROCESS `command` exits with failure. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
 
 ### Monitors
 MONITORS watch for conditions in a given PROCESS and perform ACTIONS if/when those conditions are met. MONITORS are configured by defining a condition and actions to execute when the condition exits successfully.
@@ -235,11 +236,12 @@ Custom ACTIONS can define new tasks to be executed if/when triggering conditions
 #### Custom action properties:
 - **name**: Name of the ACTION.
 - **command**: Command to execute when ACTION is initiated.
+- **color** Output color. Receives [ black, blue, green, red, cyan, magenta, yellow, white, <ansi 256 number>, <rgb in format 255,255,255> ].
 - **cwd**: Working directory in which to execute ACTION `command`.
 - **silent**: Whether the ACTION should propagate stdout and stderr from the `command` to the **arpx** stdout.
 - **stdin**: Enter some stdin. Allows for automatically replying to prompts from a PROCESS. `stdin` does not apply to ACTIONS called by `onsucceed` or `onfail`.
-- **onsucceed**: An ACTION to initiate if the current ACTION `command` exits successfully.
-- **onfail**: An ACTION to initiate if the current ACTION `command` exits with failure.
+- **onsucceed**: An ACTION to initiate if the current ACTION `command` exits successfully. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
+- **onfail**: An ACTION to initiate if the current ACTION `command` exits with failure. To execute an existing PROCESS, use `process:` followed by the PROCESS name.
 
 <div align="center">
   <h2>
@@ -249,6 +251,7 @@ Custom ACTIONS can define new tasks to be executed if/when triggering conditions
 
 Some potential applications:
 - Selectively silence logging output for programs or scripts
+- Automate build process
 - Run multiple programs or scripts concurrently
 - Manage local development environment with multiple dependent services as one process
 - Run scripts in a particular order
