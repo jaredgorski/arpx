@@ -162,7 +162,7 @@ processes:
         sleep 1
         echo "Loop1 $i"
       done
-    onsucceed: loop2                // Added
+    onsucceed: process:loop2        // Added
   - name: loop2
     color: green
     command: |
@@ -172,7 +172,7 @@ processes:
         echo "Loop2 $i"
       done
       exit
-    onsucceed: loop3                // Added
+    onsucceed: process:loop3        // Added
   - name: loop3
     color: blue
     command: |
