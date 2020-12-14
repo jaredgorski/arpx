@@ -1,7 +1,7 @@
 [package]
 name = "arpx"
 description = "Automate and relate multiple processes."
-version = "0.3.1"
+version = "0.4.0"
 license = "MIT"
 readme = "README.md"
 keywords = ["automation", "process", "concurrency", "multiplexer"]
@@ -15,7 +15,6 @@ travis-ci = { repository = "jaredgorski/arpx" }
 [[bin]]
 name = "arpx"
 path = "src/main.rs"
-doc = false
 
 [dependencies]
 clap = "2.27.0"
@@ -23,3 +22,4 @@ crossbeam-channel = "0.3"
 dirs = "2.0"
 serde = { version = "1.0.99", features = ["derive"] }
 serde_yaml = "0.8.9"
+termcolor = "1.1"

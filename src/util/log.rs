@@ -1,26 +1,44 @@
-use std::collections::HashMap;
+use std::io::{self, Write};
+use std::str::FromStr;
 
-#[derive(Debug)]
-pub struct LogData<'a> {
-    pub message: &'a str,
-    pub snippets: HashMap<String, String>,
-}
+use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
-pub fn logger(log: &str) {
-    let log_output: String = log.to_string();
-    println!("{}", log_output);
-}
+pub struct AnnotatedMessage;
 
-pub fn error(err: &str) {
-    let error: String = format!("error: {}", err);
-    println!("{}", error);
-}
-
-pub fn log_trigger_snippet(log_data: &LogData, action: &str) {
-    if let Some(snippet) = log_data.snippets.get(action) {
-        logger(&format!(
-            "[arpx] Condition met on line:\n[arpx]\t--> {}",
-            snippet
-        ));
+impl AnnotatedMessage {
+    pub fn new<'a>(annotation: &'a str, message: &'a str) -> String {
+        format!("[{}] {}", annotation, message)
     }
+}
+
+pub fn logger(log: String) {
+    write_with_color(log, Color::White).expect("!log");
+}
+
+pub fn logger_with_color(log: String, color: String) {
+    let log_color = {
+        if color.is_empty() {
+            Color::White
+        } else {
+            Color::from_str(&color[..]).unwrap()
+        }
+    };
+
+    write_with_color(log, log_color).expect("!log");
+}
+
+pub fn logger_error(err: String) {
+    write_error(err).expect("!log");
+}
+
+fn write_with_color(output: String, color: Color) -> io::Result<()> {
+    let mut stdout = StandardStream::stdout(ColorChoice::Always);
+    stdout.set_color(ColorSpec::new().set_fg(Some(color)))?;
+    writeln!(&mut stdout, "{}", output)
+}
+
+fn write_error(output: String) -> io::Result<()> {
+    let mut stderr = StandardStream::stderr(ColorChoice::Always);
+    stderr.set_color(ColorSpec::new().set_fg(Some(Color::Red)))?;
+    writeln!(&mut stderr, "{}", output)
 }
