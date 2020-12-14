@@ -41,14 +41,17 @@ Command  | Info
 PROFILES can be named `arpx.yaml` or formatted as `<my-prefix>.arpx.yaml`. PROFILES are currently the primary mode of configuration for **arpx** runtimes, at least until a more scriptable/less verbose interface is developed.
 
 ```yaml
-processes:                          // Define primary PROCESSES.
+entrypoint: [NAME OF PROCESS]       // Configure a single PROCESS to be run as an "entrypoint" to the profile.
+
+processes:                          // Define PROCESSES.
   - name: [NAME OF PROCESS]         // Add a unique name to identify the PROCESS within the arpx runtime.
     command: [COMMAND]              // The command to execute.
+    color: [COLOR]                  // Output color. Receives [ black, blue, green, red, cyan, magenta, yellow, white, <ansi 256 number>, <rgb in format 255,255,255> ]
     cwd: [PATH]                     // Directory in which to execute command.
     blocking: [TRUE|(FALSE)]        // Whether the PROCESS should block the main thread or run concurrently.
     silent: [TRUE|(FALSE)]          // Whether to silence logs for the PROCESS.
-    onsucceed: [ACTION]             // ACTION to execute if PROCESS exits with success.
-    onfail: [ACTION]                // ACTION to execute if PROCESS exits with failure.
+    onsucceed: [ACTION]             // ACTION to execute if PROCESS exits with success. To execute an existing process, use `process:` followed by the process name.
+    onfail: [ACTION]                // ACTION to execute if PROCESS exits with failure. To execute an existing process, use `process:` followed by the process name.
 
 monitors:                           // Configure MONITORS for specific PROCESSES.
   - process: [NAME OF PROCESS]      // Specify the PROCESS to MONITOR.
@@ -59,17 +62,19 @@ monitors:                           // Configure MONITORS for specific PROCESSES
 actions:                            // Define custom ACTIONS which can be activated by MONITORS under triggering conditions.
   - name: [NAME OF ACTION]          // Add a unique name to identify the ACTION within the arpx runtime.
     command: [COMMAND]              // The command to execute.
+    color: [COLOR]                  // Output color. Receives [ black, blue, green, red, cyan, magenta, yellow, white, <ansi 256 number>, <rgb in format 255,255,255> ]
     cwd: [PATH]                     // Directory in which to execute command.
     silent: [TRUE|(FALSE)]          // Whether to silence logs for the ACTION.
     stdin: [STDIN]                  // Enter some stdin when the ACTION is triggered.
-    onsucceed: [ACTION]             // ACTION to execute if ACTION exits with success.
-    onfail: [ACTION]                // ACTION to execute if ACTION exits with failure.
+    onsucceed: [ACTION]             // ACTION to execute if ACTION exits with success. To execute an existing process, use `process:` followed by the process name.
+    onfail: [ACTION]                // ACTION to execute if ACTION exits with failure. To execute an existing process, use `process:` followed by the process name.
 ```
 
 #### Example profile - script.arpx.yaml:
 ```yaml
 processes:
   - name: loop1
+    color: red
     command: |
       for i in {1..5}
       do
@@ -77,6 +82,7 @@ processes:
         echo "Loop1 $i"
       done
   - name: loop3
+    color: blue
     command: |
       for i in {1..5}
       do
@@ -92,6 +98,7 @@ monitors:
 
 actions:
   - name: loop2
+    color: green
     command: |
       for i in {1..3}
       do
@@ -101,11 +108,12 @@ actions:
       exit
 ```
 
-![Example arpx concurrent output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_concurrent_screenshot-annotated.png)
+![Example arpx concurrent output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_concurrent_screenshot.jpg)
 
 ```yaml
 processes:
   - name: loop1
+    color: red
     command: |
       for i in {1..5}
       do
@@ -114,6 +122,7 @@ processes:
       done
     blocking: true                  // Added
   - name: loop3
+    color: blue
     command: |
       for i in {1..5}
       do
@@ -129,6 +138,7 @@ monitors:
 
 actions:
   - name: loop2
+    color: green
     command: |
       for i in {1..3}
       do
@@ -138,7 +148,42 @@ actions:
       exit
 ```
 
-![Example arpx blocking output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_blocking_screenshot-annotated.png)
+![Example arpx blocking output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_blocking_screenshot.jpg)
+
+```yaml
+entrypoint: loop1                   // Added
+
+processes:
+  - name: loop1
+    color: red
+    command: |
+      for i in {1..5}
+      do
+        sleep 1
+        echo "Loop1 $i"
+      done
+    onsucceed: loop2                // Added
+  - name: loop2
+    color: green
+    command: |
+      for i in {1..3}
+      do
+        sleep 1
+        echo "Loop2 $i"
+      done
+      exit
+    onsucceed: loop3                // Added
+  - name: loop3
+    color: blue
+    command: |
+      for i in {1..5}
+      do
+        sleep 1
+        echo "Loop3 $i"
+      done
+```
+
+![Example arpx entrypoint output](https://github.com/jaredgorski/arpx/raw/master/.media/arpx_entrypoint_screenshot.jpg)
 
 ### Processes
 PROCESSES are the primary commands **arpx** will manage. PROCESSES can be run blockingly or concurrently, and can be run one at a time with the `-p` option.
@@ -148,7 +193,12 @@ To run an individual PROCESS named `my-process` contained in a file named `arpx.
 $ arpx -p my-process
 ```
 
-To run all PROCESSES contained in a file named `my.arpx.yaml`, execute:
+To run individual PROCESSES named `my-process-1` and `my-process-` contained in a file named `arpx.yaml` in the current working directory, execute:
+```shell
+$ arpx -p my-process-1 my-process-2
+```
+
+To run all PROCESSES (or entrypoint PROCESS) contained in a file named `my.arpx.yaml`, execute:
 ```shell
 $ arpx -f ~/path/to/my.arpx.yaml
 ```
