@@ -66,8 +66,8 @@ fn main() {
         .author(AUTHOR)
         .about(DESCRIPTION)
         .arg(
-            Arg::with_name("file")
-                .short("f")
+            Arg::new("file")
+                .short('f')
                 .long("file")
                 .value_name("FILE")
                 .default_value(&default_profile)
@@ -75,10 +75,10 @@ fn main() {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("process")
-                .short("p")
+            Arg::new("process")
+                .short('p')
                 .long("process")
-                .multiple(true)
+                .multiple_occurrences(true)
                 .value_name("PROCESS")
                 .help("Processes in the profile to run (runs all if none given)")
                 .takes_value(true),
