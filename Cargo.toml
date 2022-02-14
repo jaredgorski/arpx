@@ -19,7 +19,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = "3.0.14"
-crossbeam-channel = "0.3"
+crossbeam-channel = "0.5.2"
 dirs = "2.0"
 serde = { version = "1.0.99", features = ["derive"] }
 serde_yaml = "0.8.9"
