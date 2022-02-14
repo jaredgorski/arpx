@@ -163,7 +163,7 @@ impl Process {
                 ));
             }
 
-            let onsucceed_split = onsucceed.split(":").collect::<Vec<&str>>();
+            let onsucceed_split = onsucceed.split(':').collect::<Vec<&str>>();
             let onsucceed_cmd = match onsucceed_split[0] {
                 "process" => {
                     onsucceed = onsucceed_split[1].to_string();
@@ -205,7 +205,7 @@ impl Process {
                 ));
             }
 
-            let onfail_split = onfail.split(":").collect::<Vec<&str>>();
+            let onfail_split = onfail.split(':').collect::<Vec<&str>>();
             let onfail_cmd = match onfail_split[0] {
                 "process" => {
                     onfail = onfail_split[1].to_string();
