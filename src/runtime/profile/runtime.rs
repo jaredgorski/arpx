@@ -4,7 +4,7 @@ use crate::runtime::{
 use log::debug;
 use std::collections::HashMap;
 
-pub fn runtime_from_job_names(
+pub fn runtime_from_profile(
     profile: Profile,
     job_names: Vec<String>,
 ) -> Result<Runtime, std::io::Error> {
@@ -39,7 +39,7 @@ pub fn runtime_from_job_names(
         .map(|job_name| {
             let job = match jobs.get(&job_name[..]) {
                 Some(job) => job,
-                None => panic!("runtime_from_job_names"),
+                None => panic!("runtime_from_profile"),
             };
 
             Job::new(

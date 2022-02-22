@@ -4,7 +4,7 @@ mod runtime;
 use crate::runtime::Runtime;
 pub use deserialize::Profile;
 use log::debug;
-use runtime::runtime_from_job_names;
+use runtime::runtime_from_profile;
 use std::fs;
 
 impl Profile {
@@ -18,7 +18,7 @@ impl Profile {
 
         let profile = Self::deserialize_from_str(&data).unwrap();
 
-        runtime_from_job_names(profile, job_names)
+        runtime_from_profile(profile, job_names)
     }
 
     fn deserialize_from_str(data: &str) -> Result<Self, std::io::Error> {
