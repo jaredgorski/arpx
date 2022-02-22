@@ -3,15 +3,15 @@ use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Ctx {
-    pub process_lib: HashMap<String, Process>,
     pub bin_command: BinCommand,
+    pub process_lib: HashMap<String, Process>,
 }
 
 impl Ctx {
     pub fn new() -> Self {
         Self {
-            process_lib: HashMap::new(),
             bin_command: BinCommand::system_default(),
+            process_lib: HashMap::new(),
         }
     }
 }
