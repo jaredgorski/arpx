@@ -1,17 +1,53 @@
-entrypoint: loop1
+jobs:
+  recursive: (recursive1;)
+  inorder: |
+      loop1 ? loop2;
+      loop2;
+      loop3;
+  concurrent: |
+      [
+        loop1 ? loop2;
+        loop3 ? loop4;
+      ]
+  concurrentAndThenInorder: |
+      [
+        loop1 ? loop2 : loop1;
+        (loop2 ? loop3;)
+        loop3;
+      ]
+      loop1;
+      loop2;
+      loop3;
 
 processes:
-  - name: loop1
-    color: red
+  recursive1:
+    cwd: /Users/jaredgorski
+    command: |
+      for i in {1..5}
+      do
+        sleep 1
+        echo "Recursive1 $i"
+      done
+    onsucceed: recursive2
+  recursive2:
+    cwd: /Users/jaredgorski
+    command: |
+      for i in {1..5}
+      do
+        sleep 1
+        echo "Recursive2 $i"
+      done
+    onsucceed: recursive1
+  loop1:
+    cwd: /Users/jaredgorski
     command: |
       for i in {1..5}
       do
         sleep 1
         echo "Loop1 $i"
       done
-    onsucceed: process:loop2
-  - name: loop2
-    color: green
+  loop2:
+    cwd: /Users/jaredgorski
     command: |
       for i in {1..3}
       do
@@ -19,12 +55,19 @@ processes:
         echo "Loop2 $i"
       done
       exit
-    onsucceed: process:loop3
-  - name: loop3
-    color: blue
+  loop3:
+    cwd: /Users/jaredgorski
     command: |
       for i in {1..5}
       do
         sleep 1
         echo "Loop3 $i"
+      done
+  loop4:
+    cwd: /Users/jaredgorski
+    command: |
+      for i in {1..5}
+      do
+        sleep 1
+        echo "Loop4 $i"
       done
