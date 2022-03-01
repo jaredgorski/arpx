@@ -20,7 +20,7 @@ mod util;
 use cli::Cli;
 use log::{debug, LevelFilter};
 use runtime::{local_bin::BinCommand, Runtime};
-use util::log::Logs;
+use util::logs::Logs;
 
 fn main() -> Result<(), std::io::Error> {
     let matches = Cli::run();
