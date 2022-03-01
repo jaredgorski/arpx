@@ -46,3 +46,6 @@
   - job with recursive process
   - job with single log_monitor
   - job with multiple log_monitors
+
+### Binary distribution
+- [link](https://rust-cli.github.io/book/tutorial/packaging.html#distributing-binaries)
