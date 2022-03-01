@@ -1,9 +1,9 @@
-mod ctx;
+pub mod ctx;
 mod job;
 pub mod local_bin;
 mod profile;
 
-use crate::runtime::job::task::process::Process;
+use crate::runtime::job::task::{log_monitor::LogMonitor, process::Process};
 use ctx::Ctx;
 use job::Job;
 use local_bin::BinCommand;
@@ -31,6 +31,12 @@ impl Runtime {
         self
     }
 
+    pub fn log_monitor_lib(mut self, p: HashMap<String, LogMonitor>) -> Self {
+        self.ctx.log_monitor_lib = p;
+
+        self
+    }
+
     pub fn process_lib(mut self, p: HashMap<String, Process>) -> Self {
         self.ctx.process_lib = p;
 
@@ -49,7 +55,7 @@ impl Runtime {
         Profile::load_runtime(path, job_names)
     }
 
-    pub fn run(self) -> Result<(), std::io::Error> {
+    pub fn run(&self) -> Result<(), std::io::Error> {
         debug!("Running runtime instance with structure:\n{:#?}", self);
 
         self.jobs

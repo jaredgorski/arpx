@@ -3,27 +3,27 @@ use serde::{Deserialize, Deserializer};
 use std::collections::HashMap;
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct Process {
-    #[serde(default = "defaults::string_vec")]
-    pub log_monitors: Vec<String>,
+pub struct LogMonitor {
+    #[serde(default = "defaults::buffer_size")]
+    pub buffer_size: usize,
     #[serde(default = "defaults::string")]
     pub name: String,
     #[serde(default = "defaults::string")]
-    pub command: String,
-    #[serde(default = "defaults::cwd")]
-    pub cwd: String,
+    pub ontrigger: String,
+    #[serde(default = "defaults::boolean")]
+    pub silent: bool,
     #[serde(default = "defaults::string")]
-    pub onsucceed: String,
-    #[serde(default = "defaults::string")]
-    pub onfail: String,
+    pub test: String,
+    #[serde(default = "defaults::variable_pattern")]
+    pub variable_pattern: String,
 }
 
-pub fn deserialize<'de, D>(deserializer: D) -> Result<HashMap<String, Process>, D::Error>
+pub fn deserialize<'de, D>(deserializer: D) -> Result<HashMap<String, LogMonitor>, D::Error>
 where
     D: Deserializer<'de>,
 {
     #[derive(Deserialize)]
-    struct Wrapper(Process);
+    struct Wrapper(LogMonitor);
 
     let v = HashMap::<String, Wrapper>::deserialize(deserializer)?;
     Ok(v.into_iter()

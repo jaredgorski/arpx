@@ -18,7 +18,7 @@ name = "arpx"
 path = "src/main.rs"
 
 [dependencies]
-arpx_job_parser = "0.1.10"
+arpx_job_parser = "0.1.11"
 clap = { version = "3.0.14", features = ["cargo"] }
 crossbeam-channel = "0.5.2"
 log = "0.4.14"

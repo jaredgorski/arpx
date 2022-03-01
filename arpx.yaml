@@ -1,23 +1,21 @@
 jobs:
   recursive: (recursive1;)
   inorder: |
-      loop1 ? loop2;
+      loop1 ? loop2; @monitor1 @monitor2
       loop2;
       loop3;
   concurrent: |
       [
         loop1 ? loop2;
-        loop3 ? loop4;
+        loop3;
       ]
   concurrentAndThenInorder: |
       [
         loop1 ? loop2 : loop1;
         (loop2 ? loop3;)
-        loop3;
       ]
       loop1;
       loop2;
-      loop3;
 
 processes:
   recursive1:
@@ -63,11 +61,15 @@ processes:
         sleep 1
         echo "Loop3 $i"
       done
-  loop4:
-    cwd: /Users/jaredgorski
-    command: |
-      for i in {1..5}
-      do
-        sleep 1
-        echo "Loop4 $i"
-      done
+
+log_monitors:
+  monitor1:
+    buffer_size: 15
+    ontrigger: loop2
+    test: |
+      grep "Loop1 3" <<< "$ARPX_BUFFER"
+  monitor2:
+    buffer_size: 15
+    ontrigger: loop3
+    test: |
+      grep "Loop1 5" <<< "$ARPX_BUFFER"

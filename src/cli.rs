@@ -8,7 +8,7 @@ impl Cli {
             .propagate_version(true)
             .arg_required_else_help(true)
             .arg(arg!(-f --file <FILE> "Path to profile"))
-            .arg(arg!(-j --jobs <JOB> "Jobs in profile to run").multiple_values(true))
+            .arg(arg!(-j --jobs <JOBS> "Jobs in profile to run").multiple_values(true))
             .arg(arg!(-v - -verbose))
             .arg(arg!(--debug))
             .subcommand(

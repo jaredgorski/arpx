@@ -1,4 +1,5 @@
-use crossbeam_channel::{unbounded, Receiver, Select};
+use crate::runtime::job::task::log_monitor::message::{LogMonitorCmd, LogMonitorMessage};
+use crossbeam_channel::{unbounded, Receiver, Select, Sender};
 use log::{error, info};
 use std::{io, process::Child, string::FromUtf8Error, thread::spawn};
 
@@ -58,7 +59,11 @@ impl PipeStreamReader {
         }
     }
 
-    pub fn stream_child_output(child: &mut Child, silent: bool) {
+    pub fn stream_child_output(
+        child: &mut Child,
+        silent: bool,
+        log_monitor_senders: &[Sender<LogMonitorMessage>],
+    ) {
         let channels = vec![
             Self::init(Box::new(child.stdout.take().expect("!stdout"))),
             Self::init(Box::new(child.stderr.take().expect("!stderr"))),
@@ -87,6 +92,16 @@ impl PipeStreamReader {
                                 } else {
                                     error!("{}", line);
                                 }
+                            }
+
+                            for sender in log_monitor_senders.iter() {
+                                sender
+                                    .send(
+                                        LogMonitorMessage::new()
+                                            .cmd(LogMonitorCmd::Log)
+                                            .message(line.clone()),
+                                    )
+                                    .unwrap();
                             }
                         }
                         PipedLine::Eof => {

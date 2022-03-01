@@ -1,5 +1,10 @@
 use crate::runtime::{
-    job::task::process::Process, job::task::Task, job::Job, profile::Profile, Runtime,
+    job::{
+        task::{log_monitor::LogMonitor, process::Process, Task},
+        Job,
+    },
+    profile::Profile,
+    Runtime,
 };
 use log::debug;
 use std::collections::HashMap;
@@ -10,25 +15,42 @@ pub fn runtime_from_profile(
 ) -> Result<Runtime, std::io::Error> {
     debug!("Building runtime object from profile data");
 
-    let Profile { jobs, processes } = profile;
+    let Profile {
+        jobs,
+        processes,
+        log_monitors,
+    } = profile;
+
+    let log_monitor_lib: HashMap<String, LogMonitor> = log_monitors
+        .into_iter()
+        .map(|(name, v)| {
+            let log_monitor = LogMonitor::new(name.clone())
+                .buffer_size(v.buffer_size)
+                .ontrigger(v.ontrigger)
+                .silent(v.silent)
+                .test(v.test)
+                .variable_pattern(v.variable_pattern);
+
+            (name, log_monitor)
+        })
+        .collect();
 
     let process_lib: HashMap<String, Process> = processes
         .into_iter()
         .map(|(name, v)| {
-            let process = Process::new(Process {
-                name: name.clone(),
-                command: v.command,
-                cwd: v.cwd,
-                onfail: match &v.onfail[..] {
+            let process = Process::new(name.clone())
+                .command(v.command)
+                .cwd(v.cwd)
+                .log_monitors(v.log_monitors)
+                .onfail(match &v.onfail[..] {
                     "" => None,
                     _ => Some(v.onfail),
-                },
-                onsucceed: match &v.onsucceed[..] {
+                })
+                .onsucceed(match &v.onsucceed[..] {
                     "" => None,
                     _ => Some(v.onsucceed),
-                },
-                silent: false,
-            });
+                })
+                .silent(false);
 
             (name, process)
         })
@@ -53,20 +75,19 @@ pub fn runtime_from_profile(
                                 .map(|process| {
                                     let default_process = &process_lib[&process.name[..]];
 
-                                    Process::new(Process {
-                                        name: default_process.name.clone(),
-                                        command: default_process.command.clone(),
-                                        cwd: default_process.cwd.clone(),
-                                        onfail: match &process.onfail {
+                                    Process::new(default_process.name.clone())
+                                        .command(default_process.command.clone())
+                                        .cwd(default_process.cwd.clone())
+                                        .log_monitors(process.log_monitors.clone())
+                                        .onfail(match &process.onfail {
                                             Some(onfail) => Some(onfail.into()),
                                             None => default_process.onfail.clone(),
-                                        },
-                                        onsucceed: match &process.onsucceed {
+                                        })
+                                        .onsucceed(match &process.onsucceed {
                                             Some(onsucceed) => Some(onsucceed.into()),
                                             None => default_process.onsucceed.clone(),
-                                        },
-                                        silent: process.silent,
-                                    })
+                                        })
+                                        .silent(process.silent)
                                 })
                                 .collect(),
                         )
@@ -76,7 +97,10 @@ pub fn runtime_from_profile(
         })
         .collect();
 
-    let runtime = Runtime::new().jobs(jobs).process_lib(process_lib);
+    let runtime = Runtime::new()
+        .jobs(jobs)
+        .log_monitor_lib(log_monitor_lib)
+        .process_lib(process_lib);
 
     Ok(runtime)
 }

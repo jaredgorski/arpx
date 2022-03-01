@@ -1,14 +1,12 @@
 pub mod action;
+pub mod log_monitor;
 pub mod process;
-mod uplink;
 
 use crate::runtime::ctx::Ctx;
-use action::execute_action;
-use crossbeam_channel::unbounded;
+use action::{get_log_monitor_action, get_process_actions};
 use log::debug;
 use process::Process;
 use std::thread;
-use uplink::{Cmd, UplinkMessage};
 
 #[derive(Clone, Debug)]
 pub struct Task {
@@ -25,43 +23,42 @@ impl Task {
 
         let mut thread_handles = Vec::new();
 
-        let (sender, receiver) = unbounded::<UplinkMessage>();
-
         for process in self.processes {
             let cloned_ctx = ctx.clone();
-            let cloned_sender = sender.clone();
 
-            let handle = match thread::Builder::new()
-                .name(process.name.clone())
-                .spawn(move || {
-                    debug!("Spawned thread \"{}\"", process.name);
+            let mut log_monitor_senders = Vec::new();
+            process.log_monitors.iter().for_each(|log_monitor_name| {
+                let log_monitor = cloned_ctx.log_monitor_lib.get(log_monitor_name).unwrap();
 
-                    process.clone().run(cloned_ctx, cloned_sender);
+                let log_monitor_action = get_log_monitor_action(log_monitor, &cloned_ctx);
+                let (handle, sender) = log_monitor.clone().run(log_monitor_action);
 
-                    debug!("Closing thread \"{}\"", process.name);
-                }) {
-                Ok(handle) => handle,
-                Err(error) => return Err(error),
-            };
+                thread_handles.push(handle);
+                log_monitor_senders.push(sender);
+            });
 
-            thread_handles.push(handle);
+            let process_handle =
+                match thread::Builder::new()
+                    .name(process.name.clone())
+                    .spawn(move || {
+                        debug!("Spawned thread \"{}\"", process.name);
+
+                        let process_actions = get_process_actions(&process, &cloned_ctx);
+                        process.run(process_actions, &cloned_ctx, &log_monitor_senders);
+
+                        debug!("Closing thread \"{}\"", process.name);
+                    }) {
+                    Ok(handle) => handle,
+                    Err(error) => return Err(error),
+                };
+
+            thread_handles.push(process_handle);
         }
 
         for handle in thread_handles {
             match handle.join() {
                 Ok(()) => (),
                 Err(_) => panic!("!join"),
-            }
-        }
-
-        for received in receiver.try_iter().collect::<Vec<UplinkMessage>>() {
-            let UplinkMessage { cmd, message } = received;
-
-            debug!("Received uplink message: {:?}", message);
-
-            match cmd {
-                Cmd::Action => execute_action(&message[..]),
-                Cmd::None => debug!("Received empty uplink message."),
             }
         }
 

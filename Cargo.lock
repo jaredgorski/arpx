@@ -38,9 +38,9 @@ dependencies = [
 
 [[package]]
 name = "arpx_job_parser"
-version = "0.1.10"
+version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "160e3704b49426617c8c4f988a21a8d2ec6dac142530ab2db19be428f8034bfe"
+checksum = "f5f8340cf7c08162642c635f7b7d61397bf8c4f78ac4766c9d736a525afa5007"
 
 [[package]]
 name = "atty"
@@ -86,9 +86,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "3.1.1"
+version = "3.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d76c22c9b9b215eeb8d016ad3a90417bd13cb24cf8142756e6472445876cab7"
+checksum = "5177fac1ab67102d8989464efd043c6ff44191b1557ec1ddd489b4f7e1447e77"
 dependencies = [
  "atty",
  "bitflags",

@@ -3,12 +3,12 @@ mod stream;
 use crate::runtime::{
     ctx::Ctx,
     job::task::{
-        action::BUILTIN_ACTIONS,
-        uplink::{Cmd, UplinkMessage},
+        action::ProcessActions,
+        log_monitor::message::{LogMonitorCmd, LogMonitorMessage},
     },
 };
 use crossbeam_channel::Sender;
-use log::{debug, error, info};
+use log::{debug, info};
 use std::process::{Command, Stdio};
 use stream::PipeStreamReader;
 
@@ -16,6 +16,7 @@ use stream::PipeStreamReader;
 pub struct Process {
     pub command: String,
     pub cwd: String,
+    pub log_monitors: Vec<String>,
     pub name: String,
     pub onfail: Option<String>,
     pub onsucceed: Option<String>,
@@ -23,11 +24,60 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn new(process: Self) -> Self {
-        process
+    pub fn new(name: String) -> Self {
+        Self {
+            command: String::new(),
+            cwd: ".".to_string(),
+            log_monitors: Vec::new(),
+            name,
+            onfail: None,
+            onsucceed: None,
+            silent: false,
+        }
     }
 
-    pub fn run(self, ctx: Ctx, uplink: Sender<UplinkMessage>) {
+    pub fn command(mut self, c: String) -> Self {
+        self.command = c;
+
+        self
+    }
+
+    pub fn cwd(mut self, d: String) -> Self {
+        self.cwd = d;
+
+        self
+    }
+
+    pub fn log_monitors(mut self, m: Vec<String>) -> Self {
+        self.log_monitors = m;
+
+        self
+    }
+
+    pub fn onfail(mut self, f: Option<String>) -> Self {
+        self.onfail = f;
+
+        self
+    }
+
+    pub fn onsucceed(mut self, s: Option<String>) -> Self {
+        self.onsucceed = s;
+
+        self
+    }
+
+    pub fn silent(mut self, s: bool) -> Self {
+        self.silent = s;
+
+        self
+    }
+
+    pub fn run(
+        &self,
+        actions: ProcessActions,
+        ctx: &Ctx,
+        log_monitor_senders: &[Sender<LogMonitorMessage>],
+    ) {
         debug!("Initiating process \"{}\"", self.name);
 
         let bin = ctx.bin_command.bin.clone();
@@ -52,7 +102,7 @@ impl Process {
         let pid = child.id();
 
         debug!("Begin streaming output from \"{}\" ({})", self.name, pid);
-        PipeStreamReader::stream_child_output(&mut child, self.silent);
+        PipeStreamReader::stream_child_output(&mut child, self.silent, log_monitor_senders);
 
         debug!("Waiting on close... \"{}\" ({})", self.name, pid);
         let status = child.wait().expect("!wait");
@@ -62,53 +112,33 @@ impl Process {
             self.name, pid, status
         );
 
+        for sender in log_monitor_senders.iter() {
+            sender
+                .send(LogMonitorMessage::new().cmd(LogMonitorCmd::Close))
+                .unwrap();
+        }
+
         if status.success() {
             info!("\"{}\" ({}) succeeded", self.name, pid);
 
-            if let Some(onsucceed) = self.onsucceed {
-                debug!("Indexing onsucceed \"{}\" from builtin actions", onsucceed);
-                if BUILTIN_ACTIONS.contains(&&onsucceed[..]) {
-                    uplink
-                        .send(UplinkMessage::new().cmd(Cmd::Action).message(onsucceed))
-                        .expect("!uplink send");
-                } else {
-                    debug!("Indexing onsucceed \"{}\" from process library", onsucceed);
-                    match ctx.process_lib.get(&onsucceed[..]) {
-                        Some(process) => {
-                            let mut cloned_process = process.clone();
+            if let Some(onsucceed) = actions.onsucceed {
+                debug!(
+                    "Running onsucceed \"{}\" from prepared actions",
+                    self.onsucceed.clone().unwrap()
+                );
 
-                            cloned_process.silent = self.silent;
-                            cloned_process.run(ctx.clone(), uplink);
-                        }
-                        None => {
-                            error!("No onsucceed \"{}\" found for current runtime.", onsucceed)
-                        }
-                    };
-                }
+                onsucceed();
             }
         } else {
             info!("\"{}\" ({}) failed", self.name, pid);
 
-            if let Some(onfail) = self.onfail {
-                debug!("Indexing onfail \"{}\" from builtin actions", onfail);
-                if BUILTIN_ACTIONS.contains(&&onfail[..]) {
-                    uplink
-                        .send(UplinkMessage::new().cmd(Cmd::Action).message(onfail))
-                        .expect("!uplink send");
-                } else {
-                    debug!("Indexing onfail \"{}\" from process library", onfail);
-                    match ctx.process_lib.get(&onfail[..]) {
-                        Some(process) => {
-                            let mut cloned_process = process.clone();
+            if let Some(onfail) = actions.onfail {
+                debug!(
+                    "Running onfail \"{}\" from prepared actions",
+                    self.onfail.clone().unwrap()
+                );
 
-                            cloned_process.silent = self.silent;
-                            cloned_process.run(ctx.clone(), uplink);
-                        }
-                        None => {
-                            error!("No onfail \"{}\" found for current runtime.", onfail)
-                        }
-                    };
-                }
+                onfail();
             }
         }
     }

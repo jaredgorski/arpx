@@ -1,8 +1,12 @@
-use crate::runtime::profile::deserialize::processes;
+use crate::runtime::profile::deserialize::{log_monitors, processes};
 use arpx_job_parser::Job;
 use std::collections::HashMap;
 
 pub fn jobs() -> HashMap<String, Job> {
+    HashMap::new()
+}
+
+pub fn log_monitors() -> HashMap<String, log_monitors::LogMonitor> {
     HashMap::new()
 }
 
@@ -16,4 +20,20 @@ pub fn cwd() -> String {
 
 pub fn string() -> String {
     "".to_string()
+}
+
+pub fn string_vec() -> Vec<String> {
+    Vec::new()
+}
+
+pub fn boolean() -> bool {
+    false
+}
+
+pub fn buffer_size() -> usize {
+    20
+}
+
+pub fn variable_pattern() -> String {
+    "read -r -d '' ARPX_BUFFER << 'EOF'\n{%b%}\nEOF".to_string()
 }

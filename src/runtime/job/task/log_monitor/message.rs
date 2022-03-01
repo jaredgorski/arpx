@@ -1,24 +1,25 @@
 #[derive(Clone)]
-pub enum Cmd {
-    Action,
+pub enum LogMonitorCmd {
+    Close,
+    Log,
     None,
 }
 
 #[derive(Clone)]
-pub struct UplinkMessage {
-    pub cmd: Cmd,
+pub struct LogMonitorMessage {
+    pub cmd: LogMonitorCmd,
     pub message: String,
 }
 
-impl UplinkMessage {
+impl LogMonitorMessage {
     pub fn new() -> Self {
         Self {
-            cmd: Cmd::None,
+            cmd: LogMonitorCmd::None,
             message: "Empty message.".to_string(),
         }
     }
 
-    pub fn cmd(mut self, c: Cmd) -> Self {
+    pub fn cmd(mut self, c: LogMonitorCmd) -> Self {
         self.cmd = c;
 
         self
