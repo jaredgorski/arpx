@@ -20,7 +20,7 @@
   - Insofar as `ctx` is passed around, the entire `log_monitor_lib` and `process_lib` objects get copied. Can `ctx` be referenced instead?
   - Ensure `pub` is only used where needed.
   - Clearly map out runtime and reason about design strengths/weaknesses.
-  - Remove all usage of `panic`, `expect`, and `unwrap`.
+  - Remove all usage of `panic`
 
 
 ### Test mapping
