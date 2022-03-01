@@ -15,7 +15,7 @@ impl Job {
         Self { name, tasks }
     }
 
-    pub fn run(self, ctx: Ctx) -> Result<(), std::io::Error> {
+    pub fn run(self, ctx: &Ctx) -> Result<(), std::io::Error> {
         debug!(
             "Running job instance \"{}\" with structure:\n{:#?}",
             self.name, self
@@ -23,6 +23,6 @@ impl Job {
 
         self.tasks
             .iter()
-            .try_for_each(|task| task.clone().run(ctx.clone()))
+            .try_for_each(|task| task.clone().run(&ctx.clone()))
     }
 }

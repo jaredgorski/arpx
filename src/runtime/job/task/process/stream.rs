@@ -32,7 +32,10 @@ impl PipeStreamReader {
                     loop {
                         match stream.read(&mut byte) {
                             Ok(0) => {
-                                let _ = tx.send(Ok(PipedLine::Eof));
+                                if let Err(error) = tx.send(Ok(PipedLine::Eof)) {
+                                    panic!("{}", error)
+                                }
+
                                 break;
                             }
                             Ok(_) => {
@@ -42,9 +45,9 @@ impl PipeStreamReader {
                                         Err(err) => Err(PipeError::NotUtf8(err)),
                                     })
                                     .unwrap();
-                                    buf.clear()
+                                    buf.clear();
                                 } else {
-                                    buf.push(byte[0])
+                                    buf.push(byte[0]);
                                 }
                             }
                             Err(error) => {
@@ -81,8 +84,8 @@ impl PipeStreamReader {
             let index = operation.index();
             let received = operation.recv(&channels.get(index).expect("!channel").lines);
 
-            match received {
-                Ok(remote_result) => match remote_result {
+            if let Ok(remote_result) = received {
+                match remote_result {
                     Ok(piped_line) => match piped_line {
                         PipedLine::Line(line) => {
                             if index == 0 {
@@ -109,11 +112,10 @@ impl PipeStreamReader {
                     Err(error) => {
                         error!("Error streaming process output: {:?}", error);
                     }
-                },
-                Err(_) => {
-                    stream_eof = true;
-                    select.remove(index);
                 }
+            } else {
+                stream_eof = true;
+                select.remove(index);
             }
         }
     }

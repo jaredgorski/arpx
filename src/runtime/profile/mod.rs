@@ -16,9 +16,12 @@ impl Profile {
             Err(error) => return Err(error),
         };
 
-        let profile = Self::deserialize_from_str(&data).unwrap();
+        let profile = match Self::deserialize_from_str(&data) {
+            Ok(p) => p,
+            Err(error) => panic!("{}", error),
+        };
 
-        runtime_from_profile(profile, job_names)
+        runtime_from_profile(profile, &job_names)
     }
 
     fn deserialize_from_str(data: &str) -> Result<Self, std::io::Error> {

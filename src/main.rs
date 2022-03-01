@@ -1,16 +1,5 @@
 #![cfg_attr(feature = "doc", doc(include = "../README.md"))]
 //! https://github.com/jaredgorski/arpx
-#![warn(
-    missing_copy_implementations,
-    missing_crate_level_docs,
-    missing_debug_implementations,
-    missing_docs,
-    private_doc_tests,
-    trivial_casts,
-    trivial_numeric_casts,
-    unused_allocation,
-    unused_import_braces
-)]
 #![forbid(unsafe_code)]
 
 mod cli;
@@ -36,12 +25,11 @@ fn main() -> Result<(), std::io::Error> {
 
     debug!("CLI returned matches: {:#?}", matches);
 
-    let path = matches.value_of("file").unwrap_or("arpx.yaml").to_string();
-    let jobs = matches
-        .values_of("job")
-        .unwrap()
-        .map(std::string::ToString::to_string)
-        .collect();
+    let path = matches.value_of("file").unwrap_or("arpx.yaml").to_owned();
+    let jobs = match matches.values_of("job") {
+        Some(jobs) => jobs.map(std::string::ToString::to_string).collect(),
+        None => Vec::new(),
+    };
 
     debug!("Profile path from CLI matches: {}", path);
     debug!("Jobs from CLI matches: {:?}", jobs);
@@ -53,13 +41,15 @@ fn main() -> Result<(), std::io::Error> {
     };
 
     if let Some(("bin", sub_matches)) = matches.subcommand() {
-        let bin = sub_matches.value_of("BIN").unwrap();
+        let bin = sub_matches.value_of("BIN");
         let args = match sub_matches.values_of("args") {
             Some(a) => a.map(std::string::ToString::to_string).collect(),
             None => Vec::new(),
         };
 
-        runtime.bin_command(BinCommand::new(bin.into(), args));
+        if let Some(cmd) = bin {
+            runtime.bin_command(BinCommand::new(cmd.into(), args));
+        }
     }
 
     runtime.run()

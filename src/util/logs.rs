@@ -13,7 +13,7 @@ pub enum Patterns {
 }
 
 impl Patterns {
-    pub fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &str {
         match self {
             Patterns::Console => "[{h({T})}] {m}{n}",
             Patterns::Debug => "{d} {l} {f}, line {L}: [{T} \\({I}\\)] {m}{n}",
@@ -28,9 +28,12 @@ pub struct Logs {
 
 impl Logs {
     pub fn init(level: LevelFilter, verbose: bool) -> Self {
-        let handle = log4rs::init_config(Self::get_config(level, verbose)).unwrap();
-
-        Self { handle }
+        Self {
+            handle: match log4rs::init_config(Self::get_config(level, verbose)) {
+                Ok(h) => h,
+                Err(error) => panic!("{}", error),
+            },
+        }
     }
 
     fn get_config(level: LevelFilter, verbose: bool) -> Config {
@@ -49,9 +52,12 @@ impl Logs {
             .encoder(Box::new(PatternEncoder::new(pattern)))
             .build();
 
-        Config::builder()
+        match Config::builder()
             .appender(Appender::builder().build("stdout", Box::new(stdout)))
             .build(Root::builder().appender("stdout").build(level))
-            .unwrap()
+        {
+            Ok(config) => config,
+            Err(error) => panic!("{}", error),
+        }
     }
 }

@@ -11,7 +11,7 @@ use std::collections::HashMap;
 
 pub fn runtime_from_profile(
     profile: Profile,
-    job_names: Vec<String>,
+    job_names: &[String],
 ) -> Result<Runtime, std::io::Error> {
     debug!("Building runtime object from profile data");
 

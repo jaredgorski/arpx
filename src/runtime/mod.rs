@@ -60,6 +60,6 @@ impl Runtime {
 
         self.jobs
             .iter()
-            .try_for_each(|job| job.clone().run(self.ctx.clone()))
+            .try_for_each(|job| job.clone().run(&self.ctx.clone()))
     }
 }

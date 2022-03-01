@@ -18,25 +18,24 @@ impl Task {
         Self { processes }
     }
 
-    pub fn run(self, ctx: Ctx) -> Result<(), std::io::Error> {
+    pub fn run(self, ctx: &Ctx) -> Result<(), std::io::Error> {
         debug!("Running task instance with structure:\n{:#?}", self);
 
         let mut thread_handles = Vec::new();
 
         for process in self.processes {
-            let cloned_ctx = ctx.clone();
-
             let mut log_monitor_senders = Vec::new();
             process.log_monitors.iter().for_each(|log_monitor_name| {
-                let log_monitor = cloned_ctx.log_monitor_lib.get(log_monitor_name).unwrap();
+                let log_monitor = &ctx.log_monitor_lib[log_monitor_name];
 
-                let log_monitor_action = get_log_monitor_action(log_monitor, &cloned_ctx);
+                let log_monitor_action = get_log_monitor_action(log_monitor, ctx);
                 let (handle, sender) = log_monitor.clone().run(log_monitor_action);
 
                 thread_handles.push(handle);
                 log_monitor_senders.push(sender);
             });
 
+            let cloned_ctx = ctx.clone();
             let process_handle =
                 match thread::Builder::new()
                     .name(process.name.clone())
