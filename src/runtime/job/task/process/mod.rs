@@ -80,14 +80,17 @@ impl Process {
             "Building command and invoking on local binary \"{}\" with args {:?}",
             bin, bin_args
         );
-        let mut child = Command::new(bin)
+        let mut child = match Command::new(bin)
             .args(bin_args)
             .current_dir(&self.cwd[..])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .expect("!spawn");
+        {
+            Ok(c) => c,
+            Err(error) => panic!("{}", error),
+        };
 
         info!("\"{}\" ({}) spawned", self.name, child.id());
 
@@ -97,7 +100,10 @@ impl Process {
         PipeStreamReader::stream_child_output(&mut child, log_monitor_senders);
 
         debug!("Waiting on close... \"{}\" ({})", self.name, pid);
-        let status = child.wait().expect("!wait");
+        let status = match child.wait() {
+            Ok(s) => s,
+            Err(error) => panic!("{}", error),
+        };
 
         debug!(
             "Process \"{}\" ({}) closed with exit status: {:?}",
@@ -105,18 +111,22 @@ impl Process {
         );
 
         for sender in log_monitor_senders.iter() {
-            sender
-                .send(LogMonitorMessage::new().cmd(LogMonitorCmd::Close))
-                .unwrap();
+            if let Err(error) = sender.send(LogMonitorMessage::new().cmd(LogMonitorCmd::Close)) {
+                panic!("{}", error);
+            }
         }
 
         if status.success() {
             info!("\"{}\" ({}) succeeded", self.name, pid);
 
             if let Some(onsucceed) = actions.onsucceed {
+                let onsucceed_name = match &self.onsucceed {
+                    Some(n) => n.to_owned(),
+                    None => "".to_string(),
+                };
                 debug!(
                     "Running onsucceed \"{}\" from prepared actions",
-                    self.onsucceed.clone().unwrap()
+                    onsucceed_name
                 );
 
                 onsucceed();
@@ -125,10 +135,11 @@ impl Process {
             info!("\"{}\" ({}) failed", self.name, pid);
 
             if let Some(onfail) = actions.onfail {
-                debug!(
-                    "Running onfail \"{}\" from prepared actions",
-                    self.onfail.clone().unwrap()
-                );
+                let onfail_name = match &self.onfail {
+                    Some(n) => n.to_owned(),
+                    None => "".to_string(),
+                };
+                debug!("Running onfail \"{}\" from prepared actions", onfail_name);
 
                 onfail();
             }

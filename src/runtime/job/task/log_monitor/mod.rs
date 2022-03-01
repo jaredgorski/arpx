@@ -107,15 +107,19 @@ impl LogMonitor {
         let mut bin_args = self.ctx.bin_command.args.clone();
         bin_args.push(self.get_test_script());
 
-        let status = Command::new(bin)
+        let status = match Command::new(bin)
             .args(bin_args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .expect("!spawn")
-            .wait()
-            .expect("!wait");
+        {
+            Ok(mut c) => match c.wait() {
+                Ok(s) => s,
+                Err(error) => panic!("{}", error),
+            },
+            Err(error) => panic!("{}", error),
+        };
 
         if status.success() {
             debug!("LogMonitor {} triggered", self.name);

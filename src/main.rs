@@ -25,7 +25,10 @@ fn main() -> Result<(), std::io::Error> {
 
     debug!("CLI returned matches: {:#?}", matches);
 
-    let path = matches.value_of("file").unwrap_or("arpx.yaml").to_owned();
+    let path = match matches.value_of("file") {
+        Some(f) => f,
+        _ => "arpx.yaml",
+    };
     let jobs = match matches.values_of("job") {
         Some(jobs) => jobs.map(std::string::ToString::to_string).collect(),
         None => Vec::new(),
@@ -35,7 +38,7 @@ fn main() -> Result<(), std::io::Error> {
     debug!("Jobs from CLI matches: {:?}", jobs);
     debug!("Program start");
 
-    let mut runtime = match Runtime::from_profile(&path[..], jobs) {
+    let mut runtime = match Runtime::from_profile(path, jobs) {
         Ok(runtime) => runtime,
         Err(error) => panic!("{:?}", error),
     };

@@ -32,26 +32,29 @@ impl PipeStreamReader {
                     loop {
                         match stream.read(&mut byte) {
                             Ok(0) => {
-                                if let Err(error) = tx.send(Ok(PipedLine::Eof)) {
-                                    panic!("{}", error)
-                                }
-
+                                let _ = tx.send(Ok(PipedLine::Eof));
                                 break;
                             }
                             Ok(_) => {
                                 if byte[0] == 0x0A {
-                                    tx.send(match String::from_utf8(buf.clone()) {
-                                        Ok(line) => Ok(PipedLine::Line(line)),
-                                        Err(err) => Err(PipeError::NotUtf8(err)),
-                                    })
-                                    .unwrap();
+                                    if let Err(error) =
+                                        tx.send(match String::from_utf8(buf.clone()) {
+                                            Ok(line) => Ok(PipedLine::Line(line)),
+                                            Err(err) => Err(PipeError::NotUtf8(err)),
+                                        })
+                                    {
+                                        panic!("{}", error);
+                                    }
+
                                     buf.clear();
                                 } else {
                                     buf.push(byte[0]);
                                 }
                             }
                             Err(error) => {
-                                tx.send(Err(PipeError::IO(error))).unwrap();
+                                if let Err(error) = tx.send(Err(PipeError::IO(error))) {
+                                    panic!("{}", error);
+                                }
                             }
                         }
                     }
@@ -67,8 +70,14 @@ impl PipeStreamReader {
         log_monitor_senders: &[Sender<LogMonitorMessage>],
     ) {
         let channels = vec![
-            Self::init(Box::new(child.stdout.take().expect("!stdout"))),
-            Self::init(Box::new(child.stderr.take().expect("!stderr"))),
+            Self::init(Box::new(match child.stdout.take() {
+                Some(o) => o,
+                None => panic!("!stdout"),
+            })),
+            Self::init(Box::new(match child.stderr.take() {
+                Some(e) => e,
+                None => panic!("!stderr"),
+            })),
         ];
 
         let mut select = Select::new();
@@ -82,7 +91,10 @@ impl PipeStreamReader {
         while !stream_eof {
             let operation = select.select();
             let index = operation.index();
-            let received = operation.recv(&channels.get(index).expect("!channel").lines);
+            let received = operation.recv(match &channels.get(index) {
+                Some(c) => &c.lines,
+                None => panic!("!lines"),
+            });
 
             if let Ok(remote_result) = received {
                 match remote_result {
@@ -95,13 +107,13 @@ impl PipeStreamReader {
                             }
 
                             for sender in log_monitor_senders.iter() {
-                                sender
-                                    .send(
-                                        LogMonitorMessage::new()
-                                            .cmd(LogMonitorCmd::Log)
-                                            .message(line.clone()),
-                                    )
-                                    .unwrap();
+                                if let Err(error) = sender.send(
+                                    LogMonitorMessage::new()
+                                        .cmd(LogMonitorCmd::Log)
+                                        .message(line.clone()),
+                                ) {
+                                    panic!("{}", error);
+                                }
                             }
                         }
                         PipedLine::Eof => {
