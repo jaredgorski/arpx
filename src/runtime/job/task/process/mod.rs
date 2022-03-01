@@ -121,7 +121,7 @@ impl Process {
 
             if let Some(onsucceed) = actions.onsucceed {
                 let onsucceed_name = match &self.onsucceed {
-                    Some(n) => n.to_owned(),
+                    Some(n) => n.clone(),
                     None => "".to_string(),
                 };
                 debug!(
@@ -136,7 +136,7 @@ impl Process {
 
             if let Some(onfail) = actions.onfail {
                 let onfail_name = match &self.onfail {
-                    Some(n) => n.to_owned(),
+                    Some(n) => n.clone(),
                     None => "".to_string(),
                 };
                 debug!("Running onfail \"{}\" from prepared actions", onfail_name);
