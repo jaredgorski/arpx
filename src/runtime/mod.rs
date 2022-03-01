@@ -49,7 +49,7 @@ impl Runtime {
         self
     }
 
-    pub fn from_profile(path: &str, job_names: Vec<String>) -> Result<Self, std::io::Error> {
+    pub fn from_profile(path: &str, job_names: &[String]) -> Result<Self, std::io::Error> {
         debug!("Loading runtime from profile");
 
         Profile::load_runtime(path, job_names)

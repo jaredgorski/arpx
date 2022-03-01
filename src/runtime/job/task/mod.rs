@@ -57,7 +57,7 @@ impl Task {
         for handle in thread_handles {
             match handle.join() {
                 Ok(()) => (),
-                Err(_) => panic!("!join"),
+                Err(error) => panic!("{:?}", error),
             }
         }
 

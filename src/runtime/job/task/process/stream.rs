@@ -32,7 +32,8 @@ impl PipeStreamReader {
                     loop {
                         match stream.read(&mut byte) {
                             Ok(0) => {
-                                let _ = tx.send(Ok(PipedLine::Eof));
+                                if tx.send(Ok(PipedLine::Eof)).is_err() {}
+
                                 break;
                             }
                             Ok(_) => {

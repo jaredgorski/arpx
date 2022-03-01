@@ -91,7 +91,7 @@ impl LogMonitor {
             debug!("Closing log_monitor thread \"{}\"", &name);
         }) {
             Ok(handle) => handle,
-            Err(_) => panic!("!spawn thread"),
+            Err(error) => panic!("{}", error),
         };
 
         (handle, sender)

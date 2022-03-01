@@ -38,7 +38,7 @@ fn main() -> Result<(), std::io::Error> {
     debug!("Jobs from CLI matches: {:?}", jobs);
     debug!("Program start");
 
-    let mut runtime = match Runtime::from_profile(path, jobs) {
+    let mut runtime = match Runtime::from_profile(path, &jobs) {
         Ok(runtime) => runtime,
         Err(error) => panic!("{:?}", error),
     };
