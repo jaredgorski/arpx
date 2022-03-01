@@ -15,11 +15,12 @@
 - edge cases:
   - (walk through program from start to finish looking for edge cases)
 - code improvements:
-  - Reduce `clone()` anti-patterns.
+  - Review ownership: reduce `clone()` anti-patterns.
   - Use more references, less values and owned data.
   - Insofar as `ctx` is passed around, the entire `log_monitor_lib` and `process_lib` objects get copied. Can `ctx` be referenced instead?
   - Ensure `pub` is only used where needed.
   - Clearly map out runtime and reason about design strengths/weaknesses.
+  - Remove all usage of `panic`, `explain`, and `unwrap`.
 
 
 ### Test mapping
@@ -49,3 +50,9 @@
 
 ### Binary distribution
 - [link](https://rust-cli.github.io/book/tutorial/packaging.html#distributing-binaries)
+
+### Code quality
+- decide on linting settings (make a clippy toml)
+
+### Performance
+- benchmarking
