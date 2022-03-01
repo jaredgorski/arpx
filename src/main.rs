@@ -38,7 +38,7 @@ fn main() -> Result<(), std::io::Error> {
 
     let path = matches.value_of("file").unwrap_or("arpx.yaml").to_string();
     let jobs = matches
-        .values_of("jobs")
+        .values_of("job")
         .unwrap()
         .map(std::string::ToString::to_string)
         .collect();
@@ -53,7 +53,7 @@ fn main() -> Result<(), std::io::Error> {
     };
 
     if let Some(("bin", sub_matches)) = matches.subcommand() {
-        let bin = sub_matches.value_of("NAME").unwrap();
+        let bin = sub_matches.value_of("BIN").unwrap();
         let args = match sub_matches.values_of("args") {
             Some(a) => a.map(std::string::ToString::to_string).collect(),
             None => Vec::new(),
