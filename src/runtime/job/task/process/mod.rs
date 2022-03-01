@@ -20,7 +20,6 @@ pub struct Process {
     pub name: String,
     pub onfail: Option<String>,
     pub onsucceed: Option<String>,
-    pub silent: bool,
 }
 
 impl Process {
@@ -32,7 +31,6 @@ impl Process {
             name,
             onfail: None,
             onsucceed: None,
-            silent: false,
         }
     }
 
@@ -62,12 +60,6 @@ impl Process {
 
     pub fn onsucceed(mut self, s: Option<String>) -> Self {
         self.onsucceed = s;
-
-        self
-    }
-
-    pub fn silent(mut self, s: bool) -> Self {
-        self.silent = s;
 
         self
     }
@@ -102,7 +94,7 @@ impl Process {
         let pid = child.id();
 
         debug!("Begin streaming output from \"{}\" ({})", self.name, pid);
-        PipeStreamReader::stream_child_output(&mut child, self.silent, log_monitor_senders);
+        PipeStreamReader::stream_child_output(&mut child, log_monitor_senders);
 
         debug!("Waiting on close... \"{}\" ({})", self.name, pid);
         let status = child.wait().expect("!wait");

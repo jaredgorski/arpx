@@ -27,7 +27,6 @@ pub fn runtime_from_profile(
             let log_monitor = LogMonitor::new(name.clone())
                 .buffer_size(v.buffer_size)
                 .ontrigger(v.ontrigger)
-                .silent(v.silent)
                 .test(v.test)
                 .variable_pattern(v.variable_pattern);
 
@@ -49,8 +48,7 @@ pub fn runtime_from_profile(
                 .onsucceed(match &v.onsucceed[..] {
                     "" => None,
                     _ => Some(v.onsucceed),
-                })
-                .silent(false);
+                });
 
             (name, process)
         })
@@ -87,7 +85,6 @@ pub fn runtime_from_profile(
                                             Some(onsucceed) => Some(onsucceed.into()),
                                             None => default_process.onsucceed.clone(),
                                         })
-                                        .silent(process.silent)
                                 })
                                 .collect(),
                         )

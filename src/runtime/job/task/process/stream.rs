@@ -61,7 +61,6 @@ impl PipeStreamReader {
 
     pub fn stream_child_output(
         child: &mut Child,
-        silent: bool,
         log_monitor_senders: &[Sender<LogMonitorMessage>],
     ) {
         let channels = vec![
@@ -86,12 +85,10 @@ impl PipeStreamReader {
                 Ok(remote_result) => match remote_result {
                     Ok(piped_line) => match piped_line {
                         PipedLine::Line(line) => {
-                            if !silent {
-                                if index == 0 {
-                                    info!("{}", line);
-                                } else {
-                                    error!("{}", line);
-                                }
+                            if index == 0 {
+                                info!("{}", line);
+                            } else {
+                                error!("{}", line);
                             }
 
                             for sender in log_monitor_senders.iter() {

@@ -1,5 +1,5 @@
 jobs:
-  recursive: (recursive1;)
+  recursive: recursive1;
   inorder: |
       loop1 ? loop2; @monitor1 @monitor2
       loop2;
@@ -12,7 +12,7 @@ jobs:
   concurrentAndThenInorder: |
       [
         loop1 ? loop2 : loop1;
-        (loop2 ? loop3;)
+        loop2 ? loop3;
       ]
       loop1;
       loop2;

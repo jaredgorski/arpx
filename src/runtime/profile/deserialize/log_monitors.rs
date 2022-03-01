@@ -10,8 +10,6 @@ pub struct LogMonitor {
     pub name: String,
     #[serde(default = "defaults::string")]
     pub ontrigger: String,
-    #[serde(default = "defaults::boolean")]
-    pub silent: bool,
     #[serde(default = "defaults::string")]
     pub test: String,
     #[serde(default = "defaults::variable_pattern")]

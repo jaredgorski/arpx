@@ -26,10 +26,6 @@ pub fn string_vec() -> Vec<String> {
     Vec::new()
 }
 
-pub fn boolean() -> bool {
-    false
-}
-
 pub fn buffer_size() -> usize {
     20
 }

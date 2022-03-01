@@ -16,7 +16,6 @@ pub struct LogMonitor {
     pub ctx: Ctx,
     pub name: String,
     pub ontrigger: String,
-    pub silent: bool,
     pub test: String,
     pub variable_pattern: String,
 }
@@ -29,7 +28,6 @@ impl LogMonitor {
             ctx: Ctx::new(),
             name,
             ontrigger: String::new(),
-            silent: false,
             test: String::new(),
             variable_pattern: "read -r -d '' ARPX_BUFFER << 'EOF'\n{%b%}\nEOF".to_string(),
         }
@@ -44,12 +42,6 @@ impl LogMonitor {
 
     pub fn ontrigger(mut self, o: String) -> Self {
         self.ontrigger = o;
-
-        self
-    }
-
-    pub fn silent(mut self, s: bool) -> Self {
-        self.silent = s;
 
         self
     }
