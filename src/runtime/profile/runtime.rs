@@ -8,7 +8,7 @@ use crate::runtime::{
 };
 use anyhow::{ensure, Context, Error, Result};
 use log::debug;
-use std::{collections::HashMap, env::var};
+use std::{collections::HashMap, env::var, path::Path};
 
 pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Runtime> {
     debug!("Building runtime object from profile data");
@@ -45,9 +45,16 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
 
     debug!("Building process_lib");
 
-    let process_lib: HashMap<String, Process> = processes
+    let process_lib = processes
         .into_iter()
         .map(|(name, v)| {
+            ensure!(
+                Path::new(&v.cwd).is_dir(),
+                "Current working directory \"{}\" on process \"{}\" does not exist",
+                v.cwd,
+                name
+            );
+
             let process = Process::new(name.clone())
                 .command(v.command)
                 .cwd(v.cwd)
@@ -61,9 +68,9 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
                     _ => Some(v.onsucceed),
                 });
 
-            (name, process)
+            Ok((name, process))
         })
-        .collect();
+        .collect::<Result<HashMap<String, Process>, Error>>()?;
 
     ensure!(
         process_lib.len()
