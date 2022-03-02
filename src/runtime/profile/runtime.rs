@@ -37,7 +37,7 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
     ensure!(
         log_monitor_lib.len()
             <= var("ARPX_LOG_MONITORS_MAX")
-                .unwrap_or_else(|_| "200".to_string())
+                .unwrap_or_else(|_| "200".to_owned())
                 .parse::<usize>()
                 .unwrap_or(200),
         "Too many log_monitors defined in profile"
@@ -68,7 +68,7 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
     ensure!(
         process_lib.len()
             <= var("ARPX_PROCESSES_MAX")
-                .unwrap_or_else(|_| "200".to_string())
+                .unwrap_or_else(|_| "200".to_owned())
                 .parse::<usize>()
                 .unwrap_or(200),
         "Too many processes defined in profile"
@@ -101,7 +101,7 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
                         ensure!(
                             task.processes.len()
                                 <= var("ARPX_CONCURRENT_PROCESSES_MAX")
-                                    .unwrap_or_else(|_| "500".to_string())
+                                    .unwrap_or_else(|_| "500".to_owned())
                                     .parse::<usize>()
                                     .unwrap_or(500),
                             "Job \"{}\", task {}: too many processes",
@@ -124,7 +124,7 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
                                     ensure!(
                                         task.processes.len() + process.log_monitors.len()
                                             <= var("ARPX_THREAD_MAX")
-                                                .unwrap_or_else(|_| "500".to_string())
+                                                .unwrap_or_else(|_| "500".to_owned())
                                                 .parse::<usize>()
                                                 .unwrap_or(500),
                                         "Job \"{}\", task {}: too many threads (reduce processes or log_monitors on task)",
