@@ -2,16 +2,9 @@
 
 ### TODO
 
-- errors:
-  - job parsing errors
-  - deserialization errors
-  - validation errors:
-    - protect against thread max
-    - process doesn't exist in processes
-  - runtime errors
 - features:
-  - detached monitors:
-    - use arpx to monitor external logs, such as a log file
+  - external log monitors:
+    - use arpx to monitor external log file and spawn processes ontrigger
 - edge cases:
   - (walk through program from start to finish looking for edge cases)
 - code improvements:
