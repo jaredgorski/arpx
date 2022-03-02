@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use log::LevelFilter;
 use log4rs::{
     append::console::ConsoleAppender,
@@ -27,16 +28,14 @@ pub struct Logs {
 }
 
 impl Logs {
-    pub fn init(level: LevelFilter, verbose: bool) -> Self {
-        Self {
-            handle: match log4rs::init_config(Self::get_config(level, verbose)) {
-                Ok(h) => h,
-                Err(error) => panic!("{}", error),
-            },
-        }
+    pub fn init(level: LevelFilter, verbose: bool) -> Result<Self> {
+        let handle = log4rs::init_config(Self::get_config(level, verbose)?)
+            .context("Error initiating logger config")?;
+
+        Ok(Self { handle })
     }
 
-    fn get_config(level: LevelFilter, verbose: bool) -> Config {
+    fn get_config(level: LevelFilter, verbose: bool) -> Result<Config> {
         let pattern = match level {
             LevelFilter::Debug => Patterns::Debug.as_str(),
             _ => {
@@ -52,12 +51,9 @@ impl Logs {
             .encoder(Box::new(PatternEncoder::new(pattern)))
             .build();
 
-        match Config::builder()
+        Config::builder()
             .appender(Appender::builder().build("stdout", Box::new(stdout)))
             .build(Root::builder().appender("stdout").build(level))
-        {
-            Ok(config) => config,
-            Err(error) => panic!("{}", error),
-        }
+            .context("Error building logger config")
     }
 }

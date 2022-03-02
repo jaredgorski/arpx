@@ -4,7 +4,7 @@ use crate::runtime::{
 };
 use log::debug;
 
-const BUILTIN_ACTIONS: [&str; 2] = ["arpx_exit", "arpx_exit_error"];
+pub const BUILTIN_ACTIONS: [&str; 2] = ["arpx_exit", "arpx_exit_error"];
 
 pub struct ProcessActions {
     pub onfail: OptionalAction,
@@ -42,7 +42,7 @@ fn get_optional_action(action_name: String, ctx: Ctx) -> OptionalAction {
             Some(Box::new(move || {
                 let process_actions = get_process_actions(&cloned_process, &ctx);
 
-                cloned_process.run(process_actions, &ctx, &[]);
+                cloned_process.run(process_actions, &ctx, &[]).ok();
             }))
         }
         None => None,

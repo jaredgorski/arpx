@@ -1,5 +1,5 @@
 use arpx_job_parser::{parse_job, Job};
-use serde::{Deserialize, Deserializer};
+use serde::{de, Deserialize, Deserializer};
 use std::collections::HashMap;
 
 pub fn deserialize<'de, D>(deserializer: D) -> Result<HashMap<String, Job>, D::Error>
@@ -17,8 +17,12 @@ fn job_from_str<'de, D>(deserializer: D) -> Result<Job, D::Error>
 where
     D: Deserializer<'de>,
 {
-    String::deserialize(deserializer).map(|job_str| match parse_job(&job_str[..]) {
-        Ok(job) => job,
-        Err(error) => panic!("{:?}", error),
-    })
+    String::deserialize(deserializer).map(|job_str| {
+        parse_job(&job_str[..]).map_err(|((line, col), msg)| {
+            de::Error::custom(format!(
+                "[Parse error at job line {} column {}: `{}`]",
+                line, col, msg
+            ))
+        })
+    })?
 }

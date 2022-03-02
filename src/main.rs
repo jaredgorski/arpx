@@ -6,12 +6,13 @@ mod cli;
 mod runtime;
 mod util;
 
+use anyhow::{Context, Result};
 use cli::Cli;
 use log::{debug, LevelFilter};
 use runtime::{local_bin::BinCommand, Runtime};
 use util::logs::Logs;
 
-fn main() -> Result<(), std::io::Error> {
+fn main() -> Result<()> {
     let matches = Cli::run();
 
     Logs::init(
@@ -21,7 +22,7 @@ fn main() -> Result<(), std::io::Error> {
             LevelFilter::Info
         },
         matches.is_present("verbose"),
-    );
+    )?;
 
     debug!("CLI returned matches: {:#?}", matches);
 
@@ -38,10 +39,8 @@ fn main() -> Result<(), std::io::Error> {
     debug!("Jobs from CLI matches: {:?}", jobs);
     debug!("Program start");
 
-    let mut runtime = match Runtime::from_profile(path, &jobs) {
-        Ok(runtime) => runtime,
-        Err(error) => panic!("{:?}", error),
-    };
+    let mut runtime =
+        Runtime::from_profile(path, &jobs).context(format!("Error loading profile at {}", path))?;
 
     if let Some(("bin", sub_matches)) = matches.subcommand() {
         let bin = sub_matches.value_of("BIN");

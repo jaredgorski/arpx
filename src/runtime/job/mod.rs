@@ -1,6 +1,7 @@
 pub mod task;
 
 use crate::runtime::ctx::Ctx;
+use anyhow::Result;
 use log::debug;
 use task::Task;
 
@@ -15,7 +16,7 @@ impl Job {
         Self { name, tasks }
     }
 
-    pub fn run(self, ctx: &Ctx) -> Result<(), std::io::Error> {
+    pub fn run(self, ctx: &Ctx) -> Result<()> {
         debug!(
             "Running job instance \"{}\" with structure:\n{:#?}",
             self.name, self

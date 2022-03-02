@@ -4,6 +4,7 @@ pub mod local_bin;
 mod profile;
 
 use crate::runtime::job::task::{log_monitor::LogMonitor, process::Process};
+use anyhow::{Context, Result};
 use ctx::Ctx;
 use job::Job;
 use local_bin::BinCommand;
@@ -49,17 +50,18 @@ impl Runtime {
         self
     }
 
-    pub fn from_profile(path: &str, job_names: &[String]) -> Result<Self, std::io::Error> {
+    pub fn from_profile(path: &str, job_names: &[String]) -> Result<Self> {
         debug!("Loading runtime from profile");
 
         Profile::load_runtime(path, job_names)
     }
 
-    pub fn run(&self) -> Result<(), std::io::Error> {
+    pub fn run(&self) -> Result<()> {
         debug!("Running runtime instance with structure:\n{:#?}", self);
 
         self.jobs
             .iter()
             .try_for_each(|job| job.clone().run(&self.ctx.clone()))
+            .context("Runtime error")
     }
 }

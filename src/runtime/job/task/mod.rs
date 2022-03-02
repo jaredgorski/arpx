@@ -4,6 +4,7 @@ pub mod process;
 
 use crate::runtime::ctx::Ctx;
 use action::{get_log_monitor_action, get_process_actions};
+use anyhow::{bail, Error, Result};
 use log::debug;
 use process::Process;
 use std::thread;
@@ -18,7 +19,7 @@ impl Task {
         Self { processes }
     }
 
-    pub fn run(self, ctx: &Ctx) -> Result<(), std::io::Error> {
+    pub fn run(self, ctx: &Ctx) -> Result<()> {
         debug!("Running task instance with structure:\n{:#?}", self);
 
         let mut thread_handles = Vec::new();
@@ -29,35 +30,33 @@ impl Task {
                 let log_monitor = &ctx.log_monitor_lib[log_monitor_name];
 
                 let log_monitor_action = get_log_monitor_action(log_monitor, ctx);
-                let (handle, sender) = log_monitor.clone().run(log_monitor_action);
+                let (handle, sender) = log_monitor.clone().run(log_monitor_action)?;
 
                 thread_handles.push(handle);
                 log_monitor_senders.push(sender);
             }
 
             let cloned_ctx = ctx.clone();
-            let process_handle =
-                match thread::Builder::new()
-                    .name(process.name.clone())
-                    .spawn(move || {
-                        debug!("Spawned thread \"{}\"", process.name);
+            let process_handle = thread::Builder::new()
+                .name(process.name.clone())
+                .spawn(move || {
+                    debug!("Spawned thread \"{}\"", process.name);
 
-                        let process_actions = get_process_actions(&process, &cloned_ctx);
-                        process.run(process_actions, &cloned_ctx, &log_monitor_senders);
+                    let process_actions = get_process_actions(&process, &cloned_ctx);
+                    process
+                        .run(process_actions, &cloned_ctx, &log_monitor_senders)
+                        .ok();
 
-                        debug!("Closing thread \"{}\"", process.name);
-                    }) {
-                    Ok(handle) => handle,
-                    Err(error) => return Err(error),
-                };
+                    debug!("Closing thread \"{}\"", process.name);
+                })
+                .map_err(Error::new)?;
 
             thread_handles.push(process_handle);
         }
 
         for handle in thread_handles {
-            match handle.join() {
-                Ok(()) => (),
-                Err(error) => panic!("{:?}", error),
+            if handle.join().is_err() {
+                bail!("Error joining thread handle");
             }
         }
 

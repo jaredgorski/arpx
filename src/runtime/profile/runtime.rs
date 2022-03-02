@@ -1,18 +1,16 @@
 use crate::runtime::{
     job::{
-        task::{log_monitor::LogMonitor, process::Process, Task},
+        task::{action::BUILTIN_ACTIONS, log_monitor::LogMonitor, process::Process, Task},
         Job,
     },
     profile::Profile,
     Runtime,
 };
+use anyhow::{ensure, Context, Error, Result};
 use log::debug;
 use std::collections::HashMap;
 
-pub fn runtime_from_profile(
-    profile: Profile,
-    job_names: &[String],
-) -> Result<Runtime, std::io::Error> {
+pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Runtime> {
     debug!("Building runtime object from profile data");
 
     let Profile {
@@ -20,6 +18,8 @@ pub fn runtime_from_profile(
         processes,
         log_monitors,
     } = profile;
+
+    debug!("Building log_monitor_lib");
 
     let log_monitor_lib: HashMap<String, LogMonitor> = log_monitors
         .into_iter()
@@ -33,6 +33,8 @@ pub fn runtime_from_profile(
             (name, log_monitor)
         })
         .collect();
+
+    debug!("Building process_lib");
 
     let process_lib: HashMap<String, Process> = processes
         .into_iter()
@@ -54,50 +56,101 @@ pub fn runtime_from_profile(
         })
         .collect();
 
-    let jobs = job_names
+    ensure!(
+        !process_lib.is_empty(),
+        "No valid processes exist in profile"
+    );
+
+    debug!("Building jobs object");
+
+    ensure!(!job_names.is_empty(), "No jobs requested for runtime");
+
+    let runtime_jobs = job_names
         .iter()
         .map(|job_name| {
-            let job = match jobs.get(&job_name[..]) {
-                Some(job) => job,
-                None => panic!("runtime_from_profile"),
-            };
+            let job = jobs
+                .get(&job_name[..])
+                .context(format!("Requested job \"{}\" not defined in jobs", job_name))?;
 
-            Job::new(
+            return Ok(Job::new(
                 job_name.into(),
                 job.tasks
                     .iter()
                     .map(|task| {
-                        Task::new(
+                        return Ok(Task::new(
                             task.processes
                                 .iter()
-                                .map(|process| {
-                                    let default_process = &process_lib[&process.name[..]];
+                                .enumerate()
+                                .map(|(i, process)| {
+                                    let task_index = i + 1;
 
-                                    Process::new(default_process.name.clone())
+                                    let default_process =
+                                        process_lib.get(&process.name[..]).context(format!(
+                                            "Job \"{}\", task {}: process \"{}\" not defined in processes",
+                                            job_name,
+                                            task_index,
+                                            process.name
+                                        ))?;
+
+                                    for log_monitor in &process.log_monitors {
+                                        ensure!(
+                                            log_monitor_lib.contains_key(log_monitor),
+                                            "Job \"{}\", task {}: log monitor \"{}\" not defined in log_monitors",
+                                            job_name,
+                                            task_index,
+                                            log_monitor
+                                        );
+                                    }
+
+                                    return Ok(Process::new(default_process.name.clone())
                                         .command(default_process.command.clone())
                                         .cwd(default_process.cwd.clone())
                                         .log_monitors(process.log_monitors.clone())
                                         .onfail(match &process.onfail {
-                                            Some(onfail) => Some(onfail.into()),
+                                            Some(onfail) => {
+                                                ensure!(
+                                                    process_lib.contains_key(onfail) || BUILTIN_ACTIONS.contains(&&onfail[..]),
+                                                    "Job \"{}\", task {}: invalid onfail \"{}\" provided",
+                                                    job_name,
+                                                    task_index,
+                                                    onfail
+                                                );
+
+                                                Some(onfail.into())
+                                            }
                                             None => default_process.onfail.clone(),
                                         })
                                         .onsucceed(match &process.onsucceed {
-                                            Some(onsucceed) => Some(onsucceed.into()),
+                                            Some(onsucceed) => {
+                                                ensure!(
+                                                    process_lib.contains_key(onsucceed) || BUILTIN_ACTIONS.contains(&&onsucceed[..]),
+                                                    "Job \"{}\", task {}: invalid onsucceed \"{}\" provided",
+                                                    job_name,
+                                                    task_index,
+                                                    onsucceed
+                                                );
+
+                                                Some(onsucceed.into())
+                                            }
                                             None => default_process.onsucceed.clone(),
-                                        })
+                                        }))
                                 })
-                                .collect(),
-                        )
+                                .collect::<Result<Vec<Process>, Error>>()?,
+                        ))
                     })
-                    .collect(),
-            )
+                    .collect::<Result<Vec<Task>, Error>>()?,
+            ))
         })
-        .collect();
+        .collect::<Result<Vec<Job>, Error>>()?;
+
+    debug!("Building runtime object");
 
     let runtime = Runtime::new()
-        .jobs(jobs)
+        .jobs(runtime_jobs)
         .log_monitor_lib(log_monitor_lib)
         .process_lib(process_lib);
+
+    debug!("Runtime object built");
 
     Ok(runtime)
 }

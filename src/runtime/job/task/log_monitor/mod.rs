@@ -2,6 +2,7 @@ pub mod message;
 pub mod rolling_buffer;
 
 use crate::runtime::{ctx::Ctx, job::task::action::OptionalAction};
+use anyhow::{Context, Result};
 use crossbeam_channel::{unbounded, Sender};
 use log::debug;
 use message::{LogMonitorCmd, LogMonitorMessage};
@@ -61,65 +62,67 @@ impl LogMonitor {
     pub fn run(
         mut self,
         ontrigger: OptionalAction,
-    ) -> (thread::JoinHandle<()>, Sender<LogMonitorMessage>) {
+    ) -> Result<(thread::JoinHandle<()>, Sender<LogMonitorMessage>)> {
         debug!("Running log_monitor instance with structure:\n{:#?}", self);
 
         let name = self.name.clone();
 
         let (sender, receiver) = unbounded::<LogMonitorMessage>();
 
-        let handle = match thread::Builder::new().name(name.clone()).spawn(move || {
-            debug!("Spawned log_monitor thread \"{}\"", &name);
+        let handle = thread::Builder::new()
+            .name(name.clone())
+            .spawn(move || {
+                debug!("Spawned log_monitor thread \"{}\"", &name);
 
-            loop {
-                if let Ok(LogMonitorMessage { cmd, message }) = receiver.recv() {
-                    debug!("Received message: {:?}", message);
+                loop {
+                    if let Ok(LogMonitorMessage { cmd, message }) = receiver.recv() {
+                        debug!("Received message: {:?}", message);
 
-                    match cmd {
-                        LogMonitorCmd::Close => {
-                            debug!("Received close message.");
-                            break;
+                        match cmd {
+                            LogMonitorCmd::Close => {
+                                debug!("Received close message.");
+                                break;
+                            }
+                            LogMonitorCmd::Log => {
+                                self.push(message, &ontrigger);
+                            }
+                            LogMonitorCmd::None => debug!("Received empty message."),
                         }
-                        LogMonitorCmd::Log => {
-                            self.push(message, &ontrigger);
-                        }
-                        LogMonitorCmd::None => debug!("Received empty message."),
                     }
                 }
-            }
 
-            debug!("Closing log_monitor thread \"{}\"", &name);
-        }) {
-            Ok(handle) => handle,
-            Err(error) => panic!("{}", error),
-        };
+                debug!("Closing log_monitor thread \"{}\"", &name);
+            })
+            .context("Error spawning log monitor thread")?;
 
-        (handle, sender)
+        Ok((handle, sender))
     }
 
     pub fn push(&mut self, line: String, ontrigger: &OptionalAction) {
         self.buffer.push(line);
-        self.exec_test(ontrigger);
+        self.exec_test(ontrigger).ok();
     }
 
-    pub fn exec_test(&self, ontrigger: &OptionalAction) {
+    pub fn exec_test(&self, ontrigger: &OptionalAction) -> Result<()> {
         let bin = self.ctx.bin_command.bin.clone();
         let mut bin_args = self.ctx.bin_command.args.clone();
         bin_args.push(self.get_test_script());
 
-        let status = match Command::new(bin)
+        let status = Command::new(bin)
             .args(bin_args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-        {
-            Ok(mut c) => match c.wait() {
-                Ok(s) => s,
-                Err(error) => panic!("{}", error),
-            },
-            Err(error) => panic!("{}", error),
-        };
+            .context(format!(
+                "Error spawning test command on log monitor \"{}\"",
+                self.name
+            ))?
+            .wait()
+            .context(format!(
+                "Error waiting for test command child on log monitor \"{}\"",
+                self.name
+            ))?;
 
         if status.success() {
             debug!("LogMonitor {} triggered", self.name);
@@ -133,6 +136,8 @@ impl LogMonitor {
                 action();
             }
         }
+
+        Ok(())
     }
 
     pub fn get_test_script(&self) -> String {

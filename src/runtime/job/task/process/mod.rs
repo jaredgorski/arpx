@@ -7,6 +7,7 @@ use crate::runtime::{
         log_monitor::message::{LogMonitorCmd, LogMonitorMessage},
     },
 };
+use anyhow::{bail, Context, Result};
 use crossbeam_channel::Sender;
 use log::{debug, info};
 use std::process::{Command, Stdio};
@@ -69,7 +70,7 @@ impl Process {
         actions: ProcessActions,
         ctx: &Ctx,
         log_monitor_senders: &[Sender<LogMonitorMessage>],
-    ) {
+    ) -> Result<()> {
         debug!("Initiating process \"{}\"", self.name);
 
         let bin = ctx.bin_command.bin.clone();
@@ -80,30 +81,31 @@ impl Process {
             "Building command and invoking on local binary \"{}\" with args {:?}",
             bin, bin_args
         );
-        let mut child = match Command::new(bin)
+        let mut child = Command::new(bin)
             .args(bin_args)
             .current_dir(&self.cwd[..])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-        {
-            Ok(c) => c,
-            Err(error) => panic!("{}", error),
-        };
+            .context(format!(
+                "Error spawning process command on process \"{}\"",
+                self.name
+            ))?;
 
         info!("\"{}\" ({}) spawned", self.name, child.id());
 
         let pid = child.id();
 
         debug!("Begin streaming output from \"{}\" ({})", self.name, pid);
-        PipeStreamReader::stream_child_output(&mut child, log_monitor_senders);
+        PipeStreamReader::stream_child_output(&mut child, log_monitor_senders)
+            .context("Output stream error")?;
 
         debug!("Waiting on close... \"{}\" ({})", self.name, pid);
-        let status = match child.wait() {
-            Ok(s) => s,
-            Err(error) => panic!("{}", error),
-        };
+        let status = child.wait().context(format!(
+            "Error waiting for process command child on process \"{}\"",
+            self.name
+        ))?;
 
         debug!(
             "Process \"{}\" ({}) closed with exit status: {:?}",
@@ -111,8 +113,14 @@ impl Process {
         );
 
         for sender in log_monitor_senders.iter() {
-            if let Err(error) = sender.send(LogMonitorMessage::new().cmd(LogMonitorCmd::Close)) {
-                panic!("{}", error);
+            if sender
+                .send(LogMonitorMessage::new().cmd(LogMonitorCmd::Close))
+                .is_err()
+            {
+                bail!(
+                    "Error sending process close message to log monitor on process \"{}\"",
+                    self.name
+                );
             }
         }
 
@@ -144,5 +152,7 @@ impl Process {
                 onfail();
             }
         }
+
+        Ok(())
     }
 }
