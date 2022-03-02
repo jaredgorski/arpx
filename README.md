@@ -12,6 +12,7 @@
   - Ensure `pub` is only used where needed.
   - Clearly map out runtime and reason about design strengths/weaknesses.
 - write documentation
+- add changelog
 
 ### Test mapping
 
