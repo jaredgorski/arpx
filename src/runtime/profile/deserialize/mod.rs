@@ -1,7 +1,7 @@
 mod defaults;
 mod jobs;
-mod log_monitors;
-mod processes;
+pub mod log_monitors;
+pub mod processes;
 
 use arpx_job_parser::Job;
 use serde::Deserialize;

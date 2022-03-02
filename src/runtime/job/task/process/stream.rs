@@ -29,7 +29,7 @@ impl PipeStreamReader {
 
                 spawn(move || {
                     let mut buf = Vec::new();
-                    let mut byte = [0_u8];
+                    let mut byte = [0u8];
                     loop {
                         match stream.read(&mut byte) {
                             Ok(0) => {

@@ -9,8 +9,11 @@ where
     #[derive(Deserialize)]
     struct Wrapper(#[serde(deserialize_with = "job_from_str")] Job);
 
-    let v = HashMap::<String, Wrapper>::deserialize(deserializer)?;
-    Ok(v.into_iter().map(|(k, Wrapper(v))| (k, v)).collect())
+    let deserialized = HashMap::<String, Wrapper>::deserialize(deserializer)?;
+    Ok(deserialized
+        .into_iter()
+        .map(|(k, Wrapper(v))| (k, v))
+        .collect())
 }
 
 fn job_from_str<'de, D>(deserializer: D) -> Result<Job, D::Error>

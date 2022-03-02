@@ -15,7 +15,7 @@ impl LogMonitorMessage {
     pub fn new() -> Self {
         Self {
             cmd: LogMonitorCmd::None,
-            message: "Empty message.".to_string(),
+            message: "Empty message.".to_owned(),
         }
     }
 

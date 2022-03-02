@@ -23,8 +23,9 @@ where
     #[derive(Deserialize)]
     struct Wrapper(LogMonitor);
 
-    let v = HashMap::<String, Wrapper>::deserialize(deserializer)?;
-    Ok(v.into_iter()
+    let deserialized = HashMap::<String, Wrapper>::deserialize(deserializer)?;
+    Ok(deserialized
+        .into_iter()
         .map(|(k, Wrapper(mut v))| {
             v.name = k.clone();
 

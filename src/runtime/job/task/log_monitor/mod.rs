@@ -32,7 +32,7 @@ impl LogMonitor {
             name,
             ontrigger: String::new(),
             test: String::new(),
-            variable_pattern: DEFAULT_VARIABLE_PATTERN.to_string(),
+            variable_pattern: DEFAULT_VARIABLE_PATTERN.to_owned(),
         }
     }
 

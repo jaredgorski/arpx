@@ -27,7 +27,7 @@ impl Process {
     pub fn new(name: String) -> Self {
         Self {
             command: String::new(),
-            cwd: ".".to_string(),
+            cwd: ".".to_owned(),
             log_monitors: Vec::new(),
             name,
             onfail: None,
@@ -145,7 +145,7 @@ impl Process {
             if let Some(onfail) = actions.onfail {
                 let onfail_name = match &self.onfail {
                     Some(n) => n.clone(),
-                    None => "".to_string(),
+                    None => "".to_owned(),
                 };
                 debug!("Running onfail \"{}\" from prepared actions", onfail_name);
 
