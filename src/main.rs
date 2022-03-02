@@ -1,14 +1,14 @@
 #![forbid(unsafe_code)]
 
 mod cli;
+mod logs;
 mod runtime;
-mod util;
 
 use anyhow::{Context, Result};
 use cli::Cli;
 use log::{debug, LevelFilter};
+use logs::Logs;
 use runtime::{local_bin::BinCommand, Runtime};
-use util::logs::Logs;
 
 fn main() -> Result<()> {
     let matches = Cli::run();
