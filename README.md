@@ -2,6 +2,7 @@
 
 ### TODO
 
+- write tests!
 - features:
   - external log monitors:
     - use arpx to monitor external log file and spawn processes ontrigger
