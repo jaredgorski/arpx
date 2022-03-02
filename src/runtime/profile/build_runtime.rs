@@ -10,7 +10,7 @@ use anyhow::{ensure, Context, Error, Result};
 use log::debug;
 use std::{collections::HashMap, env::var, path::Path};
 
-pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Runtime> {
+pub fn from_profile(profile: Profile, job_names: &[String]) -> Result<Runtime> {
     debug!("Building runtime object from profile data");
 
     let Profile {

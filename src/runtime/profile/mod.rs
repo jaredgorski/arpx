@@ -1,11 +1,10 @@
+mod build_runtime;
 mod deserialize;
-mod runtime;
 
 use crate::runtime::Runtime;
 use anyhow::{Context, Error, Result};
 pub use deserialize::Profile;
 use log::debug;
-use runtime::runtime_from_profile;
 use std::fs;
 
 impl Profile {
@@ -15,7 +14,7 @@ impl Profile {
         let data = fs::read_to_string(path).context("Error reading file")?;
         let profile = Self::deserialize_from_str(&data).context("Error deserializing file")?;
 
-        runtime_from_profile(profile, job_names).context("Error building runtime")
+        build_runtime::from_profile(profile, job_names).context("Error building runtime")
     }
 
     fn deserialize_from_str(data: &str) -> Result<Self> {
