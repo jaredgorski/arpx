@@ -36,7 +36,7 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
 
     ensure!(
         log_monitor_lib.len()
-            < var("ARPX_LOG_MONITORS_MAX")
+            <= var("ARPX_LOG_MONITORS_MAX")
                 .unwrap_or_else(|_| "200".to_string())
                 .parse::<usize>()
                 .unwrap_or(200),
@@ -67,7 +67,7 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
 
     ensure!(
         process_lib.len()
-            < var("ARPX_PROCESSES_MAX")
+            <= var("ARPX_PROCESSES_MAX")
                 .unwrap_or_else(|_| "200".to_string())
                 .parse::<usize>()
                 .unwrap_or(200),
@@ -99,7 +99,11 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
                         let task_index = i + 1;
 
                         ensure!(
-                            task.processes.len() < var("ARPX_CONCURRENT_PROCESSES_MAX").unwrap_or_else(|_| "500".to_string()).parse::<usize>().unwrap_or(500),
+                            task.processes.len()
+                                <= var("ARPX_CONCURRENT_PROCESSES_MAX")
+                                    .unwrap_or_else(|_| "500".to_string())
+                                    .parse::<usize>()
+                                    .unwrap_or(500),
                             "Job \"{}\", task {}: too many processes",
                             job_name,
                             task_index
@@ -118,7 +122,11 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
                                         ))?;
 
                                     ensure!(
-                                        task.processes.len() + process.log_monitors.len() < var("ARPX_THREAD_MAX").unwrap_or_else(|_| "500".to_string()).parse::<usize>().unwrap_or(500),
+                                        task.processes.len() + process.log_monitors.len()
+                                            <= var("ARPX_THREAD_MAX")
+                                                .unwrap_or_else(|_| "500".to_string())
+                                                .parse::<usize>()
+                                                .unwrap_or(500),
                                         "Job \"{}\", task {}: too many threads (reduce processes or log_monitors on task)",
                                         job_name,
                                         task_index
