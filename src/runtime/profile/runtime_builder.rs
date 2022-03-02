@@ -117,7 +117,8 @@ impl RuntimeBuilder {
                                             .onfail(match &process.onfail {
                                                 Some(onfail) => {
                                                     ensure!(
-                                                        process_lib.contains_key(onfail) || BUILTIN_ACTIONS.contains(&&onfail[..]),
+                                                        process_lib.contains_key(onfail)
+                                                            || BUILTIN_ACTIONS.contains(&&onfail[..]),
                                                         "Job \"{}\", task {}: invalid onfail \"{}\" provided",
                                                         job_name,
                                                         task_index,
@@ -131,7 +132,8 @@ impl RuntimeBuilder {
                                             .onsucceed(match &process.onsucceed {
                                                 Some(onsucceed) => {
                                                     ensure!(
-                                                        process_lib.contains_key(onsucceed) || BUILTIN_ACTIONS.contains(&&onsucceed[..]),
+                                                        process_lib.contains_key(onsucceed)
+                                                            || BUILTIN_ACTIONS.contains(&&onsucceed[..]),
                                                         "Job \"{}\", task {}: invalid onsucceed \"{}\" provided",
                                                         job_name,
                                                         task_index,
