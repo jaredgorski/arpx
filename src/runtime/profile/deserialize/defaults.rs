@@ -1,4 +1,7 @@
-use crate::runtime::profile::deserialize::{log_monitors, processes};
+use crate::runtime::{
+    job::task::log_monitor::DEFAULT_VARIABLE_PATTERN,
+    profile::deserialize::{log_monitors, processes},
+};
 use arpx_job_parser::Job;
 use std::collections::HashMap;
 
@@ -31,5 +34,5 @@ pub fn buffer_size() -> usize {
 }
 
 pub fn variable_pattern() -> String {
-    "read -r -d '' ARPX_BUFFER << 'EOF'\n{%b%}\nEOF".to_string()
+    DEFAULT_VARIABLE_PATTERN.to_string()
 }

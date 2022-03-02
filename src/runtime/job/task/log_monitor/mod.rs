@@ -10,6 +10,8 @@ use rolling_buffer::RollingBuffer;
 use std::process::{Command, Stdio};
 use std::thread;
 
+pub const DEFAULT_VARIABLE_PATTERN: &str = "read -r -d '' ARPX_BUFFER << 'EOF'\n{%b%}\nEOF";
+
 #[derive(Clone, Debug)]
 pub struct LogMonitor {
     pub buffer: RollingBuffer,
@@ -30,7 +32,7 @@ impl LogMonitor {
             name,
             ontrigger: String::new(),
             test: String::new(),
-            variable_pattern: "read -r -d '' ARPX_BUFFER << 'EOF'\n{%b%}\nEOF".to_string(),
+            variable_pattern: DEFAULT_VARIABLE_PATTERN.to_string(),
         }
     }
 
