@@ -50,7 +50,7 @@ pub fn runtime_from_profile(profile: Profile, job_names: &[String]) -> Result<Ru
         .map(|(name, v)| {
             ensure!(
                 Path::new(&v.cwd).is_dir(),
-                "Current working directory \"{}\" on process \"{}\" does not exist",
+                "Configured current working directory \"{}\" on process \"{}\" is not a valid directory",
                 v.cwd,
                 name
             );
