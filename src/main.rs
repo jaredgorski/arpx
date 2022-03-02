@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "doc", doc(include = "../README.md"))]
-//! https://github.com/jaredgorski/arpx
 #![forbid(unsafe_code)]
 
 mod cli;
