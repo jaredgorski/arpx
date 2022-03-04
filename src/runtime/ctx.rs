@@ -11,6 +11,12 @@ pub struct Ctx {
     pub process_lib: HashMap<String, Process>,
 }
 
+impl Default for Ctx {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Ctx {
     pub fn new() -> Self {
         Self {

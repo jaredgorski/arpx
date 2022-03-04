@@ -174,8 +174,7 @@ impl RuntimeBuilder {
                 let log_monitor = LogMonitor::new(name.clone())
                     .buffer_size(v.buffer_size)
                     .ontrigger(v.ontrigger)
-                    .test(v.test)
-                    .variable_pattern(v.variable_pattern);
+                    .test(v.test);
 
                 (name, log_monitor)
             })

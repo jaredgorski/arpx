@@ -11,6 +11,12 @@ pub struct LogMonitorMessage {
     pub message: String,
 }
 
+impl Default for LogMonitorMessage {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LogMonitorMessage {
     pub fn new() -> Self {
         Self {

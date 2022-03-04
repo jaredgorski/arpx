@@ -12,8 +12,6 @@ pub struct LogMonitor {
     pub ontrigger: String,
     #[serde(default = "defaults::string")]
     pub test: String,
-    #[serde(default = "defaults::variable_pattern")]
-    pub variable_pattern: String,
 }
 
 pub fn deserialize<'de, D>(deserializer: D) -> Result<HashMap<String, LogMonitor>, D::Error>

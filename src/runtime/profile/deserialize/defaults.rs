@@ -1,7 +1,4 @@
-use crate::runtime::{
-    job::task::log_monitor::DEFAULT_VARIABLE_PATTERN,
-    profile::deserialize::{log_monitors, processes},
-};
+use crate::runtime::profile::deserialize::{log_monitors, processes};
 use arpx_job_parser::Job;
 use std::collections::HashMap;
 
@@ -31,8 +28,4 @@ pub fn string_vec() -> Vec<String> {
 
 pub fn buffer_size() -> usize {
     20
-}
-
-pub fn variable_pattern() -> String {
-    DEFAULT_VARIABLE_PATTERN.to_string()
 }

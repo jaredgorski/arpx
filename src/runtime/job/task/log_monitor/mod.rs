@@ -10,8 +10,6 @@ use rolling_buffer::RollingBuffer;
 use std::process::{Command, Stdio};
 use std::thread;
 
-pub const DEFAULT_VARIABLE_PATTERN: &str = "read -r -d '' ARPX_BUFFER << 'EOF'\n{%b%}\nEOF";
-
 #[derive(Clone, Debug)]
 pub struct LogMonitor {
     pub buffer: RollingBuffer,
@@ -20,7 +18,6 @@ pub struct LogMonitor {
     pub name: String,
     pub ontrigger: String,
     pub test: String,
-    pub variable_pattern: String,
 }
 
 impl LogMonitor {
@@ -32,7 +29,6 @@ impl LogMonitor {
             name,
             ontrigger: String::new(),
             test: String::new(),
-            variable_pattern: DEFAULT_VARIABLE_PATTERN.to_owned(),
         }
     }
 
@@ -51,12 +47,6 @@ impl LogMonitor {
 
     pub fn test(mut self, t: String) -> Self {
         self.test = t;
-
-        self
-    }
-
-    pub fn variable_pattern(mut self, p: String) -> Self {
-        self.variable_pattern = p;
 
         self
     }
@@ -108,10 +98,11 @@ impl LogMonitor {
     pub fn exec_test(&self, ontrigger: &OptionalAction) -> Result<()> {
         let bin = self.ctx.bin_command.bin.clone();
         let mut bin_args = self.ctx.bin_command.args.clone();
-        bin_args.push(self.get_test_script());
+        bin_args.push(self.test.clone());
 
         let status = Command::new(bin)
             .args(bin_args)
+            .env("ARPX_BUFFER", &self.buffer.dump()[..])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -140,17 +131,5 @@ impl LogMonitor {
         }
 
         Ok(())
-    }
-
-    pub fn get_test_script(&self) -> String {
-        let mut test_script = String::new();
-        let env = self
-            .variable_pattern
-            .replacen("{%b%}", &self.buffer.dump()[..], 1);
-        test_script.push_str(&env[..]);
-        test_script.push('\n');
-        test_script.push_str(&self.test[..]);
-
-        test_script
     }
 }

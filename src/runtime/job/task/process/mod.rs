@@ -6,6 +6,7 @@ use crate::runtime::{
         action::ProcessActions,
         log_monitor::message::{LogMonitorCmd, LogMonitorMessage},
     },
+    local_bin::BinCommand,
 };
 use anyhow::{bail, Context, Result};
 use crossbeam_channel::Sender;
@@ -73,16 +74,15 @@ impl Process {
     ) -> Result<()> {
         debug!("Initiating process \"{}\"", self.name);
 
-        let bin = ctx.bin_command.bin.clone();
-        let mut bin_args = ctx.bin_command.args.clone();
-        bin_args.push(self.command.clone());
+        let BinCommand { bin, mut args } = ctx.bin_command.clone();
+        args.push(self.command.clone());
 
         debug!(
             "Building command and invoking on local binary \"{}\" with args {:?}",
-            bin, bin_args
+            bin, args
         );
         let mut child = Command::new(bin)
-            .args(bin_args)
+            .args(args)
             .current_dir(&self.cwd[..])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
