@@ -47,9 +47,12 @@
 - decide on linting settings (make a clippy toml)
 
 ### Performance
-- benchmarking
+- benchmarking:
+  - [link](https://www.cs.brandeis.edu/~cs146a/rust/rustbyexample-02-21-2015/bench.html)
+  - [link](https://patrickfreed.github.io/rust/2021/10/15/making-slow-rust-code-fast.html)
 
 ### Feature backlog:
+  - optional log monitor ontrigger (just run code on the buffer)
   - external log monitors:
     - use arpx to monitor external log file and spawn processes ontrigger
   - per-process log colors
