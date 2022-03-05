@@ -11,18 +11,11 @@
   - Ensure `pub` is only used where needed.
   - Clearly map out runtime and reason about design strengths/weaknesses.
 - write documentation
+- add binary distribution to CI
 - add changelog
 
 ### Binary distribution
 - [link](https://rust-cli.github.io/book/tutorial/packaging.html#distributing-binaries)
-
-### Code quality
-- decide on linting settings (make a clippy toml)
-
-### Performance
-- benchmarking:
-  - [link](https://www.cs.brandeis.edu/~cs146a/rust/rustbyexample-02-21-2015/bench.html)
-  - [link](https://patrickfreed.github.io/rust/2021/10/15/making-slow-rust-code-fast.html)
 
 ### Feature backlog:
   - optional log monitor ontrigger (just run code on the buffer)
