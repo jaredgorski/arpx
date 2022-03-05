@@ -3,7 +3,10 @@ mod common;
 use common::TC;
 
 // TODO:
-// - job/process/log_monitor name syntax
+// - profile file doesn't exist
+// - invalid job/process/log_monitor name syntax (alphanumeric + - + _)
+// - invalid process (onfail/onsucceed doesn't exist, etc.)
+// - invalid log_monitor (ontrigger doesn't exist, etc.)
 
 /*
  * jobs
