@@ -165,7 +165,7 @@ test!(multiple_jobs, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-test!(job_with_chained_process, |t: TC| {
+test!(job_with_onsucceed_process, |t: TC| {
     let (out, err) = t
         .profile(
             r#"
@@ -179,6 +179,39 @@ test!(job_with_chained_process, |t: TC| {
                 two:
                     command: echo bar
                     onsucceed: three
+                three:
+                    command: echo baz
+        "#,
+        )
+        .opts("-j test")
+        .run()
+        .unwrap();
+
+    assert_eq!("[one] foo", out[1]);
+    assert_eq!("[one] bar", out[4]);
+    assert_eq!("[one] baz", out[7]);
+    assert_eq!(9, out.len());
+    assert_eq!(0, err.len());
+});
+
+test!(job_with_onfail_process, |t: TC| {
+    let (out, err) = t
+        .profile(
+            r#"
+            jobs:
+                test: one;
+
+            processes:
+                one:
+                    command: |
+                        echo foo
+                        exit 1
+                    onfail: two
+                two:
+                    command: |
+                        echo bar
+                        exit 1
+                    onfail: three
                 three:
                     command: echo baz
         "#,
