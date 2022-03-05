@@ -2,7 +2,6 @@
 
 ### TODO
 
-- write tests!
 - edge cases:
   - (walk through program from start to finish looking for edge cases)
 - code improvements:
@@ -13,32 +12,6 @@
   - Clearly map out runtime and reason about design strengths/weaknesses.
 - write documentation
 - add changelog
-
-### Test mapping
-
-- profile:
-  - invalid yaml key(s) (job, processes, log_monitors)
-  - invalid job/process/log_monitor name syntax (alphanumeric + `-` + `_`)
-  - invalid job yaml
-  - invalid job (parse error)
-  - invalid job (process doesn't exist, log_monitor doesn't exist, etc.)
-  - invalid process yaml
-  - invalid process (onfail/onsucceed doesn't exist, etc.)
-  - invalid log_monitor yaml
-  - invalid log_monitor (ontrigger doesn't exist, etc.)
-  - invalid profile configuration (too many threads, etc.)
-- runtime:
-  - profile file doesn't exist
-  - profile file read error (not errors in parsing / deserialization)
-  - single job
-  - multiple jobs
-  - job with single task
-  - job with multiple tasks
-  - job with concurrent tasks
-  - job with serial and concurrent tasks
-  - job with recursive process
-  - job with single log_monitor
-  - job with multiple log_monitors
 
 ### Binary distribution
 - [link](https://rust-cli.github.io/book/tutorial/packaging.html#distributing-binaries)
