@@ -74,14 +74,14 @@ test!(single_job_with_concurrent_task, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.2
+                        sleep 2
                         echo baz
-                        sleep 0.1
+                        sleep 1
                 p2:
                     command: |
-                        sleep 0.1
+                        sleep 1
                         echo bar
-                        sleep 0.2
+                        sleep 2
         "#,
         )
         .opts("-j test")
@@ -113,14 +113,14 @@ test!(single_job_with_single_and_concurrent_task, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.2
+                        sleep 2
                         echo baz
-                        sleep 0.1
+                        sleep 1
                 p2:
                     command: |
-                        sleep 0.1
+                        sleep 1
                         echo bar
-                        sleep 0.2
+                        sleep 2
         "#,
         )
         .opts("-j test")
@@ -238,13 +238,13 @@ test!(job_with_multiple_log_monitors, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.2
+                        sleep 2
                         echo bar
                 p2:
                     command: echo baz
                 p3:
                     command: |
-                        sleep 0.2
+                        sleep 2
                         echo qux
             log_monitors:
                 m1:
