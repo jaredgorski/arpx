@@ -1,0 +1,21 @@
+jobs:
+  bench: |
+    [
+      loop_3; @watch
+      loop_3; @watch
+    ]
+
+processes:
+  loop_3:
+    command: |
+      for i in {1..3}
+      do
+        echo "$i"
+      done
+
+log_monitors:
+  watch:
+    ontrigger: loop_3
+    test: |
+      echo "$ARPX_BUFFER"
+      exit 1

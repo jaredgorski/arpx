@@ -26,3 +26,13 @@ log = "0.4.14"
 log4rs = "1.0.0"
 serde = { version = "1.0.136", features = ["derive"] }
 serde_yaml = "0.8.23"
+
+[dev-dependencies]
+criterion = { version = "0.3", features = ["html_reports"] }
+
+[[bench]]
+name = "loop_3"
+harness = false
+
+[profile.bench]
+debug = true
