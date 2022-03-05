@@ -13,8 +13,8 @@ pub fn loop_3_benchmark(c: &mut Criterion) {
     c.bench_function("loop 3", |b| {
         b.iter(|| {
             Runtime::from_profile(
-                &fixture_path.display().to_string()[..],
-                &["bench".to_string()],
+                black_box(&fixture_path.display().to_string()[..]),
+                black_box(&["bench".to_string()]),
             )
             .unwrap()
             .run()
@@ -33,8 +33,8 @@ pub fn concurrent_loop_3_benchmark(c: &mut Criterion) {
     c.bench_function("concurrent loop 3", |b| {
         b.iter(|| {
             Runtime::from_profile(
-                &fixture_path.display().to_string()[..],
-                &["bench".to_string()],
+                black_box(&fixture_path.display().to_string()[..]),
+                black_box(&["bench".to_string()]),
             )
             .unwrap()
             .run()
@@ -53,8 +53,8 @@ pub fn loop_3_with_log_monitor_benchmark(c: &mut Criterion) {
     c.bench_function("loop 3 with log monitor", |b| {
         b.iter(|| {
             Runtime::from_profile(
-                &fixture_path.display().to_string()[..],
-                &["bench".to_string()],
+                black_box(&fixture_path.display().to_string()[..]),
+                black_box(&["bench".to_string()]),
             )
             .unwrap()
             .run()
@@ -73,8 +73,8 @@ pub fn concurrent_loop_3_with_log_monitor_benchmark(c: &mut Criterion) {
     c.bench_function("concurrent loop 3 with log monitor", |b| {
         b.iter(|| {
             Runtime::from_profile(
-                &fixture_path.display().to_string()[..],
-                &["bench".to_string()],
+                black_box(&fixture_path.display().to_string()[..]),
+                black_box(&["bench".to_string()]),
             )
             .unwrap()
             .run()
