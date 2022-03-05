@@ -16,6 +16,12 @@ environment:
     - TARGET: i686-pc-windows-msvc
     - TARGET: x86_64-pc-windows-msvc
 
+    # Testing other channels
+    - TARGET: x86_64-pc-windows-gnu
+      RUST_VERSION: nightly
+    - TARGET: x86_64-pc-windows-msvc
+      RUST_VERSION: nightly
+
 install:
   - ps: >-
       If ($env:TARGET -eq 'x86_64-pc-windows-gnu') {
@@ -30,12 +36,11 @@ install:
   - cargo -V
 
 test_script:
-  # we don't run the "test phase" when doing deploys
   - if [%APPVEYOR_REPO_TAG%]==[false] (
       cargo build --target %TARGET% &&
       cargo build --target %TARGET% --release &&
-      cargo test --target %TARGET% &&
-      cargo test --target %TARGET% --release &&
+      # cargo test --target %TARGET% &&
+      # cargo test --target %TARGET% --release &&
     )
 
 before_deploy:
