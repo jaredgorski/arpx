@@ -9,10 +9,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-const BIN_PATH: &str = "target/debug/arpx";
-
 pub struct TC {
-    bin_path: String,
     datetime: String,
     profile_path: String,
     pub envs: HashMap<String, String>,
@@ -24,7 +21,6 @@ pub struct TC {
 impl TC {
     pub fn new(name: &str) -> Self {
         Self {
-            bin_path: BIN_PATH.to_owned(),
             datetime: Self::datetime(),
             envs: HashMap::new(),
             name: name.to_owned(),
@@ -65,7 +61,7 @@ impl TC {
     pub fn run(self) -> Result<(Vec<String>, Vec<String>)> {
         let BinCommand { bin, mut args } = BinCommand::system_default();
 
-        let test_command = format!("{} -f {} {}", self.bin_path, self.profile_path, self.opts);
+        let test_command = format!("{} -f {} {}", env!("CARGO_BIN_EXE_arpx"), self.profile_path, self.opts);
         args.push(test_command);
 
         let output = Command::new(bin)
