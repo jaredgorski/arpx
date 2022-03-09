@@ -13,11 +13,11 @@ test!(single_job_with_single_task, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.01
+                        sleep 0.1
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
                         echo baz
-                        sleep 0.01
+                        sleep 0.1
         "#,
         )
         .opts("-j test")
@@ -42,13 +42,13 @@ test!(single_job_with_multiple_tasks, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.01
+                        sleep 0.1
                 p2:
                     command: |
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
                         echo baz
-                        sleep 0.01
+                        sleep 0.1
         "#,
         )
         .opts("-j test")
@@ -76,13 +76,13 @@ test!(single_job_with_concurrent_task, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.02
+                        sleep 0.2
                         echo baz
                 p2:
                     command: |
-                        sleep 0.01
+                        sleep 0.1
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
         "#,
         )
         .opts("-j test")
@@ -112,17 +112,17 @@ test!(single_job_with_single_and_concurrent_task, |t: TC| {
                 p0:
                     command: |
                         echo qux
-                        sleep 0.01
+                        sleep 0.1
                 p1:
                     command: |
                         echo foo
-                        sleep 0.02
+                        sleep 0.2
                         echo baz
                 p2:
                     command: |
-                        sleep 0.01
+                        sleep 0.1
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
         "#,
         )
         .opts("-j test")
@@ -149,13 +149,13 @@ test!(multiple_jobs, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.01
+                        sleep 0.1
                 p2:
                     command: |
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
                         echo baz
-                        sleep 0.01
+                        sleep 0.1
         "#,
         )
         .opts("-j test_1 -j test_2")
@@ -179,17 +179,17 @@ test!(job_with_onsucceed_process, |t: TC| {
                 one:
                     command: |
                         echo foo
-                        sleep 0.01
+                        sleep 0.1
                     onsucceed: two
                 two:
                     command: |
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
                     onsucceed: three
                 three:
                     command: |
                         echo baz
-                        sleep 0.01
+                        sleep 0.1
         "#,
         )
         .opts("-j test")
@@ -214,19 +214,19 @@ test!(job_with_onfail_process, |t: TC| {
                 one:
                     command: |
                         echo foo
-                        sleep 0.01
+                        sleep 0.1
                         exit 1
                     onfail: two
                 two:
                     command: |
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
                         exit 1
                     onfail: three
                 three:
                     command: |
                         echo baz
-                        sleep 0.01
+                        sleep 0.1
         "#,
         )
         .opts("-j test")
@@ -251,13 +251,13 @@ test!(job_with_single_log_monitor, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.01
+                        sleep 0.1
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
                 p2:
                     command: |
                         echo baz
-                        sleep 0.01
+                        sleep 0.1
             log_monitors:
                 m1:
                     buffer_size: 1
@@ -286,16 +286,16 @@ test!(job_with_multiple_log_monitors, |t: TC| {
                 p1:
                     command: |
                         echo foo
-                        sleep 0.02
+                        sleep 0.2
                         echo bar
-                        sleep 0.01
+                        sleep 0.1
                 p2:
                     command: |
                         echo baz
-                        sleep 0.01
+                        sleep 0.1
                 p3:
                     command: |
-                        sleep 0.03
+                        sleep 0.3
                         echo qux
             log_monitors:
                 m1:
