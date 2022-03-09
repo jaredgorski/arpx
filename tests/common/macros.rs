@@ -16,3 +16,21 @@ macro_rules! debug {
         assert_eq!(vec![""], $input);
     };
 }
+
+#[macro_export]
+macro_rules! assert_between {
+    ($expected:expr, $got:expr, $before_index:expr, $after_index:expr) => {
+        let after_index = $after_index;
+        let before_index = $before_index;
+        let expected = &*$expected;
+        let got = &*$got;
+
+        let got_index = got.iter().position(|item| item == expected).expect("!expected");
+
+        let valid = got_index > before_index && got_index < after_index;
+
+        if !valid {
+            panic!("Expected index was not between before and after.\n\tGot: {}\n\tBefore: {}\n\tAfter: {}", got_index, before_index, after_index);
+        }
+    };
+}
