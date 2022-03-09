@@ -61,7 +61,12 @@ impl TC {
     pub fn run(self) -> Result<(Vec<String>, Vec<String>)> {
         let BinCommand { bin, mut args } = BinCommand::system_default();
 
-        let test_command = format!("{} -f {} {}", env!("CARGO_BIN_EXE_arpx"), self.profile_path, self.opts);
+        let test_command = format!(
+            "{} -f {} {}",
+            env!("CARGO_BIN_EXE_arpx"),
+            self.profile_path,
+            self.opts
+        );
         args.push(test_command);
 
         let output = Command::new(bin)

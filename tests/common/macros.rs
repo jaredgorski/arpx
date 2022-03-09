@@ -25,7 +25,10 @@ macro_rules! assert_between {
         let expected = &*$expected;
         let got = &*$got;
 
-        let got_index = got.iter().position(|item| item == expected).expect("!expected");
+        let got_index = got
+            .iter()
+            .position(|item| item.contains(expected))
+            .expect(&format!("Expected expression \"{}\" not found in given output", expected)[..]);
 
         let valid = got_index > before_index && got_index < after_index;
 
