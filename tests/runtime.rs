@@ -297,6 +297,7 @@ test!(job_with_multiple_log_monitors, |t: TC| {
                     command: |
                         sleep 0.3
                         echo qux
+                        sleep 0.1
             log_monitors:
                 m1:
                     buffer_size: 1
