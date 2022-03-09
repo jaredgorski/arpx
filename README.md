@@ -13,9 +13,16 @@
 - write documentation
 - add changelog
 
+### Test fixes:
+- Tests are inconsistent...
+
+### Platforms:
+- Currently only supporting x86 MacOS and Linux
+- Work to fix tests for different platforms (notably i686 and Windows)
+
 ### Feature backlog:
-  - optional log monitor ontrigger (just run code on the buffer)
-  - external log monitors:
-    - use arpx to monitor external log file and spawn processes ontrigger
-  - per-process log colors
-  - per-process log file
+- optional log monitor ontrigger (just run code on the buffer)
+- external log monitors:
+  - use arpx to monitor external log file and spawn processes ontrigger
+- per-process log colors
+- per-process log file
