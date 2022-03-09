@@ -214,11 +214,13 @@ test!(job_with_onfail_process, |t: TC| {
                 one:
                     command: |
                         echo foo
+                        sleep 0.01
                         exit 1
                     onfail: two
                 two:
                     command: |
                         echo bar
+                        sleep 0.01
                         exit 1
                     onfail: three
                 three:
@@ -259,7 +261,7 @@ test!(job_with_single_log_monitor, |t: TC| {
             log_monitors:
                 m1:
                     buffer_size: 1
-                    test: grep "bar" <<< "$ARPX_BUFFER"
+                    test: '[[ "$ARPX_BUFFER" =~ "bar" ]]'
                     ontrigger: p2
         "#,
         )
@@ -298,11 +300,11 @@ test!(job_with_multiple_log_monitors, |t: TC| {
             log_monitors:
                 m1:
                     buffer_size: 1
-                    test: grep "foo" <<< "$ARPX_BUFFER"
+                    test: '[[ "$ARPX_BUFFER" =~ "foo" ]]'
                     ontrigger: p2
                 m2:
                     buffer_size: 1
-                    test: grep "bar" <<< "$ARPX_BUFFER"
+                    test: '[[ "$ARPX_BUFFER" =~ "bar" ]]'
                     ontrigger: p3
         "#,
         )
