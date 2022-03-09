@@ -89,7 +89,7 @@ test!(single_job_with_concurrent_task, |t: TC| {
         .run()
         .unwrap();
 
-    assert_btw!("foo", out, 1, 3);
+    assert_btw!("foo", out, 0, 3);
     assert_btw!("bar", out, 2, 4);
     assert_btw!("baz", out, 3, 6);
     assert_eq!(7, out.len());
@@ -130,8 +130,8 @@ test!(single_job_with_single_and_concurrent_task, |t: TC| {
         .unwrap();
 
     assert_eq!("[p0] qux", out[1]);
-    assert_btw!("foo", out, 3, 6);
-    assert_btw!("bar", out, 4, 9);
+    assert_btw!("foo", out, 2, 6);
+    assert_btw!("bar", out, 3, 9);
     assert_btw!("baz", out, 6, 9);
     assert_eq!(10, out.len());
     assert_eq!(0, err.len());
