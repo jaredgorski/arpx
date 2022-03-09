@@ -132,7 +132,7 @@ test!(single_job_with_single_and_concurrent_task, |t: TC| {
     assert_eq!("[p0] qux", out[1]);
     assert_between!("foo", out, 3, 6);
     assert_between!("bar", out, 4, 9);
-    assert_between!("baz", out, 6, 9);
+    assert_between!("baz", out, 4, 9);
     assert_eq!(10, out.len());
     assert_eq!(0, err.len());
 });
@@ -270,7 +270,7 @@ test!(job_with_single_log_monitor, |t: TC| {
         .unwrap();
 
     assert_eq!(vec!["[p1] foo", "[p1] bar"], out[1..3]);
-    assert_between!("baz", out, 3, 6);
+    assert_between!("baz", out, 2, 6);
     assert_eq!(7, out.len());
     assert_eq!(0, err.len());
 });
@@ -315,7 +315,7 @@ test!(job_with_multiple_log_monitors, |t: TC| {
     assert_eq!("[p1] foo", out[1]);
     assert_between!("baz", out, 2, 6);
     assert_between!("bar", out, 2, 6);
-    assert_between!("qux", out, 7, 9);
+    assert_between!("qux", out, 5, 9);
     assert_eq!(10, out.len());
     assert_eq!(0, err.len());
 });
