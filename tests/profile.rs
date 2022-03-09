@@ -247,7 +247,7 @@ test!(log_monitors_max, |t: TC| {
             log_monitors:
                 bar:
                     ontrigger: foo
-                    test: grep "foo" <<< "$ARPX_BUFFER"
+                    test: 'echo "$ARPX_BUFFER" | grep -q "foo"'
          "#,
         )
         .opts("-j test")

@@ -89,9 +89,9 @@ test!(single_job_with_concurrent_task, |t: TC| {
         .run()
         .unwrap();
 
-    assert_between!("foo", out, 1, 3);
-    assert_between!("bar", out, 2, 4);
-    assert_between!("baz", out, 3, 6);
+    assert_btw!("foo", out, 1, 3);
+    assert_btw!("bar", out, 2, 4);
+    assert_btw!("baz", out, 3, 6);
     assert_eq!(7, out.len());
     assert_eq!(0, err.len());
 });
@@ -130,9 +130,9 @@ test!(single_job_with_single_and_concurrent_task, |t: TC| {
         .unwrap();
 
     assert_eq!("[p0] qux", out[1]);
-    assert_between!("foo", out, 3, 6);
-    assert_between!("bar", out, 4, 9);
-    assert_between!("baz", out, 6, 9);
+    assert_btw!("foo", out, 3, 6);
+    assert_btw!("bar", out, 4, 9);
+    assert_btw!("baz", out, 6, 9);
     assert_eq!(10, out.len());
     assert_eq!(0, err.len());
 });
@@ -197,8 +197,8 @@ test!(job_with_onsucceed_process, |t: TC| {
         .unwrap();
 
     assert_eq!("[one] foo", out[1]);
-    assert_between!("bar", out, 3, 8);
-    assert_between!("baz", out, 5, 8);
+    assert_btw!("bar", out, 3, 8);
+    assert_btw!("baz", out, 5, 8);
     assert_eq!(9, out.len());
     assert_eq!(0, err.len());
 });
@@ -234,8 +234,8 @@ test!(job_with_onfail_process, |t: TC| {
         .unwrap();
 
     assert_eq!("[one] foo", out[1]);
-    assert_between!("bar", out, 3, 8);
-    assert_between!("baz", out, 5, 8);
+    assert_btw!("bar", out, 3, 8);
+    assert_btw!("baz", out, 5, 8);
     assert_eq!(9, out.len());
     assert_eq!(0, err.len());
 });
@@ -261,7 +261,7 @@ test!(job_with_single_log_monitor, |t: TC| {
             log_monitors:
                 m1:
                     buffer_size: 1
-                    test: '[[ "$ARPX_BUFFER" =~ "bar" ]]'
+                    test: 'echo "$ARPX_BUFFER" | grep -q "bar"'
                     ontrigger: p2
         "#,
         )
@@ -270,7 +270,7 @@ test!(job_with_single_log_monitor, |t: TC| {
         .unwrap();
 
     assert_eq!(vec!["[p1] foo", "[p1] bar"], out[1..3]);
-    assert_between!("baz", out, 3, 6);
+    assert_btw!("baz", out, 3, 6);
     assert_eq!(7, out.len());
     assert_eq!(0, err.len());
 });
@@ -300,11 +300,11 @@ test!(job_with_multiple_log_monitors, |t: TC| {
             log_monitors:
                 m1:
                     buffer_size: 1
-                    test: '[[ "$ARPX_BUFFER" =~ "foo" ]]'
+                    test: 'echo "$ARPX_BUFFER" | grep -q "foo"'
                     ontrigger: p2
                 m2:
                     buffer_size: 1
-                    test: '[[ "$ARPX_BUFFER" =~ "bar" ]]'
+                    test: 'echo "$ARPX_BUFFER" | grep -q "bar"'
                     ontrigger: p3
         "#,
         )
@@ -313,9 +313,9 @@ test!(job_with_multiple_log_monitors, |t: TC| {
         .unwrap();
 
     assert_eq!("[p1] foo", out[1]);
-    assert_between!("baz", out, 2, 6);
-    assert_between!("bar", out, 2, 6);
-    assert_between!("qux", out, 7, 9);
+    assert_btw!("baz", out, 2, 6);
+    assert_btw!("bar", out, 2, 6);
+    assert_btw!("qux", out, 7, 9);
     assert_eq!(10, out.len());
     assert_eq!(0, err.len());
 });

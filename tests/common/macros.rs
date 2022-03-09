@@ -18,7 +18,7 @@ macro_rules! debug {
 }
 
 #[macro_export]
-macro_rules! assert_between {
+macro_rules! assert_btw {
     ($expected:expr, $got:expr, $before_index:expr, $after_index:expr) => {
         let after_index = $after_index;
         let before_index = $before_index;
