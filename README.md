@@ -19,6 +19,7 @@
 ### Platforms:
 - Currently only supporting x86 MacOS and Linux
 - Work to fix tests for different platforms (notably i686 and Windows)
+- Use os_string where needed?
 
 ### Feature backlog:
 - optional log monitor ontrigger (just run code on the buffer)
