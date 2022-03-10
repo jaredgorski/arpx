@@ -16,10 +16,14 @@
 ### Test fixes:
 - Tests are inconsistent...
 
+### Benchmarks:
+- Save benchmark baseline
+
 ### Platforms:
-- Currently only supporting x86 MacOS and Linux
-- Work to fix tests for different platforms (notably i686 and Windows)
-- Use os_string where needed?
+- Currently only supporting x86 MacOS and Linux:
+  - Work to fix tests for different platforms (notably i686 and Windows)
+  - windows support pending [this issue](https://github.com/rust-lang/rust/issues/92939)
+  - Use os_string where needed?
 
 ### Feature backlog:
 - optional log monitor ontrigger (just run code on the buffer)
@@ -27,3 +31,8 @@
   - use arpx to monitor external log file and spawn processes ontrigger
 - per-process log colors
 - per-process log file
+- windows support pending [this issue](https://github.com/rust-lang/rust/issues/92939)
+- enable configuring bin and binargs via profile:
+  - bash: `sh -c`
+  - cmd: `cmd /c`
+  - powershell: `powershell -Command`
