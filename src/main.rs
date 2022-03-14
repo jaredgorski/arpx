@@ -1,5 +1,3 @@
-#![forbid(unsafe_code)]
-
 use anyhow::{Context, Result};
 use arpx::{BinCommand, Cli, Logs, Runtime};
 use log::{debug, LevelFilter};

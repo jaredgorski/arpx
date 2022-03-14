@@ -1,5 +1,6 @@
 use std::env::consts::OS;
 
+#[doc(hidden)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BinCommand {
     pub bin: String,

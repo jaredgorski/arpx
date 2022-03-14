@@ -23,6 +23,7 @@ impl Patterns {
     }
 }
 
+#[doc(hidden)]
 pub struct Logs {
     pub handle: Handle,
 }
