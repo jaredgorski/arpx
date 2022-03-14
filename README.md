@@ -14,7 +14,7 @@
 - add changelog
 
 ### Benchmarks:
-- Save benchmark baseline
+- [Save benchmark baseline](https://bheisler.github.io/criterion.rs/book/user_guide/command_line_options.html)
 
 ### Platforms:
 - Currently only supporting x86 MacOS and Linux:
