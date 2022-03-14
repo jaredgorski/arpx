@@ -1,5 +1,8 @@
+mod cli;
+
 use anyhow::{Context, Result};
-use arpx::{BinCommand, Cli, Logs, Runtime};
+use arpx::{BinCommand, Logs, Runtime};
+use cli::Cli;
 use log::{debug, LevelFilter};
 
 fn main() -> Result<()> {

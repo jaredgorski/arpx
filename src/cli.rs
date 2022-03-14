@@ -1,6 +1,5 @@
 use clap::{arg, command, ArgMatches, Command};
 
-#[doc(hidden)]
 pub struct Cli;
 
 impl Cli {
