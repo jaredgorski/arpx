@@ -25,6 +25,7 @@ impl Default for Runtime {
 }
 
 impl Runtime {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             ctx: Ctx::new(),
@@ -32,18 +33,21 @@ impl Runtime {
         }
     }
 
+    #[must_use]
     pub fn jobs(mut self, j: Vec<Job>) -> Self {
         self.jobs = j;
 
         self
     }
 
+    #[must_use]
     pub fn log_monitor_lib(mut self, p: HashMap<String, LogMonitor>) -> Self {
         self.ctx.log_monitor_lib = p;
 
         self
     }
 
+    #[must_use]
     pub fn process_lib(mut self, p: HashMap<String, Process>) -> Self {
         self.ctx.process_lib = p;
 

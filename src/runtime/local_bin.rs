@@ -7,10 +7,12 @@ pub struct BinCommand {
 }
 
 impl BinCommand {
+    #[must_use]
     pub fn new(bin: String, args: Vec<String>) -> Self {
         Self { bin, args }
     }
 
+    #[must_use]
     pub fn system_default() -> Self {
         Self::from_os(OS)
     }

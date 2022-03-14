@@ -3,6 +3,7 @@ use clap::{arg, command, ArgMatches, Command};
 pub struct Cli;
 
 impl Cli {
+    #[must_use]
     pub fn run() -> ArgMatches {
         return command!()
             .propagate_version(true)
