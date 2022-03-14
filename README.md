@@ -13,9 +13,6 @@
 - write documentation
 - add changelog
 
-### Test fixes:
-- Tests are inconsistent...
-
 ### Benchmarks:
 - Save benchmark baseline
 
