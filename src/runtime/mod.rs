@@ -20,6 +20,51 @@ use std::collections::HashMap;
 /// libraries for processes and log monitors which are copied to each child job, task, and process
 /// so that the runtime can instantiate new processes and log monitors on the fly.
 ///
+/// A visual representation:
+///
+/// ```text
+///     Runtime
+/// T       |
+/// I       > [ Job1, Job2, ... ]
+/// M             |
+/// E             > [ Task1, Task2, ... ]
+///                     |
+/// |                   > Process1 -> `echo foo`
+/// |                   |     |
+/// |                   |     > OnSucceed: Process2 -> `echo bar`
+/// v                   |
+///                     > Process2 -> `echo bar`
+///
+///     ...
+///
+///     Runtime
+///         |
+///         > [ Job1, Job2, ... ]
+///               |
+///               > [ Task1, Task2, ... ]
+///                            |
+///                            > Process3 -> `echo baz`
+///
+///     ...
+///
+///     Runtime
+///         |
+///         > [ Job1, Job2, ... ]
+///                     |
+///                     > [ Task1, ... ]
+///                           |
+///                           > Process4 -> `echo qux`
+/// ```
+///
+/// Processes in a given task run concurrently.
+///
+/// Once all processes in the task have exited, including actions (`onsucceed`, `onfail`, and log
+/// monitor `ontrigger` actions spawned on their parent process threads), the task is complete and
+/// the next task in the job will execute.
+///
+/// Once all tasks in a given job have completed their execution, the runtime moves on to the next
+/// job in the queue. Once all jobs have completed their execution, the runtime is finished.
+///
 /// [`jobs`]: #structfield.jobs
 /// [`ctx`]: #structfield.ctx
 ///
@@ -32,9 +77,13 @@ use std::collections::HashMap;
 /// use std::collections::HashMap;
 ///
 /// // Define processes
-/// let processes = vec![Process::new("my_process".to_string())
-///     .command("echo foo".to_string())
-///     .onsucceed(Some("my_other_process".to_string()))];
+/// let processes = vec![
+///     Process::new("p_foo".to_string())
+///         .command("echo foo".to_string())
+///         .onsucceed(Some("p_baz".to_string())),
+///     Process::new("p_bar".to_string()).command("echo bar".to_string()),
+/// ];
+///
 ///
 /// // Build jobs
 /// let jobs = vec![Job::new(
@@ -49,8 +98,8 @@ use std::collections::HashMap;
 ///     .collect::<HashMap<String, Process>>();
 ///
 /// process_lib.insert(
-///     "my_other_process".to_string(),
-///     Process::new("my_other_process".to_string()).command("echo bar".to_string()),
+///     "p_baz".to_string(),
+///     Process::new("p_baz".to_string()).command("echo baz".to_string()),
 /// );
 ///
 /// // Instantiate runtime
@@ -61,13 +110,18 @@ use std::collections::HashMap;
 ///
 /// // Output:
 /// //
-/// // [my_process] "my_process" (8611) spawned
-/// // [my_process] foo
-/// // [my_process] "my_process" (8611) succeeded
-/// // [my_process] "my_other_process" (8612) spawned
-/// // [my_process] bar
-/// // [my_process] "my_other_process" (8612) succeeded
+/// // [p_foo] "p_foo" (1) spawned
+/// // [p_bar] "p_bar" (2) spawned
+/// // [p_foo] foo
+/// // [p_bar] bar
+/// // [p_foo] "p_foo" (1) succeeded
+/// // [p_bar] "p_bar" (2) succeeded
+/// // [p_foo] "p_baz" (3) spawned
+/// // [p_foo] baz
+/// // [p_foo] "p_baz" (3) succeeded
 /// ```
+///
+/// Note that `p_baz` runs on the `p_foo` thread, since `p_foo` executes it `onsucceed`.
 #[derive(Clone, Debug)]
 pub struct Runtime {
     pub ctx: Ctx,
