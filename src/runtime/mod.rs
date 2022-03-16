@@ -14,11 +14,11 @@ use std::collections::HashMap;
 
 /// Represents and contains a given runtime.
 ///
-/// This object contains an ordered list of [`jobs`], each of which contain an ordered list of
-/// tasks, each containing one or more concurrent processes. This object also contains a [`ctx`]
+/// This object contains an ordered list of [`jobs`], each job containing an ordered list of tasks,
+/// each task containing one or more concurrent processes. This object also contains a [`ctx`]
 /// object which contains the binary command and args for the current runtime as well as hashmap
-/// libraries for processes and log monitors which are copied to each child job, task, and process
-/// so that the runtime can instantiate new processes and log monitors on the fly.
+/// indexes for processes and log monitors which are copied to each child job, task, and process so
+/// that the runtime can instantiate new processes and log monitors on the fly.
 ///
 /// A visual representation:
 ///
