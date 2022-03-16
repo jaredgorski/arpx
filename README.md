@@ -7,7 +7,7 @@
 - code improvements:
   - Review ownership: reduce `clone()` anti-patterns.
   - Use more references, less values and owned data.
-  - Insofar as `ctx` is passed around, the entire `log_monitor_lib` and `process_lib` objects get copied. Can `ctx` be referenced instead?
+  - Insofar as `ctx` is passed around, the entire `log_monitor_map` and `process_map` objects get copied. Can `ctx` be referenced instead?
   - Ensure `pub` is only used where needed.
   - Clearly map out runtime and reason about design strengths/weaknesses.
 - write documentation

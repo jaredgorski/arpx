@@ -7,8 +7,8 @@ use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub struct Ctx {
     pub bin_command: BinCommand,
-    pub log_monitor_lib: HashMap<String, LogMonitor>,
-    pub process_lib: HashMap<String, Process>,
+    pub log_monitor_map: HashMap<String, LogMonitor>,
+    pub process_map: HashMap<String, Process>,
 }
 
 impl Default for Ctx {
@@ -21,8 +21,8 @@ impl Ctx {
     pub fn new() -> Self {
         Self {
             bin_command: BinCommand::system_default(),
-            log_monitor_lib: HashMap::new(),
-            process_lib: HashMap::new(),
+            log_monitor_map: HashMap::new(),
+            process_map: HashMap::new(),
         }
     }
 }

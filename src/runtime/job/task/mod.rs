@@ -27,7 +27,7 @@ impl Task {
         for process in self.processes {
             let mut log_monitor_senders = Vec::new();
             for log_monitor_name in &process.log_monitors {
-                let log_monitor = &ctx.log_monitor_lib[log_monitor_name];
+                let log_monitor = &ctx.log_monitor_map[log_monitor_name];
 
                 let log_monitor_action = get_log_monitor_action(log_monitor, ctx);
                 let (handle, sender) = log_monitor.clone().run(log_monitor_action)?;

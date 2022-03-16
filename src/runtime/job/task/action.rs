@@ -35,7 +35,7 @@ fn get_optional_action(action_name: String, ctx: Ctx) -> OptionalAction {
         return Some(Box::new(move || execute_action(&action_name[..])));
     }
 
-    match ctx.clone().process_lib.get(&action_name[..]) {
+    match ctx.clone().process_map.get(&action_name[..]) {
         Some(process) => {
             let cloned_process = process.clone();
 

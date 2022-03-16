@@ -91,13 +91,13 @@ use std::collections::HashMap;
 ///     vec![Task::new(processes.clone())],
 /// )];
 ///
-/// // Build process library
-/// let mut process_lib = processes
+/// // Build process map
+/// let mut process_map = processes
 ///     .into_iter()
 ///     .map(|process| (process.name.clone(), process))
 ///     .collect::<HashMap<String, Process>>();
 ///
-/// process_lib.insert(
+/// process_map.insert(
 ///     "p_baz".to_string(),
 ///     Process::new("p_baz".to_string()).command("echo baz".to_string()),
 /// );
@@ -105,8 +105,8 @@ use std::collections::HashMap;
 /// // Instantiate runtime
 /// Runtime::new()
 ///     .jobs(jobs)
-///     .process_lib(process_lib)
-///     .run()
+///     .process_map(process_map)
+///     .run();
 ///
 /// // Output:
 /// //
@@ -151,15 +151,15 @@ impl Runtime {
     }
 
     #[must_use]
-    pub fn log_monitor_lib(mut self, p: HashMap<String, LogMonitor>) -> Self {
-        self.ctx.log_monitor_lib = p;
+    pub fn log_monitor_map(mut self, p: HashMap<String, LogMonitor>) -> Self {
+        self.ctx.log_monitor_map = p;
 
         self
     }
 
     #[must_use]
-    pub fn process_lib(mut self, p: HashMap<String, Process>) -> Self {
-        self.ctx.process_lib = p;
+    pub fn process_map(mut self, p: HashMap<String, Process>) -> Self {
+        self.ctx.process_map = p;
 
         self
     }

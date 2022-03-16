@@ -16,12 +16,12 @@ impl RuntimeBuilder {
     pub fn from_profile_and_job_names(profile: Profile, job_names: &[String]) -> Result<Runtime> {
         debug!("Building runtime object from profile data");
 
-        debug!("Building log_monitor_lib");
+        debug!("Building log_monitor_map");
 
-        let log_monitor_lib = Self::build_log_monitor_lib(profile.log_monitors);
+        let log_monitor_map = Self::build_log_monitor_map(profile.log_monitors);
 
         ensure!(
-            log_monitor_lib.len()
+            log_monitor_map.len()
                 <= var("ARPX_LOG_MONITORS_MAX")
                     .unwrap_or_else(|_| "200".to_owned())
                     .parse::<usize>()
@@ -29,12 +29,12 @@ impl RuntimeBuilder {
             "Too many log_monitors defined in profile"
         );
 
-        debug!("Building process_lib");
+        debug!("Building process_map");
 
-        let process_lib = Self::build_process_lib(profile.processes)?;
+        let process_map = Self::build_process_map(profile.processes)?;
 
         ensure!(
-            process_lib.len()
+            process_map.len()
                 <= var("ARPX_PROCESSES_MAX")
                     .unwrap_or_else(|_| "200".to_owned())
                     .parse::<usize>()
@@ -43,7 +43,7 @@ impl RuntimeBuilder {
         );
 
         ensure!(
-            !process_lib.is_empty(),
+            !process_map.is_empty(),
             "No valid processes exist in profile"
         );
 
@@ -82,7 +82,7 @@ impl RuntimeBuilder {
                                     .iter()
                                     .map(|process| {
                                         let default_process =
-                                            process_lib.get(&process.name[..]).context(format!(
+                                            process_map.get(&process.name[..]).context(format!(
                                                 "Job \"{}\", task {}: process \"{}\" not defined in processes",
                                                 job_name,
                                                 task_index,
@@ -102,7 +102,7 @@ impl RuntimeBuilder {
 
                                         for log_monitor in &process.log_monitors {
                                             ensure!(
-                                                log_monitor_lib.contains_key(log_monitor),
+                                                log_monitor_map.contains_key(log_monitor),
                                                 "Job \"{}\", task {}: log monitor \"{}\" not defined in log_monitors",
                                                 job_name,
                                                 task_index,
@@ -117,7 +117,7 @@ impl RuntimeBuilder {
                                             .onfail(match &process.onfail {
                                                 Some(onfail) => {
                                                     ensure!(
-                                                        process_lib.contains_key(onfail)
+                                                        process_map.contains_key(onfail)
                                                             || BUILTIN_ACTIONS.contains(&&onfail[..]),
                                                         "Job \"{}\", task {}: invalid onfail \"{}\" provided",
                                                         job_name,
@@ -132,7 +132,7 @@ impl RuntimeBuilder {
                                             .onsucceed(match &process.onsucceed {
                                                 Some(onsucceed) => {
                                                     ensure!(
-                                                        process_lib.contains_key(onsucceed)
+                                                        process_map.contains_key(onsucceed)
                                                             || BUILTIN_ACTIONS.contains(&&onsucceed[..]),
                                                         "Job \"{}\", task {}: invalid onsucceed \"{}\" provided",
                                                         job_name,
@@ -157,15 +157,15 @@ impl RuntimeBuilder {
 
         let runtime = Runtime::new()
             .jobs(jobs)
-            .log_monitor_lib(log_monitor_lib)
-            .process_lib(process_lib);
+            .log_monitor_map(log_monitor_map)
+            .process_map(process_map);
 
         debug!("Runtime object built");
 
         Ok(runtime)
     }
 
-    pub fn build_log_monitor_lib(
+    pub fn build_log_monitor_map(
         log_monitors: HashMap<String, deserialize::log_monitors::LogMonitor>,
     ) -> HashMap<String, LogMonitor> {
         log_monitors
@@ -181,7 +181,7 @@ impl RuntimeBuilder {
             .collect()
     }
 
-    pub fn build_process_lib(
+    pub fn build_process_map(
         processes: HashMap<String, deserialize::processes::Process>,
     ) -> Result<HashMap<String, Process>> {
         processes
