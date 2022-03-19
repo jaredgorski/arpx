@@ -135,6 +135,7 @@ impl Default for Runtime {
 }
 
 impl Runtime {
+    /// Constructs a new, empty `Runtime`.
     #[must_use]
     pub fn new() -> Self {
         Self {
@@ -143,6 +144,7 @@ impl Runtime {
         }
     }
 
+    /// Builds `Runtime` with the specified jobs.
     #[must_use]
     pub fn jobs(mut self, j: Vec<Job>) -> Self {
         self.jobs = j;
@@ -150,6 +152,7 @@ impl Runtime {
         self
     }
 
+    /// Builds `Runtime` with the specified log monitors.
     #[must_use]
     pub fn log_monitor_map(mut self, p: HashMap<String, LogMonitor>) -> Self {
         self.ctx.log_monitor_map = p;
@@ -157,6 +160,7 @@ impl Runtime {
         self
     }
 
+    /// Builds `Runtime` with the specified processes.
     #[must_use]
     pub fn process_map(mut self, p: HashMap<String, Process>) -> Self {
         self.ctx.process_map = p;
@@ -164,18 +168,21 @@ impl Runtime {
         self
     }
 
-    pub fn bin_command(&mut self, c: BinCommand) -> &Self {
+    /// Builds `Runtime` with the specified binary command.
+    pub fn bin_command(mut self, c: BinCommand) -> Self {
         self.ctx.bin_command = c;
 
         self
     }
 
+    /// Constructs a new `Runtime` from a profile at the specified path, using the specified jobs.
     pub fn from_profile(path: &str, job_names: &[String]) -> Result<Self> {
         debug!("Loading runtime from profile");
 
         Profile::load_runtime(path, job_names)
     }
 
+    /// Executes the runtime.
     pub fn run(&self) -> Result<()> {
         debug!("Running runtime instance with structure:\n{:#?}", self);
 

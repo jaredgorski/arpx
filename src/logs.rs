@@ -23,11 +23,15 @@ impl Patterns {
     }
 }
 
+/// Configures runtime logging.
 pub struct Logs {
     pub handle: Handle,
 }
 
 impl Logs {
+    /// Initiate runtime logging with the provided level.
+    ///
+    /// If verbose, use verbose logging pattern.
     pub fn init(level: LevelFilter, verbose: bool) -> Result<Self> {
         let handle = log4rs::init_config(Self::get_config(level, verbose)?)
             .context("Error initiating logger config")?;
@@ -35,6 +39,7 @@ impl Logs {
         Ok(Self { handle })
     }
 
+    /// Build a logging configuration with the given level and verbosity.
     fn get_config(level: LevelFilter, verbose: bool) -> Result<Config> {
         let pattern = match level {
             LevelFilter::Debug => Patterns::Debug.as_str(),

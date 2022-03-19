@@ -9,16 +9,21 @@ use log::debug;
 use process::Process;
 use std::thread;
 
+/// Represents and contains a given runtime job task.
+///
+/// This object contains a list of processes which are executed in order when the task is run.
 #[derive(Clone, Debug)]
 pub struct Task {
     pub processes: Vec<Process>,
 }
 
 impl Task {
+    /// Constructs a new, empty `Task`.
     pub fn new(processes: Vec<Process>) -> Self {
         Self { processes }
     }
 
+    /// Executes defined processes in order.
     pub fn run(self, ctx: &Ctx) -> Result<()> {
         debug!("Running task instance with structure:\n{:#?}", self);
 

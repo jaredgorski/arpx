@@ -14,6 +14,12 @@ use log::{debug, info};
 use std::process::{Command, Stdio};
 use stream::PipeStreamReader;
 
+/// Represents and contains a given runtime job task process.
+///
+/// This object contains all of the data necessary to run a given process. This data includes the
+/// process name, the `command` which should be executed using the current `BinCommand`, the
+/// directory in which to execute the `command`, any log monitors which should monitor the command
+/// output, as well as any actions which should be performed when the command fails or succeeds.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Process {
     pub command: String,
@@ -25,6 +31,7 @@ pub struct Process {
 }
 
 impl Process {
+    /// Constructs a new, empty `Process`.
     pub fn new(name: String) -> Self {
         Self {
             command: String::new(),
@@ -36,36 +43,44 @@ impl Process {
         }
     }
 
+    /// Builds `Process` with the specified command.
     pub fn command(mut self, c: String) -> Self {
         self.command = c;
 
         self
     }
 
+    /// Builds `Process` with the specified current working directory.
+    ///
+    /// This directory is where `command` will be executed using the runtime `BinCommand`.
     pub fn cwd(mut self, d: String) -> Self {
         self.cwd = d;
 
         self
     }
 
+    /// Builds `Process` with the specified log monitors.
     pub fn log_monitors(mut self, m: Vec<String>) -> Self {
         self.log_monitors = m;
 
         self
     }
 
+    /// Builds `Process` with the name of the action to execute if the `command` fails.
     pub fn onfail(mut self, f: Option<String>) -> Self {
         self.onfail = f;
 
         self
     }
 
+    /// Builds `Process` with the name of the action to execute if the `command` succeeds.
     pub fn onsucceed(mut self, s: Option<String>) -> Self {
         self.onsucceed = s;
 
         self
     }
 
+    /// Executes the process using the provided actions, context, and log monitor connections.
     pub fn run(
         &self,
         actions: ProcessActions,

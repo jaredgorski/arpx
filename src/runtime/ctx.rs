@@ -4,6 +4,10 @@ use crate::runtime::{
 };
 use std::collections::HashMap;
 
+/// Runtime context object.
+///
+/// This object contains indexes to defined processes and log monitors as well as the current
+/// `BinCommand` object.
 #[derive(Clone, Debug)]
 pub struct Ctx {
     pub bin_command: BinCommand,
@@ -18,6 +22,7 @@ impl Default for Ctx {
 }
 
 impl Ctx {
+    /// Constructs a new, empty `Ctx`.
     pub fn new() -> Self {
         Self {
             bin_command: BinCommand::system_default(),

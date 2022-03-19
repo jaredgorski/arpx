@@ -43,7 +43,7 @@ fn main() -> Result<()> {
         };
 
         if let Some(cmd) = bin {
-            runtime.bin_command(BinCommand::new(cmd.into(), args));
+            runtime = runtime.bin_command(BinCommand::new(cmd.into(), args));
         }
     }
 
