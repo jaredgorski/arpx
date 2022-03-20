@@ -56,4 +56,4 @@ Larger-scale process orchestrators (like Kubernetes) allow for in-depth monitori
 
 The vague, general use-case for Arpx is development-oriented tasks which variously require scheduling, concurrency, and/or unsophisticated runtime monitoring and handling.
 
-_If you want to hack some orchestration into your development environment, this program might be right for you._
+_If you want to hack some orchestration into your development environment, Arpx might be right for you._
