@@ -32,7 +32,7 @@ The name "Arpx" variously refers to the library which provides the program's cor
 
 Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/arpx/latest). Documentation in this repository focuses on the Arpx CLI tool.
 
-# Using the CLI
+## Using the CLI
 
 Command  | Info
 -------- | --------
@@ -44,7 +44,7 @@ Command  | Info
 **-V**, **--version** | Print version information
 **bin <COMMAND> -a <ARGS>...** | Customize local binary used to execute process commands (defaults to `sh -c` on MacOS and Linux)
 
-## Examples
+### Usage examples
 
 Execute job `foo` on `my_profile.yaml`:
 
@@ -64,7 +64,8 @@ Execute jobs `foo` and `bar` on `my_profile.yaml` using `echo -n` instead of `sh
 arpx -f ~/my_profile.yaml -j foo -j bar bin echo -a -n
 ```
 
-<br/>
+---
+
 <br/>
 <br/>
 
