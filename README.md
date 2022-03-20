@@ -205,11 +205,11 @@ log_monitors:
 When our profile is loaded and executed with Arpx, the following happens:
 
 1. Task 1 begins. Process `bar` is executed and successfully exits.
-2. Because `bar` exited successfully, the Arpx runtime executes process `baz`. This concludes task 1.
+2. Because `bar` exited successfully, the Arpx runtime executes `baz`. This concludes task 1.
 3. Task 2 begins. Processes `bar`, `baz`, and `qux` are spawned simultaneously in separate threads.
 4. `bar`, `baz`, and `qux` all exit successfully. This concludes task 2.
 5. Task 3 begins. Process `bar` is spawned and the log monitor `quux` is spawned alongside it, receiving its output and storing it in a buffer.
-6. `bar` logs "bar" to stdout and `quux` receives it, running its `test` script against the text. `test` exits successfully, so the Arpx runtime executes `quux`'s `ontrigger` action, also called `quux`.
+6. `bar` logs "bar" to stdout and `quux` receives it, running its `test` script against the text. `test` exits successfully, so the Arpx runtime executes `quux`'s `ontrigger` action, which is a process also named `quux`.
 7. Process `quux` is executed and successfully exits. This is the end of the Arpx runtime.
 
 ## Using the CLI
@@ -222,7 +222,7 @@ Command  | Info
 **-v**, **--verbose** | Enable verbose output
 **--debug** | Enable debug output
 **-V**, **--version** | Print version information
-**bin <COMMAND> -a <ARGS>...** | Customize local binary used to execute process commands. Defaults to `sh -c` on MacOS and Linux.
+**bin <COMMAND> -a <ARGS>...** | Customize local binary used to execute process commands (defaults to `sh -c` on MacOS and Linux)
 
 ### Examples
 
@@ -256,7 +256,66 @@ The `jobs` key in an Arpx profile is a mapping of string values. For each entry 
 
 #### arpx_job scripting language
 
+The arpx_job scripting language seeks to express Arpx runtime jobs as succinctly as possible and enable users to easily construct and execute jobs from available processes and log monitors.
+
+The arpx_job scripting language can be broken down into 5 concepts:
+
+- Processes (`my_process`, `my_other_process`)
+  - Any process defined in the current profile can be referenced by name from within arpx_job. For example, if a process named `foo` is defined under `processes`, it can be invoked within a job using its name, "foo". A semicolon must terminate the process declaration. (`foo;`, not `foo`)
+- Concurrency (`[]`)
+  - Multiple processes can be executed concurrently by enclosing their declarations with square brackets. Each process must be terminated with a semicolon. (`[ foo; bar; baz ]`)
+- Contingency (`?:`)
+  - Actions can be executed when a process succeeds or fails using [ternary syntax](https://en.wikipedia.org/wiki/%3F:). `?` denotes an "onsucceed" branch and `:` denotes an "onfail" branch. When contingency is used, the terminating semicolon goes at the end of the entire declaration. (`foo ? bar : baz;`)
+- Actions (`my_process`, `my_other_process` + `arpx_exit`, `arpx_exit_error`)
+  - "Actions" is a supercategory which includes all processes defined in the current profile as well as special system actions `arpx_exit` and `arpx_exit_error`. `arpx_exit` exits the entire Arpx runtime with a successful status. `arpx_exit_error` exits the entire Arpx runtime with a failing status.
+- Log monitors (`@my_log_monitor`)
+  - Any log monitor defined in the current profile can be referenced by name from within arpx_job and applied to a given process declaration by placing it _after the terminating semicolon_. For example, if a log monitor named `qux` is defined under `log_monitors`, it can be applied to a process declaration like so: `foo ? bar : baz; @qux`. Log monitor declarations are always placed after the terminating semicolon.
+
 #### Examples
+
+```yaml
+jobs:
+  series: |
+    process1;
+    process2;
+```
+
+```yaml
+jobs:
+  concurrent: |
+    [
+      process1;
+      process2;
+    ]
+```
+
+```yaml
+jobs:
+  series_and_concurrent: |
+    process1;
+    process2;
+    [
+      process1;
+      process2;
+    ]
+```
+
+```yaml
+jobs:
+  contingent_onsucceed: process1 ? process2;
+```
+
+```yaml
+jobs:
+  contingent_onfail: process1 ? process2;
+```
+
+```yaml
+jobs:
+  with_log_monitors: |
+    process1; @monitor1
+    process2 ? process3; @monitor2
+```
 
 ### Processes
 
