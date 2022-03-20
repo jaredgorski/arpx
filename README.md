@@ -47,7 +47,7 @@ Arpx can be installed using the binaries build on each release or via Rust's [`c
 
 ### Installing via Cargo
 
-1. Install Rust on your machine ([docs](https://doc.rust-lang.org/book/ch01-01-installation.html))
+1. Install Rust on your machine ([docs](https://www.rust-lang.org/tools/install))
 2. Execute `cargo install arpx` on your command line
 
 ## Using the CLI
