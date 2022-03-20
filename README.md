@@ -314,6 +314,23 @@ jobs:
 
 The `processes` key in an Arpx profile is a mapping of process configuration objects. For each entry in the `processes` mapping, the key is the process's name and the value is the process configuration object.
 
+```yaml
+processes:
+  example_process:
+    command: echo "Hello, World!"             # (required) Command to execute.
+    cwd: /directory/in/which/to/run/command   # (optional) Path to directory in which `command` should execute. Defaults to `.`.
+    onsucceed: some_action_name               # (optional) Default onsucceed action. Can be overridden in job script. Defaults to none.
+    onfail: some_action_name                  # (optional) Default onfail action. Can be overridden in job script. Defaults to none.
+```
+
 ### Log monitors
 
-The `processes` key in an Arpx profile is a mapping of log monitor configuration objects. For each entry in the `log_monitors` mapping, the key is the log monitor's name and the value is the log monitor configuration object.
+The `log_monitors` key in an Arpx profile is a mapping of log monitor configuration objects. For each entry in the `log_monitors` mapping, the key is the log monitor's name and the value is the log monitor configuration object.
+
+```yaml
+log_monitors:
+  example_log_monitor:
+    test: '[[ "$ARPX_BUFFER" =~ "Hello" ]]'   # (required) Test script to execute on each buffer update.
+    ontrigger: some_action_name               # (optional) Default ontrigger action. Can be overridden in job script. Defaults to none.
+    buffer_size: 1                            # (optional) Size of rolling buffer. Defaults to 20.
+```
