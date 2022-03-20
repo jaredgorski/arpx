@@ -47,25 +47,18 @@ jobs:
           args: -- -D warnings
 
   build:
-    name: Build ${{ matrix.target }}
+    name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - x86_64-unknown-linux-gnu
-          - x86_64-apple-darwin
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          target: ${{ matrix.target }}
           override: true
       - uses: actions-rs/cargo@v1
         with:
-          use-cross: true
-          command: rustc
-          args: --bin arpx --release --target=${{ matrix.target }} -- --emit=obj
+          command: build
+          args: --release
 
   test:
     name: Test ${{ matrix.os }}
