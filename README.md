@@ -146,6 +146,10 @@ Job `foo` contains three tasks:
 bar ? baz : qux;
 ```
 
+The Arpx runtime can be programmed to respond to process exit statuses using ternary syntax. If the initial process succeeds, the `?` branch runs. If the initial process fails, the `:` branch runs. In this case, the runtime will execute `baz` when `bar` exits with a successful status.
+
+Contingency only works on one level for now, so ternary operators can't be chained. Chaining will result in a parsing error.
+
 ### Task 2: concurrency
 
 ```text
@@ -156,8 +160,42 @@ bar ? baz : qux;
 ]
 ```
 
+Any given job in an Arpx runtime is composed of tasks. Each task represents one or more _concurrent_ processes. Multiple processes can be programmed into a single task by enclosing with square brackets. When more than one process is enclosed in square brackets, those processes will run simultaneously.
+
+**Note:** Contingency and log monitor declarations can be included in each process declaration, so this is a valid task:
+
+```text
+[
+  bar ? baz;
+  qux : bar;
+  baz ? baz : qux; @quux;
+]
+```
+
 ### Task 3: a log monitor
 
 ```text
 bar; @quux
+```
+
+This runtime job task contains a log monitor declaration (`@quux`). This means that the log monitor named `quux`, defined in the `log_monitors` mapping on the profile, will run concurrently with `bar` and watch its output, storing its most recent _n_ number of lines in a rolling buffer of _n_ size. The buffer size is set to `1` in this case, but it defaults to `20`.
+
+With each update to the buffer, the log monitor will run its `test` operation. The `test` operation has access to a local environment variable called `ARPX_BUFFER` which it can use to string match for certain program conditions visible via the process logs. If the `test` operation returns with a `0` status and there is an `ontrigger` action defined for the log monitor, the `ontrigger` action will be executed.
+
+For example, a given process may log a 14 line long error message. A log monitor with a `buffer_size` of `14` can be used to match against that error message and respond to the error state during runtime. When the log monitor matches the error output, it will execute its `ontrigger` action. For a list of available actions, TODO.
+
+Log monitors can be defined without an `ontrigger` action as well, in which case the log monitor will still execute the `test` operation on each update to the buffer. This opens up the possibility of using log monitors to append external log files and otherwise respond to log states within the `test` script itself.
+
+For example, the following log monitor exists solely to append a log file:
+
+```text
+jobs:
+  job1: proc1; @mon1
+  
+...
+
+log_monitors:
+  mon1:
+    buffer_size: 1
+    test: 'echo "$ARPX_BUFFER" >> /path/to/test.log'
 ```
