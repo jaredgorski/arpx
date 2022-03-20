@@ -52,7 +52,7 @@
 
 ---
 
-<div align="right">
+<div align="right" markdown="1">
   ![Build Status] [![Latest Version]][crates.io]
   
   [Build Status]: https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master
