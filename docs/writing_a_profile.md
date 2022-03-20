@@ -64,6 +64,8 @@ jobs:
     ]
 ```
 
+To learn more, check out the [`arpx_job_parser` repo](https://github.com/jaredgorski/arpx_job_parser).
+
 ## Processes
 
 The `processes` key in an Arpx profile is a mapping of process configuration objects. For each entry in the `processes` mapping, the key is the process's name and the value is the process configuration object.

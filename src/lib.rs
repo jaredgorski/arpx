@@ -179,7 +179,7 @@
 //! The advantage of using a profile is expressiveness. The `process_map` and `log_monitor_map` are
 //! defined nicely using YAML maps and the details of how each job orchestrates the available
 //! processes and log monitors into an effective runtime are expressed succinctly using the
-//! dedicated arpx_job scripting language:
+//! dedicated [arpx_job scripting language][arpx_job docs]:
 //!
 //! ```text
 //! [
@@ -205,6 +205,10 @@
 //!
 //! Also, the `@db_permissions_error` declaration on the `database` task tells the runtime to apply
 //! the `db_permissions_error` log monitor to the `database` process.
+//!
+//! **Related:** [arpx_job documentation][arpx_job docs]
+//!
+//! [arpx_job docs]: https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md#arpx_job-scripting-language
 
 mod logs;
 mod runtime;
