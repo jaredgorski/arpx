@@ -48,8 +48,6 @@
 
 **Small-scale process orchestration**
 
----
-
 ## About
 
 Arpx is a small-scale process orchestrator. In common terms, Arpx makes it easy to schedule processes and automate them depending on each others' runtimes.
