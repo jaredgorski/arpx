@@ -36,13 +36,13 @@ Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/a
 
 Command  | Info
 -------- | --------
-**-f**, **--file** <FILE> | Path to profile
-**-j**, **--job** <JOB> | Execute job from profile (multiple occurrences are valid)
+**-f**, **--file** \<FILE\> | Path to profile
+**-j**, **--job** \<JOB\> | Execute job from profile (multiple occurrences are valid)
 **-h**, **--help** | Print help information
 **-v**, **--verbose** | Enable verbose output
 **--debug** | Enable debug output
 **-V**, **--version** | Print version information
-**bin <COMMAND> -a <ARGS>...** | Customize local binary used to execute process commands (defaults to `sh -c` on MacOS and Linux)
+**bin** \<COMMAND\> **-a** \<ARGS\>... | Customize local binary used to execute process commands (defaults to `sh -c` on MacOS and Linux)
 
 ### Usage examples
 
