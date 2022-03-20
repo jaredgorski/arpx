@@ -66,7 +66,7 @@ The name "Arpx" variously refers to the library which provides the program's cor
 
 Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/arpx/latest). The rest of this README provides a more general overview of how Arpx works and how to use the CLI.
 
-## Quick start
+## Quick demo
 
 1. Download the correct Arpx binary for your operating system and place it in your `PATH` (or equivalent) so that it can be executed by name from your command line.
 2. Create a new file somewhere on your computer called `arpx_demo.yaml`.
