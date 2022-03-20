@@ -106,7 +106,7 @@ Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/a
     arpx -f /path/to/arpx_demo.yaml -j foo
     ```
     
-5. If you did everything right, you should see something like the following output in your terminal:
+5. If you did everything right, you should see _something like_ the following output in your terminal:
 
     ```terminal
     [bar] "bar" (1) spawned
