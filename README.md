@@ -34,8 +34,8 @@ Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/a
 
 ## Using the CLI
 
-Command  | Description
--------- | ------------
+Command     | Description
+----------- | ---------------
 **-f**, **--file** \<FILE\> | Path to profile
 **-j**, **--job** \<JOB\> | Execute job from profile (multiple occurrences are valid)
 **-h**, **--help** | Print help information
