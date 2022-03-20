@@ -17,7 +17,7 @@ The arpx_job scripting language can be broken down into 5 concepts:
 - **Processes** (`my_process`, `my_other_process`)
   - Any process defined in the current profile can be referenced by name from within arpx_job. For example, if a process named `foo` is defined under `processes`, it can be invoked within a job using its name, "foo". A semicolon must terminate the process declaration. (`foo;`, not `foo`)
 - **Concurrency** (`[]`)
-  - Multiple processes can be executed concurrently by enclosing their declarations with square brackets. Each process must be terminated with a semicolon. (`[ foo; bar; baz ]`)
+  - Multiple processes can be executed in parallel by enclosing their declarations with square brackets. Each process must be terminated with a semicolon. (`[ foo; bar; baz ]`)
 - **Contingency** (`?:`)
   - Actions can be executed when a process succeeds or fails using [ternary syntax](https://en.wikipedia.org/wiki/%3F:). `?` denotes an "onsucceed" branch and `:` denotes an "onfail" branch. When contingency is used, the terminating semicolon goes at the end of the entire declaration. (`foo ? bar : baz;`)
 - **Actions** (`my_process`, `my_other_process` + `arpx_exit`, `arpx_exit_error`)
@@ -29,7 +29,7 @@ Each job defined below demonstrates one or more of the concepts described above.
 
 ```yaml
 jobs:
-  series: |
+  sequence: |
     process1;
     process2;
     
@@ -39,7 +39,7 @@ jobs:
       process2;
     ]
     
-  series_and_concurrent: |
+  sequence_and_concurrent: |
     process1;
     process2;
     [

@@ -40,7 +40,7 @@
 //! any `onsucceed` or `onfail` actions will be performed on the same thread as the process which
 //! spawned them.
 //!
-//! Multiple tasks in a single job will execute in series, in the order in which they're defined on
+//! Multiple tasks in a single job will execute in sequence, in the order in which they're defined on
 //! the job object. The same is true for multiple jobs in a single runtime.
 //!
 //! In the above diagram, the runtime contains one job (`dev`). `dev` contains one task with
@@ -48,7 +48,7 @@
 //! processes declare an `onfail` action which performs some sort of self-healing procedure and,
 //! presumably, respawns the failed process.
 //!
-//! So, runtimes can run processes concurrently or in series, as well as respond to success and
+//! So, runtimes can run processes concurrently or in sequence, as well as respond to success and
 //! failure states upon process exit.
 //!
 //! # Define a runtime using this library
