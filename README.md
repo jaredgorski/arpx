@@ -41,16 +41,19 @@
 <div>
   <img align="right" src="https://img.shields.io/crates/v/arpx?color=black">
   <img align="right" src="https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master" />
-</div>
-<div>
-  <h1 align="center">
+  <h1 align="left">
     arpx
   </h1>
-  <p align="center">
+  <p align="left">
+    <strong>
+      Small-scale process orchestration
+    </strong>
   </p>
 </div>
 
-# arpx &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; ![Build Status] [![Latest Version]][Crates.io]
+---
+
+# arpx &emsp; ![Build Status] [![Latest Version]][crates.io]
 
 [Build Status]: https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master
 [Latest Version]: https://img.shields.io/crates/v/arpx?color=black
