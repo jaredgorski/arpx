@@ -13,7 +13,7 @@
 
 - [Quick demo](https://github.com/jaredgorski/arpx/tree/main/docs/quick_demo.md)
 - [Installation instructions](#installing)
-- [How to use the CLI](#using-the-cli)
+- [How to use the CLI](https://github.com/jaredgorski/arpx/tree/main/docs/using_the_cli.md)
 - [How to write a profile](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md)
 
 ## About
@@ -42,46 +42,15 @@ Arpx can be installed using the binaries build on each release or via Rust's [`c
 
 1. Navigate to the [Releases](https://github.com/jaredgorski/arpx/releases) page
 2. Choose a release
-3. Download the appropriate binary for your machine
-4. Relocate the downloaded binary wherever you'd like it to exist
+3. Download the appropriate archive for your machine
+4. Unpack the archive and relocate the binary to your desired location
 5. Ensure the binary is located in your system's `PATH`
+6. Verify that `arpx --version` works on your command line
 
 ### Installing via Cargo
 
 1. Install Rust on your machine ([docs](https://www.rust-lang.org/tools/install))
 2. Execute `cargo install arpx` on your command line
-
-## Using the CLI
-
-Command  | Description
--------- | ------------
-**-f**, **--file** \<FILE\> | Path to profile
-**-j**, **--job** \<JOB\> | Execute job from profile (multiple occurrences are valid)
-**-h**, **--help** | Print help information
-**-v**, **--verbose** | Enable verbose output
-**--debug** | Enable debug output
-**-V**, **--version** | Print version information
-**bin** \<COMMAND\> **-a** \<ARGS\>... | Customize local binary used to execute process commands (defaults to `sh -c` on MacOS and Linux)
-
-### Usage examples
-
-Execute job `foo` on `my_profile.yaml`:
-
-```terminal
-arpx -f ~/my_profile.yaml -j foo
-```
-
-Execute jobs `foo` and `bar` on `my_profile.yaml`:
-
-```terminal
-arpx -f ~/my_profile.yaml -j foo -j bar
-```
-
-Execute jobs `foo` and `bar` on `my_profile.yaml` using `echo -n` instead of `sh -c`:
-
-```terminal
-arpx -f ~/my_profile.yaml -j foo -j bar bin echo -a -n
-```
 
 <br/>
 
