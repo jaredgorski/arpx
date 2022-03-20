@@ -18,7 +18,7 @@
 
 Arpx is a small-scale, run n' gun process orchestrator. In other words, Arpx makes it easy to schedule processes and automate them depending on each others' runtimes in cases where more complex orchestration isn't needed.
 
-Larger-scale process orchestrators (like Kubernetes) allow for in-depth monitoring, complex deployment setups, and granular, real-time process management on top of their normal scheduling and automation features. Arpx, in contrast, aims to provide only that which is necessary for things like running multiple concurrent, interdependent development servers, scheduling build scripts, adding naive self-healing to local processes, etc.
+Larger-scale process orchestrators (like Kubernetes) allow for in-depth monitoring, complex deployment setups, and granular, real-time process management on top of their normal scheduling and automation features. Arpx, in contrast, aims to provide only that which is necessary for things like running multiple interdependent development servers concurrently, scheduling build scripts in relation to each other, adding naive self-healing to local processes, etc.
 
 > _**a**utomate and **r**elate **p**rocesses(**x**)_
 
