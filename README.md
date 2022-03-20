@@ -34,3 +34,25 @@
 - Insofar as `ctx` is passed around, the entire `log_monitor_map` and `process_map` objects get copied. Can `ctx` be referenced instead?
 - Ensure `pub` is only used where needed.
 - Clearly map out runtime and reason about design strengths/weaknesses.
+
+
+---
+
+<div>
+  <img align="right" src="https://img.shields.io/crates/v/arpx?color=black">
+  <img align="right" src="https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master" />
+  <h1 align="center">
+    arpx
+  </h1>
+  <p align="center">
+    <strong>Small-scale process orchestration</strong>
+  </p>
+</div>
+
+## Description
+
+Arpx is a small-scale process orchestrator. In common terms, Arpx makes it easy to schedule processes and automate them depending on each others' runtimes.
+
+Larger-scale process orchestrators (like Kubernetes) allow for in-depth monitoring and granular, real-time process management on top of their normal scheduling and automation features. Arpx, in contrast, aims to provide only that which is necessary for running multiple concurrent, interdependent development servers, scheduling build scripts, adding naive self-healing to local processes, etc.
+
+The vague, general use-case for Arpx is development-oriented tasks which variously require scheduling, concurrency, and/or unsophisticated runtime monitoring and handling.
