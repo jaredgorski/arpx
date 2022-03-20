@@ -278,11 +278,13 @@ jobs:
   series: |
     process1;
     process2;
+    
   concurrent: |
     [
       process1;
       process2;
     ]
+    
   series_and_concurrent: |
     process1;
     process2;
@@ -290,12 +292,17 @@ jobs:
       process1;
       process2;
     ]
+    
   contingent: process1 ? process2 : process3;
+  
   contingent_onsucceed: process1 ? process2;
+  
   contingent_onfail: process1 : process2;
+  
   with_log_monitors: |
     process1; @monitor1
     process2 ? process3; @monitor2
+    
   concurrent_with_log_monitors: |
     [
       process1; @monitor1
