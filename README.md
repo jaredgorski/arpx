@@ -11,10 +11,8 @@
 ---
 
 - [Quick demo](https://github.com/jaredgorski/arpx/tree/main/docs/quick_demo.md)
-- [How to use the CLI](https://github.com/jaredgorski/arpx/tree/main/docs/using_the_cli.md)
+- [How to use the CLI](#using-the-cli)
 - [How to write a profile](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md)
-
----
 
 ## About
 
@@ -32,155 +30,9 @@ _If you want to hack some orchestration into your development environment, Arpx 
 
 The name "Arpx" variously refers to the library which provides the program's core functionality (the Arpx runtime object) as well as the binary which wraps that core functionality in a convenient CLI.
 
-Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/arpx/latest). The rest of this README provides a more general overview of how Arpx works and how to use the CLI.
+Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/arpx/latest). Documentation in this repository focuses on the Arpx CLI tool.
 
-## Quick demo
-
-1. Download the correct Arpx binary for your operating system and place it in your `PATH` (or equivalent) so that it can be executed by name from your command line.
-2. Create a new file somewhere on your computer called `arpx_demo.yaml`.
-3. In `arpx_demo.yaml`, paste this text:
-
-    ```yaml
-    jobs:
-      foo: |
-        bar ? baz : qux;
-        [
-          bar;
-          baz;
-          qux;
-        ]
-        bar; @quux
-
-    processes:
-      bar:
-        command: echo bar
-      baz:
-        command: echo baz
-      qux:
-        command: echo qux
-      quux:
-        command: echo quux
-
-    log_monitors:
-      quux:
-        buffer_size: 1
-        test: 'echo "$ARPX_BUFFER" | grep -q "bar"' # or equivalent for your system
-        ontrigger: quux
-    ```
-
-4. In your terminal, execute:
-
-    ```terminal
-    arpx -f /path/to/arpx_demo.yaml -j foo
-    ```
-    
-5. If you did everything right, you should see _something like_ the following output in your terminal:
-
-    ```terminal
-    [bar] "bar" (1) spawned
-    [bar] bar
-    [bar] "bar" (1) succeeded
-    [bar] "baz" (2) spawned
-    [bar] baz
-    [bar] "baz" (2) succeeded
-    [bar] "bar" (3) spawned
-    [baz] "baz" (4) spawned
-    [qux] "qux" (5) spawned
-    [bar] bar
-    [baz] baz
-    [qux] qux
-    [bar] "bar" (3) succeeded
-    [baz] "baz" (4) succeeded
-    [qux] "qux" (5) succeeded
-    [bar] "bar" (6) spawned
-    [bar] bar
-    [bar] "bar" (6) succeeded
-    [quux] "quux" (7) spawned
-    [quux] quux
-    [quux] "quux" (7) succeeded
-    ```
-
-Let's break this down.
-
-Job `foo` contains three tasks:
-
-1. `bar ? baz : qux;`
-2. `[ bar; baz; qux; ]`
-3. `bar; @quux`
-
-### Task 1: contingency
-
-```text
-bar ? baz : qux;
-```
-
-The Arpx runtime can be programmed to respond to process exit statuses using ternary syntax. If the initial process succeeds, the `?` branch runs. If the initial process fails, the `:` branch runs. In this case, the runtime will execute `baz` when `bar` exits with a successful status.
-
-Contingency only works on one level for now, so ternary operators can't be chained. Chaining will result in a parsing error.
-
-### Task 2: concurrency
-
-```text
-[
-  bar;
-  baz;
-  qux;
-]
-```
-
-Any given job in an Arpx runtime is composed of tasks. Each task represents one or more _concurrent_ processes. Multiple processes can be programmed into a single task by enclosing with square brackets. When more than one process is enclosed in square brackets, those processes will run simultaneously.
-
-**Note:** Contingency and log monitor declarations can be included in each process declaration, so this is a valid task:
-
-```text
-[
-  bar ? baz;
-  qux : bar;
-  baz ? baz : qux; @quux;
-]
-```
-
-### Task 3: a log monitor
-
-```text
-bar; @quux
-```
-
-This runtime job task contains a log monitor declaration (`@quux`). This means that the log monitor named `quux`, defined in the `log_monitors` mapping on the profile, will run concurrently with `bar` and watch its output, storing its most recent _n_ number of lines in a rolling buffer of _n_ size. The buffer size is set to `1` in this case, but it defaults to `20`.
-
-With each update to the buffer, the log monitor will run its `test` script. The `test` script has access to a local environment variable called `ARPX_BUFFER` which it can use to string match for certain program conditions visible via the process logs. If the `test` script returns with a `0` status and there is an `ontrigger` action defined for the log monitor, the `ontrigger` action will be executed.
-
-For example, a given process may log a 14 line long error message. A log monitor with a `buffer_size` of `14` can be used to match against that error message and respond to the error state during runtime. When the log monitor matches the error output, it will execute its `ontrigger` action. For a list of available actions, TODO.
-
-Log monitors can be defined without an `ontrigger` action as well, in which case the log monitor will still execute the `test` script on each update to the buffer. This opens up the possibility of using log monitors to append external log files and otherwise respond to log states within the `test` script itself.
-
-For example, the following log monitor exists solely to append process output to a log file:
-
-```text
-jobs:
-  job1: proc1; @mon1
-  
-...
-
-log_monitors:
-  mon1:
-    buffer_size: 1
-    test: 'echo "$ARPX_BUFFER" >> /path/to/test.log'
-```
-
-### Putting it all together
-
-When our profile is loaded and executed with Arpx, the following happens:
-
-1. Task 1 begins. Process `bar` is executed and successfully exits.
-2. Because `bar` exited successfully, the Arpx runtime executes `baz`. This concludes task 1.
-3. Task 2 begins. Processes `bar`, `baz`, and `qux` are spawned simultaneously in separate threads.
-4. `bar`, `baz`, and `qux` all exit successfully. This concludes task 2.
-5. Task 3 begins. Process `bar` is spawned and the log monitor `quux` is spawned alongside it, receiving its output and storing it in a buffer.
-6. `bar` logs "bar" to stdout and `quux` receives it, running its `test` script against the text. `test` exits successfully, so the Arpx runtime executes `quux`'s `ontrigger` action, which is a process also named `quux`.
-7. Process `quux` is executed and successfully exits. This is the end of the Arpx runtime.
-
-## Using the CLI
+# Using the CLI
 
 Command  | Info
 -------- | --------
@@ -192,7 +44,7 @@ Command  | Info
 **-V**, **--version** | Print version information
 **bin <COMMAND> -a <ARGS>...** | Customize local binary used to execute process commands (defaults to `sh -c` on MacOS and Linux)
 
-### Examples
+## Examples
 
 Execute job `foo` on `my_profile.yaml`:
 
@@ -212,93 +64,10 @@ Execute jobs `foo` and `bar` on `my_profile.yaml` using `echo -n` instead of `sh
 arpx -f ~/my_profile.yaml -j foo -j bar bin echo -a -n
 ```
 
-## Writing a profile
+---
 
-Arpx runtimes are configured via profiles. Profiles are written using the [YAML spec](https://yaml.org/spec/).
+<small>
+Arpx is meant to be a duct tape, run n' gun solution for hackily orchestrating program runtimes. Arpx doesn't seek to be a general-purpose, production-ready tool, but feel free to use it however you see fit (in line with [the license](https://github.com/jaredgorski/arpx/blob/main/LICENSE)).
 
-A profile is composed of three items: `jobs`, `processes`, and `log_monitors`. A profile must contain at least one process and one job (to execute that process) to be valid.
-
-### Jobs
-
-The `jobs` key in an Arpx profile is a mapping of string values. For each entry in the `jobs` mapping, the key is the job's name and the value is the job itself, written in the dedicated arpx_job scripting language.
-
-#### arpx_job scripting language
-
-The arpx_job scripting language seeks to express Arpx runtime jobs as succinctly as possible and enable users to easily construct and execute jobs from available processes and log monitors.
-
-The arpx_job scripting language can be broken down into 5 concepts:
-
-- **Processes** (`my_process`, `my_other_process`)
-  - Any process defined in the current profile can be referenced by name from within arpx_job. For example, if a process named `foo` is defined under `processes`, it can be invoked within a job using its name, "foo". A semicolon must terminate the process declaration. (`foo;`, not `foo`)
-- **Concurrency** (`[]`)
-  - Multiple processes can be executed concurrently by enclosing their declarations with square brackets. Each process must be terminated with a semicolon. (`[ foo; bar; baz ]`)
-- **Contingency** (`?:`)
-  - Actions can be executed when a process succeeds or fails using [ternary syntax](https://en.wikipedia.org/wiki/%3F:). `?` denotes an "onsucceed" branch and `:` denotes an "onfail" branch. When contingency is used, the terminating semicolon goes at the end of the entire declaration. (`foo ? bar : baz;`)
-- **Actions** (`my_process`, `my_other_process` + `arpx_exit`, `arpx_exit_error`)
-  - "Actions" is a supercategory which includes all processes defined in the current profile as well as special system actions `arpx_exit` and `arpx_exit_error`. `arpx_exit` exits the entire Arpx runtime with a successful status. `arpx_exit_error` exits the entire Arpx runtime with a failing status.
-- **Log monitors** (`@my_log_monitor`)
-  - Any log monitor defined in the current profile can be referenced by name from within arpx_job and applied to a given process declaration by placing it _after the terminating semicolon_. For example, if a log monitor named `qux` is defined under `log_monitors`, it can be applied to a process declaration like so: `foo ? bar : baz; @qux`. Log monitor declarations are always placed after the terminating semicolon.
-
-Each job defined below demonstrates one or more of the concepts described above.
-
-```yaml
-jobs:
-  series: |
-    process1;
-    process2;
-    
-  concurrent: |
-    [
-      process1;
-      process2;
-    ]
-    
-  series_and_concurrent: |
-    process1;
-    process2;
-    [
-      process1;
-      process2;
-    ]
-    
-  contingent: process1 ? process2 : process3;
-  
-  contingent_onsucceed: process1 ? process2;
-  
-  contingent_onfail: process1 : process2;
-  
-  with_log_monitors: |
-    process1; @monitor1
-    process2 ? process3; @monitor2
-    
-  concurrent_with_log_monitors: |
-    [
-      process1; @monitor1
-      process2 ? process3; @monitor2
-    ]
-```
-
-### Processes
-
-The `processes` key in an Arpx profile is a mapping of process configuration objects. For each entry in the `processes` mapping, the key is the process's name and the value is the process configuration object.
-
-```yaml
-processes:
-  example_process:
-    command: echo "Hello, World!"             # (required) Command to execute.
-    cwd: /directory/in/which/to/run/command   # (optional) Path to directory in which `command` should execute. Defaults to `.`.
-    onsucceed: some_action_name               # (optional) Default onsucceed action. Can be overridden in job script. Defaults to none.
-    onfail: some_action_name                  # (optional) Default onfail action. Can be overridden in job script. Defaults to none.
-```
-
-### Log monitors
-
-The `log_monitors` key in an Arpx profile is a mapping of log monitor configuration objects. For each entry in the `log_monitors` mapping, the key is the log monitor's name and the value is the log monitor configuration object.
-
-```yaml
-log_monitors:
-  example_log_monitor:
-    test: '[[ "$ARPX_BUFFER" =~ "Hello" ]]'   # (required) Test script to execute on each buffer update.
-    ontrigger: some_action_name               # (optional) Default ontrigger action. Can be overridden in job script. Defaults to none.
-    buffer_size: 1                            # (optional) Size of rolling buffer. Defaults to 20.
-```
+If you have ideas for Arpx, please feel free to [open an issue](https://github.com/jaredgorski/arpx/issues/new/choose) or [contact me directly](https://jaredgorski.org/about/). I'm happy to discuss this project and any ideas you might have. However, please keep in mind that ideas and feature requests will likely only be implemented if they align well with the aforementioned goals.
+</small>
