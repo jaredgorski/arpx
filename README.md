@@ -302,12 +302,17 @@ jobs:
 
 ```yaml
 jobs:
+  contingent: process1 ? process2 : process3;
+```
+
+```yaml
+jobs:
   contingent_onsucceed: process1 ? process2;
 ```
 
 ```yaml
 jobs:
-  contingent_onfail: process1 ? process2;
+  contingent_onfail: process1 : process2;
 ```
 
 ```yaml
