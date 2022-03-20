@@ -10,6 +10,12 @@ use rolling_buffer::RollingBuffer;
 use std::process::{Command, Stdio};
 use std::thread;
 
+/// Represents and contains a given runtime job task log monitor.
+///
+/// This object contains all of the data necessary to run a given log monitor. This data includes
+/// the log monitor name, the size of its rolling buffer, the rolling buffer instance itself, the
+/// `test` command which should be executed on each push to the buffer, and the `ontrigger` action
+/// which should run if `test` returns with a `0` exit code.
 #[derive(Clone, Debug)]
 pub struct LogMonitor {
     pub buffer: RollingBuffer,
@@ -21,6 +27,7 @@ pub struct LogMonitor {
 }
 
 impl LogMonitor {
+    /// Constructs a new, empty `LogMonitor`.
     pub fn new(name: String) -> Self {
         Self {
             buffer: RollingBuffer::new(20),
@@ -32,6 +39,7 @@ impl LogMonitor {
         }
     }
 
+    /// Builds `LogMonitor` with the specified rolling buffer size.
     pub fn buffer_size(mut self, b: usize) -> Self {
         self.buffer = RollingBuffer::new(b);
         self.buffer_size = b;
@@ -39,18 +47,21 @@ impl LogMonitor {
         self
     }
 
+    /// Builds `LogMonitor` with the name of the action to execute if the `test` succeeds.
     pub fn ontrigger(mut self, o: String) -> Self {
         self.ontrigger = o;
 
         self
     }
 
+    /// Builds `LogMonitor` with the specified test.
     pub fn test(mut self, t: String) -> Self {
         self.test = t;
 
         self
     }
 
+    /// Executes the log monitor using the provided action.
     pub fn run(
         mut self,
         ontrigger: OptionalAction,
@@ -90,11 +101,14 @@ impl LogMonitor {
         Ok((handle, sender))
     }
 
+    /// Pushes a line of text to the rolling buffer and executes the test command on the new buffer
+    /// state.
     pub fn push(&mut self, line: String, ontrigger: &OptionalAction) {
         self.buffer.push(line);
         self.exec_test(ontrigger).ok();
     }
 
+    /// Executes the current test command and, if successful, performs the `ontrigger` action.
     pub fn exec_test(&self, ontrigger: &OptionalAction) -> Result<()> {
         let bin = self.ctx.bin_command.bin.clone();
         let mut bin_args = self.ctx.bin_command.args.clone();

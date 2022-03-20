@@ -10,7 +10,7 @@ use std::fs;
 
 /// Represents and contains a runtime object defined by a profile.
 ///
-/// This object can create a `Runtime` object from a file which defines that object using an 
+/// This object can create a `Runtime` object from a file which defines that object using an
 /// agreed-upon specification, known as a "profile". A profile contains `jobs`, `processes` and,
 /// optionally, `log_monitors`. Items in `jobs` use a simple, domain-specific script language
 /// called "arpx-job" in order to construct runtime objects using the defined `processes` and
@@ -50,7 +50,7 @@ use std::fs;
 ///         test: 'echo $ARPX_BUFFER >> ~/test.log'
 ///
 /// // `job1` output:
-/// // 
+/// //
 /// // [p1] "p1" (1) spawned
 /// // [p1] foo
 /// // [p1] "p1" (1) failed

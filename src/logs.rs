@@ -24,6 +24,10 @@ impl Patterns {
 }
 
 /// Configures runtime logging.
+///
+/// Once this object is initialized, logging macros are available care of [`log4rs`].
+///
+/// [`log4rs`]: https://docs.rs/log4rs/latest/log4rs/
 pub struct Logs {
     pub handle: Handle,
 }

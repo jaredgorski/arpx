@@ -76,7 +76,6 @@ use std::collections::HashMap;
 /// use arpx::{Job, Process, Runtime, Task};
 /// use std::collections::HashMap;
 ///
-/// // Define processes
 /// let processes = vec![
 ///     Process::new("p_foo".to_string())
 ///         .command("echo foo".to_string())
@@ -84,15 +83,8 @@ use std::collections::HashMap;
 ///     Process::new("p_bar".to_string()).command("echo bar".to_string()),
 /// ];
 ///
-///
-/// // Build jobs
-/// let jobs = vec![Job::new(
-///     "my_job".to_string(),
-///     vec![Task::new(processes.clone())],
-/// )];
-///
-/// // Build process map
 /// let mut process_map = processes
+///     .clone()
 ///     .into_iter()
 ///     .map(|process| (process.name.clone(), process))
 ///     .collect::<HashMap<String, Process>>();
@@ -102,7 +94,11 @@ use std::collections::HashMap;
 ///     Process::new("p_baz".to_string()).command("echo baz".to_string()),
 /// );
 ///
-/// // Instantiate runtime
+/// let jobs = vec![Job::new(
+///     "my_job".to_string(),
+///     vec![Task::new(processes)],
+/// )];
+///
 /// Runtime::new()
 ///     .jobs(jobs)
 ///     .process_map(process_map)
