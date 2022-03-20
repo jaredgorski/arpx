@@ -332,14 +332,19 @@ test!(job_overrides_process_contingency, |t: TC| {
 
             processes:
                 p1:
-                    command: echo foo
+                    command: |
+                        echo foo
+                        sleep 0.1
                     onsucceed: p3;
                     onfail: p2;
                 p2:
-                    command: echo bar
+                    command: |
+                        echo bar
+                        sleep 0.1
                 p3:
                     command: |
                         echo baz
+                        sleep 0.1
                         exit 1
         "#,
         )

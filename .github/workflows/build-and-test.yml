@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: Build and test
+name: Build
 
 env:
   CARGO_TERM_COLOR: always
@@ -64,8 +64,8 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           use-cross: true
-          command: build
-          args: --release --target=${{ matrix.target }}
+          command: rustc
+          args: --bin arpx --release --target=${{ matrix.target }} -- --emit=obj
 
   test:
     name: Test ${{ matrix.os }}
