@@ -11,6 +11,7 @@
 ---
 
 - [Quick demo](https://github.com/jaredgorski/arpx/tree/main/docs/quick_demo.md)
+- [Installation instructions](#installing)
 - [How to use the CLI](#using-the-cli)
 - [How to write a profile](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md)
 
@@ -31,6 +32,23 @@ _If you want to hack some orchestration into your development environment, Arpx 
 The name "Arpx" variously refers to the library which provides the program's core functionality (the Arpx runtime object) as well as the binary which wraps that core functionality in a convenient CLI.
 
 Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/arpx/latest). Documentation in this repository focuses on the Arpx CLI tool.
+
+## Installing
+
+Arpx can be installed using the binaries build on each release or via Rust's [`cargo install`](https://doc.rust-lang.org/cargo/commands/cargo-install.html).
+
+### Installing a release binary
+
+1. Navigate to the [Releases](https://github.com/jaredgorski/arpx/releases) page
+2. Choose a release to install
+3. Download the appropriate binary for your machine
+4. Relocate the downloaded binary wherever you'd like it to exist
+5. Ensure the location of the binary is in your system's `PATH`
+
+### Installing via Cargo
+
+1. Install Rust on your machine ([docs](https://doc.rust-lang.org/book/ch01-01-installation.html))
+2. Execute `cargo install arpx` on your command line
 
 ## Using the CLI
 

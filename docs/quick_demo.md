@@ -2,7 +2,7 @@
 
 ## Instructions
 
-1. Download the correct Arpx binary for your operating system and place it in your `PATH` (or equivalent) so that it can be executed by name from your command line.
+1. Download the appropriate Arpx binary for your machine and place it in your `PATH` (or equivalent) so that it can be executed by name from your command line.
 2. Create a new file somewhere on your computer called `arpx_demo.yaml`.
 3. In `arpx_demo.yaml`, paste this text:
 
