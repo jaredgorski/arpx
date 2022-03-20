@@ -186,7 +186,7 @@ For example, a given process may log a 14 line long error message. A log monitor
 
 Log monitors can be defined without an `ontrigger` action as well, in which case the log monitor will still execute the `test` script on each update to the buffer. This opens up the possibility of using log monitors to append external log files and otherwise respond to log states within the `test` script itself.
 
-For example, the following log monitor exists solely to append a log file:
+For example, the following log monitor exists solely to append process output to a log file:
 
 ```text
 jobs:
