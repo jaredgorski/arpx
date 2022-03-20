@@ -73,5 +73,5 @@ Arpx is meant to be a duct tape, run n' gun solution for hackily orchestrating p
 <br/>
 
 <sub>
-If you have ideas for Arpx, please feel free to [open an issue](https://github.com/jaredgorski/arpx/issues/new/choose) or [contact me directly](https://jaredgorski.org/about/). I'm happy to discuss this project and any ideas you might have. However, please keep in mind that ideas and feature requests will likely only be implemented if they align well with the aforementioned goals.
+If you have ideas for Arpx, please feel free to <a href="https://github.com/jaredgorski/arpx/issues/new/choose">open an issue</a> or <a href="https://jaredgorski.org/about/">contact me directly</a>. I'm happy to discuss this project and any ideas you might have. However, please keep in mind that ideas and feature requests will likely only be implemented if they align well with the aforementioned goals.
 </sub>
