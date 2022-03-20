@@ -64,14 +64,8 @@ Execute jobs `foo` and `bar` on `my_profile.yaml` using `echo -n` instead of `sh
 arpx -f ~/my_profile.yaml -j foo -j bar bin echo -a -n
 ```
 
----
+# Philosophy
 
-<sup>
 Arpx is meant to be a duct tape, run n' gun solution for hackily orchestrating program runtimes. Arpx doesn't seek to be a general-purpose, production-ready tool, but feel free to use it however you see fit (in line with <a href="https://github.com/jaredgorski/arpx/blob/main/LICENSE">the license</a>).
-</sup>
 
-<br/>
-
-<sub>
 If you have ideas for Arpx, please feel free to <a href="https://github.com/jaredgorski/arpx/issues/new/choose">open an issue</a> or <a href="https://jaredgorski.org/about/">contact me directly</a>. I'm happy to discuss this project and any ideas you might have. However, please keep in mind that ideas and feature requests will likely only be implemented if they align well with the aforementioned goals.
-</sub>
