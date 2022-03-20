@@ -96,7 +96,7 @@ Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/a
     log_monitors:
       quux:
         buffer_size: 1
-        test: 'echo "$ARPX_BUFFER" | grep -q "bar"'
+        test: 'echo "$ARPX_BUFFER" | grep -q "bar"' # or equivalent for your system
         ontrigger: quux
     ```
 
