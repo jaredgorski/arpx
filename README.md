@@ -260,15 +260,15 @@ The arpx_job scripting language seeks to express Arpx runtime jobs as succinctly
 
 The arpx_job scripting language can be broken down into 5 concepts:
 
-- Processes (`my_process`, `my_other_process`)
+- **Processes** (`my_process`, `my_other_process`)
   - Any process defined in the current profile can be referenced by name from within arpx_job. For example, if a process named `foo` is defined under `processes`, it can be invoked within a job using its name, "foo". A semicolon must terminate the process declaration. (`foo;`, not `foo`)
-- Concurrency (`[]`)
+- **Concurrency** (`[]`)
   - Multiple processes can be executed concurrently by enclosing their declarations with square brackets. Each process must be terminated with a semicolon. (`[ foo; bar; baz ]`)
-- Contingency (`?:`)
+- **Contingency** (`?:`)
   - Actions can be executed when a process succeeds or fails using [ternary syntax](https://en.wikipedia.org/wiki/%3F:). `?` denotes an "onsucceed" branch and `:` denotes an "onfail" branch. When contingency is used, the terminating semicolon goes at the end of the entire declaration. (`foo ? bar : baz;`)
-- Actions (`my_process`, `my_other_process` + `arpx_exit`, `arpx_exit_error`)
+- **Actions** (`my_process`, `my_other_process` + `arpx_exit`, `arpx_exit_error`)
   - "Actions" is a supercategory which includes all processes defined in the current profile as well as special system actions `arpx_exit` and `arpx_exit_error`. `arpx_exit` exits the entire Arpx runtime with a successful status. `arpx_exit_error` exits the entire Arpx runtime with a failing status.
-- Log monitors (`@my_log_monitor`)
+- **Log monitors** (`@my_log_monitor`)
   - Any log monitor defined in the current profile can be referenced by name from within arpx_job and applied to a given process declaration by placing it _after the terminating semicolon_. For example, if a log monitor named `qux` is defined under `log_monitors`, it can be applied to a process declaration like so: `foo ? bar : baz; @qux`. Log monitor declarations are always placed after the terminating semicolon.
 
 #### Examples
