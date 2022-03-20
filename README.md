@@ -59,3 +59,9 @@ Larger-scale process orchestrators (like Kubernetes) allow for in-depth monitori
 Vaguely, Arpx's primary use-case is development-oriented tasks which variously require scheduling, concurrency, and/or unsophisticated runtime monitoring and handling.
 
 _If you want to hack some orchestration into your development environment, Arpx might be right for you._
+
+### Library vs. binary
+
+The name "Arpx" variously refers to the library which provides the program's core functionality (the Arpx runtime object) as well as the binary which wraps that core functionality in a convenient CLI.
+
+Library-specific documentation can be found in [rustdoc form](https://docs.rs/crate/arpx/latest). The rest of this README provides a more general overview of what Arpx accomplishes, how it works, and how to use the CLI.
