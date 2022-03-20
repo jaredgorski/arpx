@@ -50,7 +50,7 @@
 
 ## About
 
-**_~ (a)utomate and (r)elate (p)rocesses(x)_**
+**_ ~ (a)utomate and (r)elate (p)rocesses(x)_**
 
 Arpx is a small-scale, run n' gun-style process orchestrator. In other words, Arpx makes it easy to schedule processes and automate them depending on each others' runtimes in cases where more complex orchestration isn't needed.
 
