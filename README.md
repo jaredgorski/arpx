@@ -105,3 +105,43 @@ Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/a
     ```terminal
     arpx -f /path/to/arpx_demo.yaml -j foo
     ```
+    
+5. If you did everything right, you should see something like the following output in your terminal:
+
+    ```terminal
+    [bar] "bar" (1) spawned
+    [bar] bar
+    [bar] "bar" (1) succeeded
+    [bar] "baz" (2) spawned
+    [bar] baz
+    [bar] "baz" (2) succeeded
+    [bar] "bar" (3) spawned
+    [baz] "baz" (4) spawned
+    [qux] "qux" (5) spawned
+    [bar] bar
+    [baz] baz
+    [qux] qux
+    [bar] "bar" (3) succeeded
+    [baz] "baz" (4) succeeded
+    [qux] "qux" (5) succeeded
+    [bar] "bar" (6) spawned
+    [bar] bar
+    [bar] "bar" (6) succeeded
+    [quux] "quux" (7) spawned
+    [quux] quux
+    [quux] "quux" (7) succeeded
+    ```
+
+Let's break this down.
+
+Job `foo` contains three tasks:
+
+1. `bar ? baz : qux;`
+2. `[ bar; baz; qux; ]`
+3. `bar; @quux`
+
+### Task 1: contingency
+
+### Task 2: concurrency
+
+### Task 3: a log monitor
