@@ -65,3 +65,40 @@ _If you want to hack some orchestration into your development environment, Arpx 
 The name "Arpx" variously refers to the library which provides the program's core functionality (the Arpx runtime object) as well as the binary which wraps that core functionality in a convenient CLI.
 
 Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/arpx/latest). The rest of this README provides a more general overview of how Arpx works and how to use the CLI.
+
+## Quick start
+
+1. Download the correct Arpx binary for your operating system and place it in your `PATH` (or equivalent) so that it can be executed by name from your command line.
+2. Create a new file somewhere on your computer called `arpx_demo.yaml`.
+3. In `arpx_demo.yaml`, paste this text:
+    ```yaml
+    jobs:
+      foo: |
+        bar ? baz : qux;
+        [
+          bar;
+          baz;
+          qux;
+        ]
+        bar; @quux
+
+    processes:
+      bar:
+        command: echo bar
+      baz:
+        command: echo baz
+      qux:
+        command: echo qux
+      quux:
+        command: echo quux
+
+    log_monitors:
+      quux:
+        buffer_size: 1
+        test: 'echo "$ARPX_BUFFER" | grep -q "bar"'
+        ontrigger: quux
+    ```
+4. In your terminal, execute:
+    ```terminal
+    arpx -f /path/to/arpx_demo.yaml -j foo
+    ```
