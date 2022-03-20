@@ -68,7 +68,7 @@ arpx -f ~/my_profile.yaml -j foo -j bar bin echo -a -n
 <br/>
 <br/>
 
-#### The philosophy of this project
+#### Note on the philosophy behind this project
 
 <sup>
 Arpx is meant to be a duct tape, run n' gun solution for hackily orchestrating program runtimes. Arpx doesn't seek to be a general-purpose, production-ready tool, but feel free to use it however you see fit (in line with <a href="https://github.com/jaredgorski/arpx/blob/main/LICENSE">the license</a>).
