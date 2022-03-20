@@ -252,7 +252,7 @@ A profile is composed of three items: `jobs`, `processes`, and `log_monitors`. A
 
 ### Jobs
 
-The `jobs` key in an Arpx profile is a mapping of string values. For each entry in the `jobs` mapping, its key is the job's name and its value is the job itself, written in the dedicated arpx_job scripting language.
+The `jobs` key in an Arpx profile is a mapping of string values. For each entry in the `jobs` mapping, the key is the job's name and the value is the job itself, written in the dedicated arpx_job scripting language.
 
 #### arpx_job scripting language
 
@@ -260,8 +260,8 @@ The `jobs` key in an Arpx profile is a mapping of string values. For each entry 
 
 ### Processes
 
-The `processes` key in an Arpx profile is a mapping of process configuration objects. For each entry in the `processes` mapping, its key is the process's name and its value is the process configuration object.
+The `processes` key in an Arpx profile is a mapping of process configuration objects. For each entry in the `processes` mapping, the key is the process's name and the value is the process configuration object.
 
 ### Log monitors
 
-The `processes` key in an Arpx profile is a mapping of log monitor configuration objects. For each entry in the `log_monitors` mapping, its key is the log monitor's name and its value is the log monitor configuration object.
+The `processes` key in an Arpx profile is a mapping of log monitor configuration objects. For each entry in the `log_monitors` mapping, the key is the log monitor's name and the value is the log monitor configuration object.
