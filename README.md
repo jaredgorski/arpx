@@ -71,6 +71,7 @@ Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/a
 1. Download the correct Arpx binary for your operating system and place it in your `PATH` (or equivalent) so that it can be executed by name from your command line.
 2. Create a new file somewhere on your computer called `arpx_demo.yaml`.
 3. In `arpx_demo.yaml`, paste this text:
+
     ```yaml
     jobs:
       foo: |
@@ -98,7 +99,9 @@ Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/a
         test: 'echo "$ARPX_BUFFER" | grep -q "bar"'
         ontrigger: quux
     ```
+
 4. In your terminal, execute:
+
     ```terminal
     arpx -f /path/to/arpx_demo.yaml -j foo
     ```
