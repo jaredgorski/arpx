@@ -212,9 +212,7 @@ When our profile is loaded and executed with Arpx, the following happens:
 6. `bar` logs "bar" to stdout and `quux` receives it, running its `test` script against the text. `test` exits successfully, so the Arpx runtime executes `quux`'s `ontrigger` action, also called `quux`.
 7. Process `quux` is executed and successfully exits. This is the end of the Arpx runtime.
 
-## Usage
-
-### CLI
+## Using the CLI
 
 Command  | Info
 -------- | --------
@@ -226,7 +224,7 @@ Command  | Info
 **-V**, **--version** | Print version information
 **bin <COMMAND> -a <ARGS>...** | Customize local binary used to execute process commands. Defaults to `sh -c` on MacOS and Linux.
 
-#### Examples
+### Examples
 
 Execute job `foo` on `my_profile.yaml`:
 
@@ -246,10 +244,24 @@ Execute jobs `foo` and `bar` on `my_profile.yaml` using `echo -n` instead of `sh
 arpx -f ~/my_profile.yaml -j foo -j bar bin echo -a -n
 ```
 
-### Writing a profile
+## Writing a profile
 
-#### Processes
+Arpx runtimes are configured via profiles. Profiles are written using the [YAML spec](https://yaml.org/spec/).
 
-#### Jobs
+A profile is composed of three items: `jobs`, `processes`, and `log_monitors`. A profile must contain at least one process and one job (to execute that process) to be valid.
 
-#### Log monitors
+### Jobs
+
+The `jobs` key in an Arpx profile is a mapping of string values. For each entry in the `jobs` mapping, its key is the job's name and its value is the job itself, written in the dedicated arpx_job scripting language.
+
+#### arpx_job scripting language
+
+#### Examples
+
+### Processes
+
+The `processes` key in an Arpx profile is a mapping of process configuration objects. For each entry in the `processes` mapping, its key is the process's name and its value is the process configuration object.
+
+### Log monitors
+
+The `processes` key in an Arpx profile is a mapping of log monitor configuration objects. For each entry in the `log_monitors` mapping, its key is the log monitor's name and its value is the log monitor configuration object.

@@ -179,7 +179,7 @@
 //! The advantage of using a profile is expressiveness. The `process_map` and `log_monitor_map` are
 //! defined nicely using YAML maps and the details of how each job orchestrates the available
 //! processes and log monitors into an effective runtime are expressed succinctly using the
-//! dedicated `arpx_job` scripting language:
+//! dedicated arpx_job scripting language:
 //!
 //! ```text
 //! [
