@@ -54,7 +54,7 @@ Arpx can be installed using the binaries build on each release or via Rust's [`c
 
 <br/>
 
-<div align="center">&sect;</div>
+<div align="center">&#9870;</div>
 
 <br/>
 
