@@ -278,19 +278,11 @@ jobs:
   series: |
     process1;
     process2;
-```
-
-```yaml
-jobs:
   concurrent: |
     [
       process1;
       process2;
     ]
-```
-
-```yaml
-jobs:
   series_and_concurrent: |
     process1;
     process2;
@@ -298,28 +290,17 @@ jobs:
       process1;
       process2;
     ]
-```
-
-```yaml
-jobs:
   contingent: process1 ? process2 : process3;
-```
-
-```yaml
-jobs:
   contingent_onsucceed: process1 ? process2;
-```
-
-```yaml
-jobs:
   contingent_onfail: process1 : process2;
-```
-
-```yaml
-jobs:
   with_log_monitors: |
     process1; @monitor1
     process2 ? process3; @monitor2
+  concurrent_with_log_monitors: |
+    [
+      process1; @monitor1
+      process2 ? process3; @monitor2
+    ]
 ```
 
 ### Processes
