@@ -320,3 +320,37 @@ test!(job_with_multiple_log_monitors, |t: TC| {
     assert_eq!(10, out.len());
     assert_eq!(0, err.len());
 });
+
+test!(job_overrides_process_contingency, |t: TC| {
+    let (out, err) = t
+        .profile(
+            r#"
+            jobs:
+                test: |
+                    p1 ? p2;
+                    p3 : p1;
+
+            processes:
+                p1:
+                    command: echo foo
+                    onsucceed: p3;
+                    onfail: p2;
+                p2:
+                    command: echo bar
+                p3:
+                    command: |
+                        echo baz
+                        exit 1
+        "#,
+        )
+        .opts("-j test")
+        .run()
+        .unwrap();
+
+    assert_eq!("[p1] foo", out[1]);
+    assert_eq!("[p1] bar", out[4]);
+    assert_eq!("[p3] baz", out[7]);
+    assert_eq!("[p3] foo", out[10]);
+    assert_eq!(12, out.len());
+    assert_eq!(0, err.len());
+});
