@@ -41,6 +41,8 @@
 <div>
   <img align="right" src="https://img.shields.io/crates/v/arpx?color=black">
   <img align="right" src="https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master" />
+</div>
+<div>
   <h1 align="center">
     arpx
   </h1>
