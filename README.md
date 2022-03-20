@@ -142,6 +142,22 @@ Job `foo` contains three tasks:
 
 ### Task 1: contingency
 
+```text
+bar ? baz : qux;
+```
+
 ### Task 2: concurrency
 
+```text
+[
+  bar;
+  baz;
+  qux;
+]
+```
+
 ### Task 3: a log monitor
+
+```text
+bar; @quux
+```
