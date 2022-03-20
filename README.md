@@ -271,7 +271,9 @@ The arpx_job scripting language can be broken down into 5 concepts:
 - **Log monitors** (`@my_log_monitor`)
   - Any log monitor defined in the current profile can be referenced by name from within arpx_job and applied to a given process declaration by placing it _after the terminating semicolon_. For example, if a log monitor named `qux` is defined under `log_monitors`, it can be applied to a process declaration like so: `foo ? bar : baz; @qux`. Log monitor declarations are always placed after the terminating semicolon.
 
-#### Examples
+#### Example
+
+Each job defined below demonstrates one or more of the concepts described above.
 
 ```yaml
 jobs:
