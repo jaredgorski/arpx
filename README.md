@@ -64,4 +64,4 @@ _If you want to hack some orchestration into your development environment, Arpx 
 
 The name "Arpx" variously refers to the library which provides the program's core functionality (the Arpx runtime object) as well as the binary which wraps that core functionality in a convenient CLI.
 
-Library-specific documentation can be found in [rustdoc form](https://docs.rs/crate/arpx/latest). The rest of this README provides a more general overview of what Arpx accomplishes, how it works, and how to use the CLI.
+Library-specific documentation can be found on [docs.rs](https://docs.rs/crate/arpx/latest). The rest of this README provides a more general overview of what Arpx accomplishes, how it works, and how to use the CLI.
