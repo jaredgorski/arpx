@@ -8,6 +8,14 @@
 
 **Small-scale process orchestration**
 
+---
+
+- [Quick demo](https://github.com/jaredgorski/arpx/tree/main/docs/quick_demo.md)
+- [How to use the CLI](https://github.com/jaredgorski/arpx/tree/main/docs/using_the_cli.md)
+- [How to write a profile](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md)
+
+---
+
 ## About
 
 Arpx is a small-scale, run n' gun-style process orchestrator. In other words, Arpx makes it easy to schedule processes and automate them depending on each others' runtimes in cases where more complex orchestration isn't needed.
