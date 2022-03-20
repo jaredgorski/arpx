@@ -64,6 +64,8 @@ Execute jobs `foo` and `bar` on `my_profile.yaml` using `echo -n` instead of `sh
 arpx -f ~/my_profile.yaml -j foo -j bar bin echo -a -n
 ```
 
+<br/>
+
 #### The philosophy of this project
 
 <sup>
