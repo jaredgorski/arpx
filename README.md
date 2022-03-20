@@ -47,9 +47,16 @@
     arpx
   </h1>
   <p align="center">
-    <strong>Small-scale process orchestration</strong>
   </p>
 </div>
+
+# arpx &emsp [![Build Status]] [![Latest Verstion]][Crates.io]
+
+[Build Status]: https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master
+[Latest Version]: https://img.shields.io/crates/v/arpx?color=black
+[crates.io]: https://crates.io/crates/arpx
+
+**Small-scale process orchestration**
 
 ## Description
 
