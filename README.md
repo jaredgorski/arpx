@@ -40,7 +40,7 @@ Arpx can be installed using the binaries build on each release or via Rust's [`c
 ### Installing a release binary
 
 1. Navigate to the [Releases](https://github.com/jaredgorski/arpx/releases) page
-2. Choose a release to install
+2. Choose a release
 3. Download the appropriate binary for your machine
 4. Relocate the downloaded binary wherever you'd like it to exist
 5. Ensure the location of the binary is in your system's `PATH`
