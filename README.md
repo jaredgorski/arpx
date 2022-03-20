@@ -50,7 +50,7 @@
   </p>
 </div>
 
-# arpx &emsp ![Build Status] [![Latest Version]][Crates.io]
+# arpx &emsp; ![Build Status] [![Latest Version]][Crates.io]
 
 [Build Status]: https://travis-ci.com/jaredgorski/arpx.svg?token=7hLupv5JrcFFuyR6Lkp7&branch=master
 [Latest Version]: https://img.shields.io/crates/v/arpx?color=black
