@@ -1,0 +1,11 @@
+jobs:
+  bench: loop_3;
+
+processes:
+  loop_3:
+    command: |
+      for i in {1..3}
+      do
+        echo "$i"
+        sleep 0.01
+      done

@@ -1,120 +1,51 @@
-#![cfg_attr(feature = "doc", doc(include = "../README.md"))]
-//! https://github.com/jaredgorski/arpx
-#![deny(
-    missing_docs,
-    missing_debug_implementations,
-    missing_copy_implementations,
-    trivial_casts,
-    unused_import_braces,
-    unused_allocation,
-    trivial_numeric_casts
-)]
-#![forbid(unsafe_code)]
+mod cli;
 
-use clap::{App, Arg};
+use anyhow::{Context, Result};
+use arpx::{BinCommand, Logs, Runtime};
+use cli::Cli;
+use log::{debug, LevelFilter};
 
-mod action;
-mod arpx;
-mod error;
-mod process;
-mod profile;
-mod util;
+fn main() -> Result<()> {
+    let matches = Cli::run();
 
-#[doc(hidden)]
-pub const APPNAME: &str = "arpx";
-
-#[doc(hidden)]
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-#[doc(hidden)]
-const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
-
-#[doc(hidden)]
-const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
-
-#[doc(hidden)]
-pub const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
-
-#[doc(hidden)]
-const DEBUG_FLAG: bool = false;
-
-#[doc(hidden)]
-const ERROR_PREFIX: &str = r#"
-ERROR:
-"#;
-
-fn wrap_arpx_error(error_str: String) -> String {
-    format!("{}\n> {}\n\n", ERROR_PREFIX, error_str)
-}
-
-fn print_error(error: error::ArpxError) {
-    let formatted = match DEBUG_FLAG {
-        true => format!("{:?}", error),
-        false => format!("{}", error),
-    };
-
-    let wrapped = wrap_arpx_error(formatted);
-
-    eprint!("{}", wrapped)
-}
-
-#[doc(hidden)]
-fn main() {
-    let default_profile: String = format!("{}.yaml", APPNAME);
-    let matches = App::new(APPNAME)
-        .version(VERSION)
-        .author(AUTHOR)
-        .about(DESCRIPTION)
-        .arg(
-            Arg::with_name("file")
-                .short("f")
-                .long("file")
-                .value_name("FILE")
-                .default_value(&default_profile)
-                .help("Path to the profile to be executed")
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("process")
-                .short("p")
-                .long("process")
-                .multiple(true)
-                .value_name("PROCESS")
-                .help("Processes in the profile to run (runs all if none given)")
-                .takes_value(true),
-        )
-        .get_matches();
-
-    let requested_profile_file: String =
-        matches.value_of("file").unwrap_or("arpx.yaml").to_string();
-
-    let requested_processes: Vec<String> = {
-        if matches.is_present("process") {
-            matches
-                .values_of("process")
-                .unwrap()
-                .map(|x| x.to_string())
-                .collect()
+    Logs::init(
+        if matches.is_present("debug") {
+            LevelFilter::Debug
         } else {
-            Vec::new()
-        }
+            LevelFilter::Info
+        },
+        matches.is_present("verbose"),
+    )?;
+
+    debug!("CLI returned matches: {:#?}", matches);
+
+    let path = match matches.value_of("file") {
+        Some(f) => f,
+        _ => "arpx.yaml",
+    };
+    let jobs = match matches.values_of("job") {
+        Some(jobs) => jobs.map(std::string::ToString::to_string).collect(),
+        None => Vec::new(),
     };
 
-    let a = arpx::Arpx::new();
+    debug!("Profile path from CLI matches: {}", path);
+    debug!("Jobs from CLI matches: {:?}", jobs);
+    debug!("Program start");
 
-    let a_loaded = match a.load_profile(requested_profile_file) {
-        Ok(a) => a,
-        Err(error) => {
-            print_error(error);
-            std::process::exit(1);
-        }
-    };
+    let mut runtime =
+        Runtime::from_profile(path, &jobs).context(format!("Error loading profile at {}", path))?;
 
-    match a_loaded.run(requested_processes) {
-        Ok(()) => (),
-        Err(error) => {
-            print_error(error);
-            std::process::exit(1);
+    if let Some(("bin", sub_matches)) = matches.subcommand() {
+        let bin = sub_matches.value_of("BIN");
+        let args = match sub_matches.values_of("args") {
+            Some(a) => a.map(std::string::ToString::to_string).collect(),
+            None => Vec::new(),
+        };
+
+        if let Some(cmd) = bin {
+            runtime = runtime.bin_command(BinCommand::new(cmd.into(), args));
         }
-    };
+    }
+
+    runtime.run()
 }
