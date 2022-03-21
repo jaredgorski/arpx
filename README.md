@@ -1,7 +1,7 @@
 [![Build Status]][builds] [![Latest Version]][crates.io]
 
 [Build Status]: https://github.com/jaredgorski/arpx/actions/workflows/build.yml/badge.svg
-[builds]: https://github.com/jaredgorski/arpx/actions/workflows/build-and-test.yml
+[builds]: https://github.com/jaredgorski/arpx/actions/workflows/build.yml
 [Latest Version]: https://img.shields.io/crates/v/arpx?color=black
 [crates.io]: https://crates.io/crates/arpx
 
