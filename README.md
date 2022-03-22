@@ -11,8 +11,8 @@
 
 ---
 
-- [Quick demo](https://github.com/jaredgorski/arpx/tree/main/docs/quick_demo.md)
 - [Installation instructions](#installing)
+- [Quick demo](https://github.com/jaredgorski/arpx/tree/main/docs/quick_demo.md)
 - [How to use the CLI](https://github.com/jaredgorski/arpx/tree/main/docs/using_the_cli.md)
 - [How to write a profile](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md)
 

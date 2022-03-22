@@ -118,7 +118,7 @@ This runtime job task contains a log monitor declaration (`@quux`). This means t
 
 With each update to the buffer, the log monitor will run its `test` script. The `test` script has access to a local environment variable called `ARPX_BUFFER` which it can use to string match for certain program conditions visible via the process logs. If the `test` script returns with a `0` status and there is an `ontrigger` action defined for the log monitor, the `ontrigger` action will be executed.
 
-For example, a given process may log a 14 line long error message. A log monitor with a `buffer_size` of `14` can be used to match against that error message and respond to the error state during runtime. When the log monitor matches the error output, it will execute its `ontrigger` action. For a list of available actions, TODO.
+For example, a given process may log a 14 line long error message. A log monitor with a `buffer_size` of `14` can be used to match against that error message and respond to the error state during runtime. When the log monitor matches the error output, it will execute its `ontrigger` action. [Click here](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md#arpx_job-scripting-language) to learn more about actions.
 
 Log monitors can be defined without an `ontrigger` action as well, in which case the log monitor will still execute the `test` script on each update to the buffer. This opens up the possibility of using log monitors to append external log files and otherwise respond to log states within the `test` script itself.
 
