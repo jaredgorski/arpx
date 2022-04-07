@@ -72,6 +72,7 @@ jobs:
         os:
           - ubuntu-latest
           - macOS-latest
+          - windows-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
