@@ -3,6 +3,7 @@ use crate::runtime::{
         task::{action::BUILTIN_ACTIONS, log_monitor::LogMonitor, process::Process, Task},
         Job,
     },
+    local_bin::BinCommand,
     profile::{deserialize, Profile},
     Runtime,
 };
@@ -155,10 +156,14 @@ impl RuntimeBuilder {
 
         debug!("Building runtime object");
 
-        let runtime = Runtime::new()
+        let mut runtime = Runtime::new()
             .jobs(jobs)
             .log_monitor_map(log_monitor_map)
             .process_map(process_map);
+
+        if !profile.script_env.is_empty() {
+            runtime = runtime.bin_command(BinCommand::from_env_preset(&profile.script_env));
+        }
 
         debug!("Runtime object built");
 

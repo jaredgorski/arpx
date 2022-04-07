@@ -1,4 +1,4 @@
-use clap::{arg, command, ArgMatches, Command};
+use clap::{arg, command, ArgMatches};
 
 pub struct Cli;
 
@@ -12,17 +12,6 @@ impl Cli {
             .arg(arg!(-j --job <JOB> "Job in profile to run").multiple_occurrences(true))
             .arg(arg!(-v --verbose))
             .arg(arg!(--debug))
-            .subcommand(
-                Command::new("bin")
-                    .about("Local binary on which to invoke process commands")
-                    .arg(arg!([BIN]))
-                    .arg(
-                        arg!(-a --args <BINARGS> "Arguments passed to custom binary prior to process commands")
-                            .allow_hyphen_values(true)
-                            .multiple_values(true)
-                            .required(false),
-                    ),
-            )
             .get_matches();
     }
 }

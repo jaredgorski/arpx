@@ -22,14 +22,20 @@ impl BinCommand {
         Self::from_os(OS)
     }
 
-    fn from_os(os: &str) -> Self {
-        let bash = Self::new("sh".into(), vec!["-c".into()]);
-        let cmd = Self::new("cmd".into(), vec!["/c".into()]);
+    #[must_use]
+    pub fn from_env_preset(preset: &str) -> Self {
+        match preset {
+            // "cmd" => Self::new("cmd".into(), vec!["/c".into()]), PENDING https://github.com/rust-lang/rust/issues/92939
+            "bash" => Self::new("sh".into(), vec!["-c".into()]),
+            "powershell" => Self::new("powershell".into(), vec!["-Command".into()]),
+            _ => Self::new("sh".into(), vec!["-c".into()]),
+        }
+    }
 
+    fn from_os(os: &str) -> Self {
         match os {
-            "windows" => cmd,
-            "linux" | "macos" | "freebsd" | "netbsd" | "openbsd" | "solaris" => bash,
-            _ => bash,
+            "windows" => Self::from_env_preset("powershell"),
+            _ => Self::from_env_preset("bash"),
         }
     }
 }
