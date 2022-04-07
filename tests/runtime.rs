@@ -11,7 +11,7 @@ test!(single_job_with_single_task, |t: TC| {
 
             processes:
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.1
                         echo bar
@@ -40,11 +40,11 @@ test!(single_job_with_multiple_tasks, |t: TC| {
 
             processes:
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.1
                 p2:
-                    command: |
+                    exec: |
                         echo bar
                         sleep 0.1
                         echo baz
@@ -74,12 +74,12 @@ test!(single_job_with_concurrent_task, |t: TC| {
 
             processes:
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.2
                         echo baz
                 p2:
-                    command: |
+                    exec: |
                         sleep 0.1
                         echo bar
                         sleep 0.1
@@ -110,16 +110,16 @@ test!(single_job_with_single_and_concurrent_task, |t: TC| {
 
             processes:
                 p0:
-                    command: |
+                    exec: |
                         echo qux
                         sleep 0.1
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.2
                         echo baz
                 p2:
-                    command: |
+                    exec: |
                         sleep 0.1
                         echo bar
                         sleep 0.1
@@ -147,11 +147,11 @@ test!(multiple_jobs, |t: TC| {
 
             processes:
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.1
                 p2:
-                    command: |
+                    exec: |
                         echo bar
                         sleep 0.1
                         echo baz
@@ -177,17 +177,17 @@ test!(job_with_onsucceed_process, |t: TC| {
 
             processes:
                 one:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.1
                     onsucceed: two
                 two:
-                    command: |
+                    exec: |
                         echo bar
                         sleep 0.1
                     onsucceed: three
                 three:
-                    command: |
+                    exec: |
                         echo baz
                         sleep 0.1
         "#,
@@ -212,19 +212,19 @@ test!(job_with_onfail_process, |t: TC| {
 
             processes:
                 one:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.1
                         exit 1
                     onfail: two
                 two:
-                    command: |
+                    exec: |
                         echo bar
                         sleep 0.1
                         exit 1
                     onfail: three
                 three:
-                    command: |
+                    exec: |
                         echo baz
                         sleep 0.1
         "#,
@@ -249,20 +249,20 @@ test!(job_with_single_log_monitor, |t: TC| {
 
             processes:
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.1
                         echo bar
                         sleep 0.1
                 p2:
-                    command: |
+                    exec: |
                         echo baz
                         sleep 0.1
             log_monitors:
                 m1:
                     buffer_size: 1
-                    test: 'echo "$ARPX_BUFFER" | grep -q "bar"'
-                    ontrigger: p2
+                    exec: 'echo "$ARPX_BUFFER" | grep -q "bar"'
+                    onsucceed: p2
         "#,
         )
         .opts("-j test")
@@ -284,29 +284,29 @@ test!(job_with_multiple_log_monitors, |t: TC| {
 
             processes:
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.2
                         echo bar
                         sleep 0.1
                 p2:
-                    command: |
+                    exec: |
                         echo baz
                         sleep 0.1
                 p3:
-                    command: |
+                    exec: |
                         sleep 0.3
                         echo qux
                         sleep 0.1
             log_monitors:
                 m1:
                     buffer_size: 1
-                    test: 'echo "$ARPX_BUFFER" | grep -q "foo"'
-                    ontrigger: p2
+                    exec: 'echo "$ARPX_BUFFER" | grep -q "foo"'
+                    onsucceed: p2
                 m2:
                     buffer_size: 1
-                    test: 'echo "$ARPX_BUFFER" | grep -q "bar"'
-                    ontrigger: p3
+                    exec: 'echo "$ARPX_BUFFER" | grep -q "bar"'
+                    onsucceed: p3
         "#,
         )
         .opts("-j test")
@@ -332,17 +332,17 @@ test!(job_overrides_process_contingency, |t: TC| {
 
             processes:
                 p1:
-                    command: |
+                    exec: |
                         echo foo
                         sleep 0.1
                     onsucceed: p3;
                     onfail: p2;
                 p2:
-                    command: |
+                    exec: |
                         echo bar
                         sleep 0.1
                 p3:
-                    command: |
+                    exec: |
                         echo baz
                         sleep 0.1
                         exit 1

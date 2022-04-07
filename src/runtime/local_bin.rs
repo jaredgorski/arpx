@@ -23,7 +23,7 @@ impl BinCommand {
     }
 
     #[must_use]
-    pub fn from_env_preset(preset: &str) -> Self {
+    pub fn from_preset(preset: &str) -> Self {
         match preset {
             // "cmd" => Self::new("cmd".into(), vec!["/c".into()]), PENDING https://github.com/rust-lang/rust/issues/92939
             "bash" => Self::new("sh".into(), vec!["-c".into()]),
@@ -34,8 +34,8 @@ impl BinCommand {
 
     fn from_os(os: &str) -> Self {
         match os {
-            "windows" => Self::from_env_preset("powershell"),
-            _ => Self::from_env_preset("bash"),
+            "windows" => Self::from_preset("powershell"),
+            _ => Self::from_preset("bash"),
         }
     }
 }

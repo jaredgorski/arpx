@@ -73,8 +73,8 @@ The `processes` key in an Arpx profile is a mapping of process configuration obj
 ```yaml
 processes:
   example_process:
-    command: echo "Hello, World!"             # (required) Command to execute.
-    cwd: /directory/in/which/to/run/command   # (optional) Path to directory in which `command` should execute. Defaults to `.`.
+    exec: echo "Hello, World!"                # (required) Command to execute.
+    cwd: /directory/in/which/to/run/exec      # (optional) Path to directory in which `exec` should execute. Defaults to `.`.
     onsucceed: some_action_name               # (optional) Default onsucceed action. Can be overridden in job script. Defaults to none.
     onfail: some_action_name                  # (optional) Default onfail action. Can be overridden in job script. Defaults to none.
 ```
@@ -86,7 +86,7 @@ The `log_monitors` key in an Arpx profile is a mapping of log monitor configurat
 ```yaml
 log_monitors:
   example_log_monitor:
-    test: '[[ "$ARPX_BUFFER" =~ "Hello" ]]'   # (required) Test script to execute on each buffer update.
-    ontrigger: some_action_name               # (optional) Default ontrigger action. Can be overridden in job script. Defaults to none.
+    exec: '[[ "$ARPX_BUFFER" =~ "Hello" ]]'   # (required) Script to execute on each buffer update.
+    onsucceed: some_action_name               # (optional) Default onsucceed action. Can be overridden in job script. Defaults to none.
     buffer_size: 1                            # (optional) Size of rolling buffer. Defaults to 20.
 ```

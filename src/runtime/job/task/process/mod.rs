@@ -17,13 +17,13 @@ use stream::PipeStreamReader;
 /// Represents and contains a given runtime job task process.
 ///
 /// This object contains all of the data necessary to run a given process. This data includes the
-/// process name, the `command` which should be executed using the current `BinCommand`, the
-/// directory in which to execute the `command`, any log monitors which should monitor the command
+/// process name, the `exec` which should be executed using the current `BinCommand`, the
+/// directory in which to execute the `exec`, any log monitors which should monitor the command
 /// output, as well as any actions which should be performed when the command fails or succeeds.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Process {
-    pub command: String,
     pub cwd: String,
+    pub exec: String,
     pub log_monitors: Vec<String>,
     pub name: String,
     pub onfail: Option<String>,
@@ -34,8 +34,8 @@ impl Process {
     /// Constructs a new, empty `Process`.
     pub fn new(name: String) -> Self {
         Self {
-            command: String::new(),
             cwd: ".".to_owned(),
+            exec: String::new(),
             log_monitors: Vec::new(),
             name,
             onfail: None,
@@ -44,15 +44,15 @@ impl Process {
     }
 
     /// Builds `Process` with the specified command.
-    pub fn command(mut self, c: String) -> Self {
-        self.command = c;
+    pub fn exec(mut self, c: String) -> Self {
+        self.exec = c;
 
         self
     }
 
     /// Builds `Process` with the specified current working directory.
     ///
-    /// This directory is where `command` will be executed using the runtime `BinCommand`.
+    /// This directory is where `exec` will be executed using the runtime `BinCommand`.
     pub fn cwd(mut self, d: String) -> Self {
         self.cwd = d;
 
@@ -66,14 +66,14 @@ impl Process {
         self
     }
 
-    /// Builds `Process` with the name of the action to execute if the `command` fails.
+    /// Builds `Process` with the name of the action to execute if the `exec` fails.
     pub fn onfail(mut self, f: Option<String>) -> Self {
         self.onfail = f;
 
         self
     }
 
-    /// Builds `Process` with the name of the action to execute if the `command` succeeds.
+    /// Builds `Process` with the name of the action to execute if the `exec` succeeds.
     pub fn onsucceed(mut self, s: Option<String>) -> Self {
         self.onsucceed = s;
 
@@ -90,10 +90,10 @@ impl Process {
         debug!("Initiating process \"{}\"", self.name);
 
         let BinCommand { bin, mut args } = ctx.bin_command.clone();
-        args.push(self.command.clone());
+        args.push(self.exec.clone());
 
         debug!(
-            "Building command and invoking on local binary \"{}\" with args {:?}",
+            "Building exec and invoking on local binary \"{}\" with args {:?}",
             bin, args
         );
         let mut child = Command::new(bin)
@@ -104,7 +104,7 @@ impl Process {
             .stderr(Stdio::piped())
             .spawn()
             .context(format!(
-                "Error spawning process command on process \"{}\"",
+                "Error spawning process exec on process \"{}\"",
                 self.name
             ))?;
 
@@ -118,7 +118,7 @@ impl Process {
 
         debug!("Waiting on close... \"{}\" ({})", self.name, pid);
         let status = child.wait().context(format!(
-            "Error waiting for process command child on process \"{}\"",
+            "Error waiting for process exec child on process \"{}\"",
             self.name
         ))?;
 

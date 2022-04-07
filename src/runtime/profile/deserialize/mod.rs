@@ -10,7 +10,7 @@ use std::collections::HashMap;
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct Profile {
     #[serde(default = "defaults::string")]
-    pub script_env: String,
+    pub exec_bin: String,
     #[serde(default = "defaults::jobs", deserialize_with = "jobs::deserialize")]
     pub jobs: HashMap<String, Job>,
     #[serde(

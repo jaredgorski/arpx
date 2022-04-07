@@ -59,7 +59,7 @@ use std::collections::HashMap;
 /// Processes in a given task run concurrently.
 ///
 /// Once all processes in the task have exited, including actions (`onsucceed`, `onfail`, and log
-/// monitor `ontrigger` actions spawned on their parent process threads), the task is complete and
+/// monitor `onsucceed` actions spawned on their parent process threads), the task is complete and
 /// the next task in the job will execute.
 ///
 /// Once all tasks in a given job have completed their execution, the runtime moves on to the next
@@ -78,9 +78,9 @@ use std::collections::HashMap;
 ///
 /// let processes = vec![
 ///     Process::new("p_foo".to_string())
-///         .command("echo foo".to_string())
+///         .exec("echo foo".to_string())
 ///         .onsucceed(Some("p_baz".to_string())),
-///     Process::new("p_bar".to_string()).command("echo bar".to_string()),
+///     Process::new("p_bar".to_string()).exec("echo bar".to_string()),
 /// ];
 ///
 /// let mut process_map = processes
@@ -91,7 +91,7 @@ use std::collections::HashMap;
 ///
 /// process_map.insert(
 ///     "p_baz".to_string(),
-///     Process::new("p_baz".to_string()).command("echo baz".to_string()),
+///     Process::new("p_baz".to_string()).exec("echo baz".to_string()),
 /// );
 ///
 /// let jobs = vec![Job::new(

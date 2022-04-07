@@ -19,19 +19,19 @@
 
     processes:
       bar:
-        command: echo bar
+        exec: echo bar
       baz:
-        command: echo baz
+        exec: echo baz
       qux:
-        command: echo qux
+        exec: echo qux
       quux:
-        command: echo quux
+        exec: echo quux
 
     log_monitors:
       quux:
         buffer_size: 1
-        test: 'echo "$ARPX_BUFFER" | grep -q "bar"' # or equivalent for your system
-        ontrigger: quux
+        exec: 'echo "$ARPX_BUFFER" | grep -q "bar"' # or equivalent for your system
+        onsucceed: quux
     ```
 
 4. In your terminal, execute:
@@ -116,11 +116,11 @@ bar; @quux
 
 This runtime job task contains a log monitor declaration (`@quux`). This means that the log monitor named `quux`, defined in the `log_monitors` mapping on the profile, will run concurrently with `bar` and watch its output, storing its most recent _n_ number of lines in a rolling buffer of _n_ size. The buffer size is set to `1` in this case, but it defaults to `20`.
 
-With each update to the buffer, the log monitor will run its `test` script. The `test` script has access to a local environment variable called `ARPX_BUFFER` which it can use to string match for certain program conditions visible via the process logs. If the `test` script returns with a `0` status and there is an `ontrigger` action defined for the log monitor, the `ontrigger` action will be executed.
+With each update to the buffer, the log monitor will run its `exec` script. The `exec` script has access to a local environment variable called `ARPX_BUFFER` which it can use to string match for certain program conditions visible via the process logs. If the `exec` script returns with a `0` status and there is an `onsucceed` action defined for the log monitor, the `onsucceed` action will be executed.
 
-For example, a given process may log a 14 line long error message. A log monitor with a `buffer_size` of `14` can be used to match against that error message and respond to the error state during runtime. When the log monitor matches the error output, it will execute its `ontrigger` action. [Click here](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md#arpx_job-scripting-language) to learn more about actions.
+For example, a given process may log a 14 line long error message. A log monitor with a `buffer_size` of `14` can be used to match against that error message and respond to the error state during runtime. When the log monitor matches the error output, it will execute its `onsucceed` action. [Click here](https://github.com/jaredgorski/arpx/tree/main/docs/writing_a_profile.md#arpx_job-scripting-language) to learn more about actions.
 
-Log monitors can be defined without an `ontrigger` action as well, in which case the log monitor will still execute the `test` script on each update to the buffer. This opens up the possibility of using log monitors to append external log files and otherwise respond to log states within the `test` script itself.
+Log monitors can be defined without an `onsucceed` action as well, in which case the log monitor will still execute the `exec` script on each update to the buffer. This opens up the possibility of using log monitors to append external log files and otherwise respond to log states within the `exec` script itself.
 
 For example, the following log monitor exists solely to append process output to a log file:
 
@@ -133,7 +133,7 @@ jobs:
 log_monitors:
   mon1:
     buffer_size: 1
-    test: 'echo "$ARPX_BUFFER" >> /path/to/test.log'
+    exec: 'echo "$ARPX_BUFFER" >> /path/to/test.log'
 ```
 
 ### Putting it all together
@@ -145,5 +145,5 @@ When our profile is loaded and executed with Arpx, the following happens:
 3. Task 2 begins. Processes `bar`, `baz`, and `qux` are spawned simultaneously in separate threads.
 4. `bar`, `baz`, and `qux` all exit successfully. This concludes task 2.
 5. Task 3 begins. Process `bar` is spawned and the log monitor `quux` is spawned alongside it, receiving its output and storing it in a buffer.
-6. `bar` logs "bar" to stdout and `quux` receives it, running its `test` script against the text. `test` exits successfully, so the Arpx runtime executes `quux`'s `ontrigger` action, which is a process also named `quux`.
+6. `bar` logs "bar" to stdout and `quux` receives it, running its `exec` script against the text. `exec` exits successfully, so the Arpx runtime executes `quux`'s `onsucceed` action, which is a process also named `quux`.
 7. Process `quux` is executed and successfully exits. This is the end of the Arpx runtime.

@@ -112,8 +112,8 @@ impl RuntimeBuilder {
                                         }
 
                                         return Ok(Process::new(default_process.name.clone())
-                                            .command(default_process.command.clone())
                                             .cwd(default_process.cwd.clone())
+                                            .exec(default_process.exec.clone())
                                             .log_monitors(process.log_monitors.clone())
                                             .onfail(match &process.onfail {
                                                 Some(onfail) => {
@@ -161,8 +161,8 @@ impl RuntimeBuilder {
             .log_monitor_map(log_monitor_map)
             .process_map(process_map);
 
-        if !profile.script_env.is_empty() {
-            runtime = runtime.bin_command(BinCommand::from_env_preset(&profile.script_env));
+        if !profile.exec_bin.is_empty() {
+            runtime = runtime.bin_command(BinCommand::from_preset(&profile.exec_bin));
         }
 
         debug!("Runtime object built");
@@ -178,8 +178,8 @@ impl RuntimeBuilder {
             .map(|(name, v)| {
                 let log_monitor = LogMonitor::new(name.clone())
                     .buffer_size(v.buffer_size)
-                    .ontrigger(v.ontrigger)
-                    .test(v.test);
+                    .exec(v.exec)
+                    .onsucceed(v.onsucceed);
 
                 (name, log_monitor)
             })
@@ -200,8 +200,8 @@ impl RuntimeBuilder {
                 );
 
                 let process = Process::new(name.clone())
-                    .command(v.command)
                     .cwd(v.cwd)
+                    .exec(v.exec)
                     .log_monitors(v.log_monitors)
                     .onfail(match &v.onfail[..] {
                         "" => None,

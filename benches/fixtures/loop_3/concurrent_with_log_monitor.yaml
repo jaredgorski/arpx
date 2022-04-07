@@ -7,7 +7,7 @@ jobs:
 
 processes:
   loop_3:
-    command: |
+    exec: |
       for i in {1..3}
       do
         echo "$i"
@@ -16,7 +16,7 @@ processes:
 
 log_monitors:
   watch:
-    ontrigger: loop_3
-    test: |
+    exec: |
       echo "$ARPX_BUFFER"
       exit 1
+    onsucceed: loop_3

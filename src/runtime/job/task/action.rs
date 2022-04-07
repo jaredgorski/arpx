@@ -27,7 +27,7 @@ pub fn get_process_actions(process: &Process, ctx: &Ctx) -> ProcessActions {
 }
 
 pub fn get_log_monitor_action(log_monitor: &LogMonitor, ctx: &Ctx) -> OptionalAction {
-    get_optional_action(log_monitor.ontrigger.clone(), ctx.clone())
+    get_optional_action(log_monitor.onsucceed.clone(), ctx.clone())
 }
 
 fn get_optional_action(action_name: String, ctx: Ctx) -> OptionalAction {

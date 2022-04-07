@@ -14,16 +14,16 @@ use std::thread;
 ///
 /// This object contains all of the data necessary to run a given log monitor. This data includes
 /// the log monitor name, the size of its rolling buffer, the rolling buffer instance itself, the
-/// `test` command which should be executed on each push to the buffer, and the `ontrigger` action
-/// which should run if `test` returns with a `0` exit code.
+/// `exec` command which should be executed on each push to the buffer, and the `onsucceed` action
+/// which should run if `exec` returns with a `0` exit code.
 #[derive(Clone, Debug)]
 pub struct LogMonitor {
     pub buffer: RollingBuffer,
     pub buffer_size: usize,
     pub ctx: Ctx,
+    pub exec: String,
     pub name: String,
-    pub ontrigger: String,
-    pub test: String,
+    pub onsucceed: String,
 }
 
 impl LogMonitor {
@@ -33,9 +33,9 @@ impl LogMonitor {
             buffer: RollingBuffer::new(20),
             buffer_size: 20,
             ctx: Ctx::new(),
+            exec: String::new(),
             name,
-            ontrigger: String::new(),
-            test: String::new(),
+            onsucceed: String::new(),
         }
     }
 
@@ -47,16 +47,16 @@ impl LogMonitor {
         self
     }
 
-    /// Builds `LogMonitor` with the name of the action to execute if the `test` succeeds.
-    pub fn ontrigger(mut self, o: String) -> Self {
-        self.ontrigger = o;
+    /// Builds `LogMonitor` with the name of the action to execute if the `exec` succeeds.
+    pub fn onsucceed(mut self, o: String) -> Self {
+        self.onsucceed = o;
 
         self
     }
 
-    /// Builds `LogMonitor` with the specified test.
-    pub fn test(mut self, t: String) -> Self {
-        self.test = t;
+    /// Builds `LogMonitor` with the specified exec.
+    pub fn exec(mut self, t: String) -> Self {
+        self.exec = t;
 
         self
     }
@@ -64,7 +64,7 @@ impl LogMonitor {
     /// Executes the log monitor using the provided action.
     pub fn run(
         mut self,
-        ontrigger: OptionalAction,
+        onsucceed: OptionalAction,
     ) -> Result<(thread::JoinHandle<()>, Sender<LogMonitorMessage>)> {
         debug!("Running log_monitor instance with structure:\n{:#?}", self);
 
@@ -87,7 +87,7 @@ impl LogMonitor {
                                 break;
                             }
                             LogMonitorCmd::Log => {
-                                self.push(message, &ontrigger);
+                                self.push(message, &onsucceed);
                             }
                             LogMonitorCmd::None => debug!("Received empty message."),
                         }
@@ -101,18 +101,18 @@ impl LogMonitor {
         Ok((handle, sender))
     }
 
-    /// Pushes a line of text to the rolling buffer and executes the test command on the new buffer
+    /// Pushes a line of text to the rolling buffer and executes the exec command on the new buffer
     /// state.
-    pub fn push(&mut self, line: String, ontrigger: &OptionalAction) {
+    pub fn push(&mut self, line: String, onsucceed: &OptionalAction) {
         self.buffer.push(line);
-        self.exec_test(ontrigger).ok();
+        self.run_exec(onsucceed).ok();
     }
 
-    /// Executes the current test command and, if successful, performs the `ontrigger` action.
-    pub fn exec_test(&self, ontrigger: &OptionalAction) -> Result<()> {
+    /// Executes the current exec command and, if successful, performs the `onsucceed` action.
+    pub fn run_exec(&self, onsucceed: &OptionalAction) -> Result<()> {
         let bin = self.ctx.bin_command.bin.clone();
         let mut bin_args = self.ctx.bin_command.args.clone();
-        bin_args.push(self.test.clone());
+        bin_args.push(self.exec.clone());
 
         let status = Command::new(bin)
             .args(bin_args)
@@ -122,22 +122,22 @@ impl LogMonitor {
             .stderr(Stdio::piped())
             .spawn()
             .context(format!(
-                "Error spawning test command on log monitor \"{}\"",
+                "Error spawning exec command on log monitor \"{}\"",
                 self.name
             ))?
             .wait()
             .context(format!(
-                "Error waiting for test command child on log monitor \"{}\"",
+                "Error waiting for exec command child on log monitor \"{}\"",
                 self.name
             ))?;
 
         if status.success() {
             debug!("LogMonitor {} triggered", self.name);
 
-            if let Some(action) = ontrigger {
+            if let Some(action) = onsucceed {
                 debug!(
-                    "Running ontrigger \"{}\" from prepared action",
-                    self.ontrigger
+                    "Running onsucceed \"{}\" from prepared action",
+                    self.onsucceed
                 );
 
                 action();

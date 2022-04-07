@@ -3,7 +3,7 @@ jobs:
 
 processes:
   loop_3:
-    command: |
+    exec: |
       for i in {1..3}
       do
         echo "$i"

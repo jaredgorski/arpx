@@ -61,12 +61,12 @@
 //!
 //! let processes = vec![
 //!     Process::new("database".to_string())
-//!         .command("run.sh".to_string())
 //!         .cwd("/path/to/project/database/".to_string())
+//!         .exec("run.sh".to_string())
 //!         .onsucceed(Some("db_recover".to_string())),
 //!     Process::new("api".to_string())
-//!         .command("run.sh".to_string())
 //!         .cwd("/path/to/project/api/".to_string())
+//!         .exec("run.sh".to_string())
 //!         .onsucceed(Some("api_recover".to_string())),
 //! ];
 //!
@@ -79,8 +79,8 @@
 //! process_map.insert(
 //!     "db_recover".to_string(),
 //!     Process::new("db_recover".to_string())
-//!         .command("self-heal.sh".to_string())
 //!         .cwd("/path/to/project/database/".to_string())
+//!         .exec("self-heal.sh".to_string())
 //!         .onsucceed(Some("database".to_string()))
 //!         .onfail(Some("arpx_exit_error".to_string()))
 //! );
@@ -88,8 +88,8 @@
 //! process_map.insert(
 //!     "api_recover".to_string(),
 //!     Process::new("api_recover".to_string())
-//!         .command("self-heal.sh".to_string())
 //!         .cwd("/path/to/project/api/".to_string())
+//!         .exec("self-heal.sh".to_string())
 //!         .log_monitors(vec!["db_permissions_error".to_string()])
 //!         .onsucceed(Some("api".to_string()))
 //!         .onfail(Some("arpx_exit_error".to_string())),
@@ -101,8 +101,8 @@
 //!     "db_permissions_error".to_string(),
 //!     LogMonitor::new("db_permissions_error".to_string())
 //!         .buffer_size(1)
-//!         .test("echo \"$ARPX_BUFFER\" | grep -q \"Access denied for user\"".to_string())
-//!         .ontrigger("arpx_exit_error".to_string())
+//!         .exec("echo \"$ARPX_BUFFER\" | grep -q \"Access denied for user\"".to_string())
+//!         .onsucceed("arpx_exit_error".to_string())
 //! );
 //!
 //! let jobs = vec![Job::new(
@@ -126,9 +126,9 @@
 //! Log monitors allow for string matching against a rolling buffer of a given process's output.
 //! For example, the `db_permissions_error` log monitor is applied to the `database` process in job
 //! `dev`. The `db_permisions_error` log monitor will keep a rolling buffer of size 1 (the 1 most
-//! recent line of the process it's watching) and run its `test` script on every push to the
-//! buffer. If the script returns with a `0` exit status, the `ontrigger` action will run. In the
-//! case of `db_permissions_error`, a successful `test` will exit the entire runtime.
+//! recent line of the process it's watching) and run its `exec` script on every push to the
+//! buffer. If the script returns with a `0` exit status, the `onsucceed` action will run. In the
+//! case of `db_permissions_error`, a successful `exec` will exit the entire runtime.
 //!
 //! # Define a runtime using a profile
 //!
@@ -144,29 +144,29 @@
 //!
 //! processes:
 //!     database:
-//!         command: run.sh
 //!         cwd: /path/to/project/database/
+//!         exec: run.sh
 //!         onfail: db_recover
 //!     db_recover:
-//!         command: self-heal.sh
 //!         cwd: /path/to/project/database/
+//!         exec: self-heal.sh
 //!         onsucceed: database
 //!         onfail: arpx_exit_error
 //!     api:
-//!         command: run.sh
 //!         cwd: /path/to/project/api/
+//!         exec: run.sh
 //!         onfail: api_recover
 //!     api_recover:
-//!         command: self-heal.sh
 //!         cwd: /path/to/project/api/
+//!         exec: self-heal.sh
 //!         onsucceed: api
 //!         onfail: arpx_exit_error
 //!         
 //! log_monitors:
 //!     db_permissions_error:
 //!         buffer_size: 1
-//!         test: 'echo "$ARPX_BUFFER" | grep -q "Access denied for user"'
-//!         ontrigger: arpx_exit_error
+//!         exec: 'echo "$ARPX_BUFFER" | grep -q "Access denied for user"'
+//!         onsucceed: arpx_exit_error
 //! ```
 //!
 //! A runtime object can be built from this profile by loading the profile using

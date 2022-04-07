@@ -19,6 +19,8 @@ use std::fs;
 /// For example:
 ///
 /// ```text
+/// exec_bin: bash
+///
 /// jobs:
 ///     - job1: |
 ///         p1 ? p2 : p3; @m1 @m2
@@ -27,27 +29,27 @@ use std::fs;
 ///
 /// processes:
 ///     - p1:
-///         command: |
+///         exec: |
 ///             echo foo
 ///             exit 1
 ///     - p2:
-///         command: echo bar
+///         exec: echo bar
 ///     - p3:
-///         command: echo baz
+///         exec: echo baz
 ///     - p4:
-///         command: echo qux
+///         exec: echo qux
 ///     - p5:
-///         command: echo quux
+///         exec: echo quux
 ///     - p6:
-///         command: echo garply
+///         exec: echo garply
 ///
 /// log_monitors:
 ///     - m1:
-///         ontrigger: p6
-///         test: 'grep "baz" <<< "$ARPX_BUFFER"'
+///         exec: 'grep "baz" <<< "$ARPX_BUFFER"'
+///         onsucceed: p6
 ///     - m2:
+///         exec: 'echo $ARPX_BUFFER >> ~/test.log'
 ///         buffer_size: 1
-///         test: 'echo $ARPX_BUFFER >> ~/test.log'
 ///
 /// // `job1` output:
 /// //

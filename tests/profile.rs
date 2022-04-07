@@ -6,7 +6,7 @@ use common::TC;
 // - profile file doesn't exist
 // - invalid job/process/log_monitor name syntax (alphanumeric + - + _)
 // - invalid process (onfail/onsucceed doesn't exist, etc.)
-// - invalid log_monitor (ontrigger doesn't exist, etc.)
+// - invalid log_monitor (onsucceed doesn't exist, etc.)
 
 /*
  * jobs
@@ -62,7 +62,7 @@ test!(job_not_defined, |t: TC| {
 
             processes:
                 foo:
-                    command: echo foo
+                    exec: echo foo
         "#,
         )
         .opts("-j does_not_exist")
@@ -87,7 +87,7 @@ test!(job_uses_nonexistent_process, |t: TC| {
 
             processes:
                 exists:
-                    command: echo foo
+                    exec: echo foo
         "#,
         )
         .opts("-j test")
@@ -112,7 +112,7 @@ test!(job_uses_nonexistent_log_monitor, |t: TC| {
 
             processes:
                 exists:
-                    command: echo foo
+                    exec: echo foo
         "#,
         )
         .opts("-j test")
@@ -171,7 +171,7 @@ test!(processes_max, |t: TC| {
 
             processes:
                 foo:
-                    command: echo foo
+                    exec: echo foo
          "#,
         )
         .opts("-j test")
@@ -198,9 +198,9 @@ test!(concurrent_processes_max, |t: TC| {
 
             processes:
                 foo:
-                    command: echo foo
+                    exec: echo foo
                 bar:
-                    command: echo bar
+                    exec: echo bar
          "#,
         )
         .opts("-j test")
@@ -242,11 +242,11 @@ test!(log_monitors_max, |t: TC| {
 
             processes:
                 foo:
-                    command: echo foo
+                    exec: echo foo
 
             log_monitors:
                 bar:
-                    ontrigger: foo
+                    onsucceed: foo
                     test: 'echo "$ARPX_BUFFER" | grep -q "foo"'
          "#,
         )
@@ -273,7 +273,7 @@ test!(thread_max, |t: TC| {
 
             processes:
                 foo:
-                    command: echo foo
+                    exec: echo foo
          "#,
         )
         .opts("-j test")

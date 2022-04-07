@@ -4,12 +4,12 @@ use std::collections::HashMap;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Process {
+    #[serde(default = "defaults::string")]
+    pub exec: String,
     #[serde(default = "defaults::string_vec")]
     pub log_monitors: Vec<String>,
     #[serde(default = "defaults::string")]
     pub name: String,
-    #[serde(default = "defaults::string")]
-    pub command: String,
     #[serde(default = "defaults::cwd")]
     pub cwd: String,
     #[serde(default = "defaults::string")]
