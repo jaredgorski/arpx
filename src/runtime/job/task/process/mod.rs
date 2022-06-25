@@ -11,14 +11,12 @@ use crate::runtime::{
 use anyhow::{bail, Context, Result};
 use crossbeam_channel::Sender;
 use log::{debug, info};
-use std::process::Stdio;
+use std::process::{Command, Stdio};
 use stream::PipeStreamReader;
 
 #[cfg(windows)]
 use std::os::windows::process::CommandExt;
 
-#[cfg(not(windows))]
-use std::process::Command;
 
 /// Represents and contains a given runtime job task process.
 ///
@@ -106,7 +104,7 @@ impl Process {
 
         #[cfg(windows)]
         {
-            child = CommandExt::new(bin)
+            child = Command::new(bin)
                 .args(args)
                 .raw_arg(self.exec.clone())
                 .current_dir(&self.cwd[..])
