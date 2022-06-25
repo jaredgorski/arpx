@@ -2,7 +2,7 @@ mod common;
 
 use common::TC;
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(single_job_with_single_task, |t: TC| {
     let (out, err) = t
         .profile(
@@ -30,7 +30,7 @@ test!(single_job_with_single_task, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(single_job_with_multiple_tasks, |t: TC| {
     let (out, err) = t
         .profile(
@@ -63,7 +63,7 @@ test!(single_job_with_multiple_tasks, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(single_job_with_concurrent_task, |t: TC| {
     let (out, err) = t
         .profile(
@@ -99,7 +99,7 @@ test!(single_job_with_concurrent_task, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(single_job_with_single_and_concurrent_task, |t: TC| {
     let (out, err) = t
         .profile(
@@ -141,7 +141,7 @@ test!(single_job_with_single_and_concurrent_task, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(multiple_jobs, |t: TC| {
     let (out, err) = t
         .profile(
@@ -173,7 +173,7 @@ test!(multiple_jobs, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(job_with_onsucceed_process, |t: TC| {
     let (out, err) = t
         .profile(
@@ -209,7 +209,7 @@ test!(job_with_onsucceed_process, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(job_with_onfail_process, |t: TC| {
     let (out, err) = t
         .profile(
@@ -247,7 +247,7 @@ test!(job_with_onfail_process, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(job_with_single_log_monitor, |t: TC| {
     let (out, err) = t
         .profile(
@@ -283,7 +283,7 @@ test!(job_with_single_log_monitor, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(job_with_multiple_log_monitors, |t: TC| {
     let (out, err) = t
         .profile(
@@ -330,7 +330,7 @@ test!(job_with_multiple_log_monitors, |t: TC| {
     assert_eq!(0, err.len());
 });
 
-#[cfg(unix)]
+#[cfg(not(windows))]
 test!(job_overrides_process_contingency, |t: TC| {
     let (out, err) = t
         .profile(

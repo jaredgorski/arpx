@@ -11,8 +11,14 @@ use crate::runtime::{
 use anyhow::{bail, Context, Result};
 use crossbeam_channel::Sender;
 use log::{debug, info};
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 use stream::PipeStreamReader;
+
+#[cfg(windows)]
+use std::os::windows::process::CommandExt;
+
+#[cfg(not(windows))]
+use std::process::Command;
 
 /// Represents and contains a given runtime job task process.
 ///
@@ -90,23 +96,46 @@ impl Process {
         debug!("Initiating process \"{}\"", self.name);
 
         let BinCommand { bin, mut args } = ctx.bin_command.clone();
-        args.push(self.exec.clone());
 
         debug!(
             "Building exec and invoking on local binary \"{}\" with args {:?}",
             bin, args
         );
-        let mut child = Command::new(bin)
-            .args(args)
-            .current_dir(&self.cwd[..])
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .context(format!(
-                "Error spawning process exec on process \"{}\"",
-                self.name
-            ))?;
+
+        let mut child;
+
+        #[cfg(windows)]
+        {
+            child = CommandExt::new(bin)
+                .args(args)
+                .raw_arg(self.exec.clone())
+                .current_dir(&self.cwd[..])
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .context(format!(
+                    "Error spawning process exec on process \"{}\"",
+                    self.name
+                ))?;
+        }
+
+        #[cfg(not(windows))]
+        {
+            args.push(self.exec.clone());
+
+            child = Command::new(bin)
+                .args(args)
+                .current_dir(&self.cwd[..])
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .context(format!(
+                    "Error spawning process exec on process \"{}\"",
+                    self.name
+                ))?;
+        }
 
         info!("\"{}\" ({}) spawned", self.name, child.id());
 
